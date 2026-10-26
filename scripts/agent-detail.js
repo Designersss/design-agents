@@ -39,7 +39,15 @@ function selectedTab(tab,push=false){
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
-function syncSpace(){let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}el('companyAccess').hidden=personal}
+function syncSpace(){
+ let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}
+ el('companyAccess').hidden=personal;
+ const staff=el('hrRecipientTeamOption');staff.disabled=personal;staff.hidden=personal;
+ if(personal&&el('hrRecipientInput').value==='hr'){
+   el('hrRecipientInput').value='owner';
+   if(agent.status!=='active'){agent.hrRecipient='owner';persist()}
+ }
+}
 function render(){
  const recruiter=agent.role==='recruiter',active=agent.status==='active';
  text('agentName',agent.name);text('agentDescription',agent.description);
@@ -66,6 +74,21 @@ function render(){
  el('instructionInput').value=agent.instruction??(recruiter?'Помогай кандидатам, уточняй опыт и собирай контактные данные.':'Принимай обращения и отвечай на вопросы клиентов.');
  el('handoffInput').value=agent.handoff??(recruiter?'Передавай диалог HR, когда кандидат готов к собеседованию.':'Передавай сотруднику сложные запросы.');
  el('tagsInput').value=agent.tags;el('accessInput').value=agent.access||'team';
+ el('taskSpecificInput').value=agent.taskSpecific??'';
+ el('hrRecipientInput').value=agent.hrRecipient??'owner';
+ const notify=agent.hrNotifications||{new:true,review:true,clarify:true};
+ el('hrNotifyNew').checked=notify.new!==false;
+ el('hrNotifyReview').checked=notify.review!==false;
+ el('hrNotifyClarify').checked=notify.clarify!==false;
+ const assigned=agent.assignedVacancies||['vacancyFrontend'];
+ el('vacancyFrontend').checked=assigned.includes('vacancyFrontend');
+ el('vacancyDesigner').checked=assigned.includes('vacancyDesigner');
+ el('modelModeInput').value=agent.modelMode||'automatic';
+ el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
+ const hr=agent.role==='recruiter';
+ el('hrSettings').hidden=!hr;
+ el('settingsLockNote').hidden=!active;
+
  const ready=agent.status!=='draft';text('readinessLabel',ready?'Готов':'Нужна настройка');
  el('readinessLabel').classList.toggle('warning',!ready);
  text('readinessInstructions',ready?'Настроены':'Нужно заполнить');text('readinessChannel',ready?'Telegram подключён':'Не подключён');
@@ -92,6 +115,17 @@ function saveSettings(){
  if(agent.status==='active')return;
  agent.instruction=el('instructionInput').value;agent.handoff=el('handoffInput').value;
  agent.tags=el('tagsInput').value;agent.access=el('accessInput').value;
+ agent.taskSpecific=el('taskSpecificInput').value;
+ agent.hrRecipient=el('hrRecipientInput').value;
+ agent.hrNotifications={
+   new:el('hrNotifyNew').checked,
+   review:el('hrNotifyReview').checked,
+   clarify:el('hrNotifyClarify').checked
+ };
+ agent.assignedVacancies=['vacancyFrontend','vacancyDesigner'].filter(v=>el(v).checked);
+ agent.modelMode=el('modelModeInput').value;
+ el('explicitModelWrap').hidden=agent.modelMode!=='explicit';
+
  text('autosaveState',persist()?'Изменения сохранены':'Не удалось сохранить');
 }
 for(const input of document.querySelectorAll('[data-editable]')){
@@ -103,7 +137,7 @@ el('lifecycleButton').addEventListener('click',()=>{
  if(agent.status==='active'){stopDialog.showModal();return}
  const instruction=agent.instruction??el('instructionInput').value;
  const handoff=agent.handoff??el('handoffInput').value;
- if(agent.status==='draft'||!instruction.trim()||!handoff.trim()){
+ if(agent.status==='draft'||!instruction.trim()||!handoff.trim()||(agent.modelMode==='explicit'&&!agent.publicModelId)){
  selectedTab('settings',true);text('autosaveState','Проверьте инструкции и подключение перед запуском');return;
  }
  agent.status='active';persist();render();

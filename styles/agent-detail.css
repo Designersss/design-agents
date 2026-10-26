@@ -81,3 +81,32 @@
 @media(max-height:790px){.detail-hero{min-height:161px}.agent-detail{padding-top:7px}.hero-top{padding:12px 15px}.hero-bottom{padding:6px 17px 11px}.agent-detail-tabs{margin-top:8px}.agent-pane-scroll{padding-top:12px}.agent-pane{gap:11px}.detail-metric{min-height:84px;padding:10px 12px}.detail-metric strong{font-size:20px}}
 @media(max-width:1150px){.detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-grid{grid-template-columns:1fr}}
 @media(max-width:840px){.agent-detail{padding:9px 12px 0}.detail-grid{grid-template-columns:1fr}.detail-hero{min-height:224px}.hero-top{flex-direction:column}.hero-actions{justify-content:flex-start}.hero-bottom h1{font-size:22px}.profile-uploads{grid-template-columns:1fr}}
+
+/* Agent settings v6 — task-focused sections rather than user-editable profession logic. */
+.v6-settings{grid-template-columns:minmax(0,1.38fr) minmax(290px,1fr);align-items:start}
+.v6-settings .settings-main,.v6-settings .settings-side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.v6-settings .detail-card{padding:17px 19px}
+.v6-settings .detail-card .detail-field+.detail-field{margin-top:16px}
+.v6-settings .detail-field textarea{min-height:64px;resize:vertical}
+.v6-settings .detail-field textarea[rows="2"]{min-height:62px}
+.v6-settings .detail-field input[type="text"]{min-height:37px}
+.settings-lock-note{display:flex;align-items:center;gap:9px;border:1px solid #42524b;background:#212b27;padding:11px 14px;border-radius:9px;font-size:11px;color:#bed3c5}
+.settings-lock-note[hidden],.settings-hr-only[hidden],.model-select-container[hidden]{display:none!important}
+.lock-dot{width:7px;height:7px;border-radius:50%;flex:none;background:#b4cca2}
+.settings-hr-only{display:flex;flex-direction:column;gap:14px}
+.settings-card-copy,.settings-help{color:#94a49a;line-height:1.62;font-size:11px}
+.settings-card-copy{margin-bottom:12px}.settings-help{margin-top:12px}
+.settings-help strong{font-weight:600;color:#b6c7bd}
+.vacancy-options{display:flex;flex-direction:column;gap:9px}
+.vacancy-option,.checkline{display:flex;align-items:flex-start;gap:10px;padding:10px 11px;border:1px solid #323c37;background:#202624;border-radius:8px;cursor:pointer}
+.vacancy-option input,.checkline input{width:15px;height:15px;flex:none;margin:3px 0 0;accent-color:#52c89e}
+.vacancy-option span,.checkline span{min-width:0;display:flex;flex-direction:column;gap:4px}
+.vacancy-option strong,.checkline strong{font-size:11px;font-weight:600;color:#cbdad1}
+.vacancy-option small,.checkline small{font-size:10px;color:#85978c;line-height:1.4}
+.check-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.settings-ready-item{display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:35px;padding:9px 0;border-bottom:1px solid #303934;font-size:10.8px}
+.settings-ready-item span:first-child{color:#c9d6cd}.settings-ready-item span:last-child{color:#8fbba4;white-space:nowrap}
+.settings-jump{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:35px;font-size:11px;border-top:1px solid #2b3530;color:#b4dfc6}
+.settings-jump:hover{color:#effff3}
+.model-select-container{padding-top:12px}
+@media(max-width:1130px){.v6-settings{grid-template-columns:minmax(0,1fr)}}
