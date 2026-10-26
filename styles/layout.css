@@ -111,3 +111,7 @@ a{color:inherit;text-decoration:none}a:focus-visible,button:focus-visible,[role=
 @media(max-height:870px) and (min-width:1051px){
  .chatpanel .chatline:nth-of-type(n+4),.attention .alertline:nth-of-type(n+4){display:none}
 }
+
+/* Direction of the sidebar control is explicit in both states. */
+.brand>.collapse svg{transform:rotate(180deg)}
+.is-collapsed .brand>.collapse svg{transform:none}
