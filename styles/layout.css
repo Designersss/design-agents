@@ -115,3 +115,9 @@ a{color:inherit;text-decoration:none}a:focus-visible,button:focus-visible,[role=
 /* Direction of the sidebar control is explicit in both states. */
 .brand>.collapse svg{transform:rotate(180deg)}
 .is-collapsed .brand>.collapse svg{transform:none}
+
+/* Consistent horizontal inset for right-column integration and activity cards. */
+.right .integrations,.right .recent{padding-inline:17px}
+.right .integrations .panel-title,.right .recent .panel-title{padding-inline:5px}
+.right .integrations .integration,.right .recent .recentitem{margin-inline:0;padding-inline:7px;min-width:0}
+.right .integrations .integration>div,.right .recent .recentitem>div{min-width:0}
