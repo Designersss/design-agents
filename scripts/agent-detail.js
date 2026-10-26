@@ -79,8 +79,9 @@ function renderProfileTags(){
 }
 function showSettingSection(key){
  const views=[...document.querySelectorAll('[data-setting-view]')];
- const preferred=views.some(v=>v.dataset.settingView===key&&!v.hidden) ?key:key;
- const target=preferred==='hr'&&agent.role!=='recruiter'?'basics':preferred;
+ const allowed=['basics','hr','model','access','sources','preflight'];
+ const choice=allowed.includes(key)?key:'basics';
+ const target=choice==='hr'&&agent.role!=='recruiter'?'basics':choice;
  views.forEach(view=>{view.hidden=view.dataset.settingView!==target});
  document.querySelectorAll('[data-setting-key]').forEach(button=>{
    const active=button.dataset.settingKey===target;button.classList.toggle('active',active);
@@ -124,6 +125,8 @@ function render(){
  el('editProfileButton').disabled=active;
  el('editProfileButton').title=active?'Сначала остановите агента':'Изменить профиль';
  document.querySelectorAll('[data-editable]').forEach(input=>input.disabled=active);
+ // The Admin-published model catalog is not connected in this prototype.
+ el('publicModelInput').disabled=true;
  text('autosaveState',active?'Только просмотр':'Автосохранение включено');
  el('instructionInput').value=agent.instruction??(recruiter?'Первичный отбор откликов по назначенным вакансиям и передача подтверждённых данных ответственному HR.':'Обработка входящих обращений клиентов и подготовка заявок для сотрудников.');
  el('handoffInput').value=agent.handoff??(recruiter?'Кандидат попросил связаться с HR; собраны сведения для рассмотрения; необходима ручная проверка.':'Клиент запросил живого сотрудника; вопрос требует ручного подтверждения.');
