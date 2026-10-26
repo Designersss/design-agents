@@ -11,109 +11,89 @@
     <div class="agents-filters">
       <label class="agent-filter"><span class="visually-hidden">Тип</span><select id="roleFilter"><option value="all">Все типы</option><option value="recruiter">Рекрутер</option><option value="inbound">Менеджер обращений</option></select></label>
       <label class="agent-filter"><span class="visually-hidden">Теги</span><select id="tagFilter"><option value="all">Все теги</option><option value="Подбор">Подбор</option><option value="Продажи">Продажи</option><option value="FAQ">FAQ</option></select></label>
-      <label class="agent-filter sort-filter"><span class="visually-hidden">Сортировка</span><select id="sortAgents"><option value="recent">По активности</option><option value="cases">По диалогам</option><option value="name">По названию</option></select></label>
+      <label class="agent-filter sort-filter"><span class="visually-hidden">Сортировка</span><select id="sortAgents"><option value="recent">По активности</option><option value="name">По названию</option></select></label>
     </div>
   </div>
   <section class="agents-table-frame" aria-label="Каталог агентов">
     <div class="agents-table-scroller"><div class="agents-table" id="agentsTable" role="table" aria-label="Список агентов">
-      <div class="agents-table-head" role="row"><div class="cell identity" role="columnheader">Агент</div><div class="cell role" role="columnheader">Тип</div><div class="cell tags" role="columnheader">Теги</div><div class="cell channels" role="columnheader">Подключения</div><div class="cell state" role="columnheader">Статус</div><div class="cell cases" role="columnheader">Диалогов <svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18m-6-6 6 6 6-6"/></svg></div><div class="cell activity" role="columnheader">Активность</div><div class="cell row-action" role="columnheader"></div></div>
-      <div class="agents-rows" id="agentsRows"><div class="agent-record" role="row" tabindex="0" data-agent-id="a1" data-href="./agent-detail.html?agent=a1" data-role="recruiter" data-status="active" data-tags="Подбор" data-sort-name="hr-рекрутер" data-stamp="10" data-count="124"  aria-label="Открыть агента HR-рекрутер">
+      <div class="agents-table-head" role="row"><div class="cell identity" role="columnheader">Агент</div><div class="cell role" role="columnheader">Тип</div><div class="cell tags" role="columnheader">Теги</div><div class="cell state" role="columnheader">Статус</div><div class="cell activity" role="columnheader">Активность</div><div class="cell row-action" role="columnheader"></div></div>
+      <div class="agents-rows" id="agentsRows"><div class="agent-record" role="row" tabindex="0" data-agent-id="a1" data-href="./agent-detail.html?agent=a1" data-role="recruiter" data-status="active" data-tags="Подбор,Вакансии,Первичный отбор,Собеседования,Резюме" data-sort-name="hr-рекрутер" data-stamp="10"  aria-label="Открыть агента HR-рекрутер">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#4a454d">А</span></span><span class="agent-main"><span class="agent-name">HR-рекрутер</span><span class="agent-description">Проводит первичный отбор кандидатов</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Рекрутер</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Подбор</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span><span class="connect-icon amo" title="amoCRM" aria-label="amoCRM">amo</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="Подбор">Подбор</span><span class="soft-chip agent-tag" title="Вакансии">Вакансии</span><button class="tag-more" type="button" data-more-tags="a1" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 3 тега агента HR-рекрутер" title="Ещё 3 тега">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">124</div>
 <div class="cell activity" role="cell">Сейчас</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a1" aria-label="Действия с агентом HR-рекрутер" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a2" data-href="./agent-detail.html?agent=a2" data-role="inbound" data-status="active" data-tags="Продажи" data-sort-name="менеджер заявок" data-stamp="9" data-count="98"  aria-label="Открыть агента Менеджер заявок">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a2" data-href="./agent-detail.html?agent=a2" data-role="inbound" data-status="active" data-tags="Продажи,Входящие,Консультации,Срочно" data-sort-name="менеджер заявок" data-stamp="9"  aria-label="Открыть агента Менеджер заявок">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#345258">Д</span></span><span class="agent-main"><span class="agent-name">Менеджер заявок</span><span class="agent-description">Принимает обращения и отвечает клиентам</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Менеджер обращений</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Продажи</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span><span class="connect-icon bitrix" title="Битрикс24" aria-label="Битрикс24">24</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="Продажи">Продажи</span><span class="soft-chip agent-tag" title="Входящие">Входящие</span><button class="tag-more" type="button" data-more-tags="a2" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 2 тега агента Менеджер заявок" title="Ещё 2 тега">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">98</div>
 <div class="cell activity" role="cell">5 мин назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a2" aria-label="Действия с агентом Менеджер заявок" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a3" data-href="./agent-detail.html?agent=a3" data-role="inbound" data-status="active" data-tags="FAQ" data-sort-name="поддержка" data-stamp="8" data-count="42"  aria-label="Открыть агента Поддержка">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a3" data-href="./agent-detail.html?agent=a3" data-role="inbound" data-status="active" data-tags="FAQ,Клиенты,Поддержка" data-sort-name="поддержка" data-stamp="8"  aria-label="Открыть агента Поддержка">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#584442">С</span></span><span class="agent-main"><span class="agent-name">Поддержка</span><span class="agent-description">Отвечает на вопросы пользователей</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Менеджер обращений</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">FAQ</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="FAQ">FAQ</span><span class="soft-chip agent-tag" title="Клиенты">Клиенты</span><button class="tag-more" type="button" data-more-tags="a3" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 1 тег агента Поддержка" title="Ещё 1 тег">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">42</div>
 <div class="cell activity" role="cell">12 мин назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a3" aria-label="Действия с агентом Поддержка клиентов" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a4" data-href="./agent-detail.html?agent=a4" data-role="recruiter" data-status="active" data-tags="Подбор" data-sort-name="рекрутер · дизайн" data-stamp="7" data-count="73"  aria-label="Открыть агента Рекрутер · Дизайн">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a4" data-href="./agent-detail.html?agent=a4" data-role="recruiter" data-status="active" data-tags="Подбор,Дизайн,Портфолио,Интервью" data-sort-name="рекрутер · дизайн" data-stamp="7"  aria-label="Открыть агента Рекрутер · Дизайн">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#3f4c68">М</span></span><span class="agent-main"><span class="agent-name">Рекрутер · Дизайн</span><span class="agent-description">Помогает HR с поиском специалистов</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Рекрутер</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Подбор</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span><span class="connect-icon amo" title="amoCRM" aria-label="amoCRM">amo</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="Подбор">Подбор</span><span class="soft-chip agent-tag" title="Дизайн">Дизайн</span><button class="tag-more" type="button" data-more-tags="a4" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 2 тега агента Рекрутер · Дизайн" title="Ещё 2 тега">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">73</div>
 <div class="cell activity" role="cell">23 мин назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a4" aria-label="Действия с агентом Рекрутер · Дизайн" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a5" data-href="./agent-detail.html?agent=a5" data-role="inbound" data-status="active" data-tags="Продажи" data-sort-name="менеджер партнёров" data-stamp="6" data-count="28"  aria-label="Открыть агента Менеджер партнёров">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a5" data-href="./agent-detail.html?agent=a5" data-role="inbound" data-status="active" data-tags="Продажи,Партнёры" data-sort-name="менеджер партнёров" data-stamp="6"  aria-label="Открыть агента Менеджер партнёров">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#4a454d">М</span></span><span class="agent-main"><span class="agent-name">Менеджер партнёров</span><span class="agent-description">Входящие заявки от партнёров</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Менеджер обращений</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Продажи</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span><span class="connect-icon bitrix" title="Битрикс24" aria-label="Битрикс24">24</span></span></div>
+<div class="cell tags" role="cell"><span class="soft-chip agent-tag" title="Продажи">Продажи</span><span class="soft-chip agent-tag" title="Партнёры">Партнёры</span></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">28</div>
 <div class="cell activity" role="cell">1 час назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a5" aria-label="Действия с агентом Менеджер партнёров" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a6" data-href="./agent-detail.html?agent=a6" data-role="recruiter" data-status="active" data-tags="Подбор" data-sort-name="hr · регионы" data-stamp="5" data-count="31"  aria-label="Открыть агента HR · Регионы">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a6" data-href="./agent-detail.html?agent=a6" data-role="recruiter" data-status="active" data-tags="Подбор,Регионы,Вакансии,Массовый найм" data-sort-name="hr · регионы" data-stamp="5"  aria-label="Открыть агента HR · Регионы">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#345258">Р</span></span><span class="agent-main"><span class="agent-name">HR · Регионы</span><span class="agent-description">Отбор кандидатов в регионах</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Рекрутер</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Подбор</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="Подбор">Подбор</span><span class="soft-chip agent-tag" title="Регионы">Регионы</span><button class="tag-more" type="button" data-more-tags="a6" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 2 тега агента HR · Регионы" title="Ещё 2 тега">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">31</div>
 <div class="cell activity" role="cell">2 часа назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a6" aria-label="Действия с агентом HR · Регионы" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a7" data-href="./agent-detail.html?agent=a7" data-role="inbound" data-status="stopped" data-tags="FAQ" data-sort-name="поддержка сайта" data-stamp="3" data-count="8"  aria-label="Открыть агента Поддержка сайта">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a7" data-href="./agent-detail.html?agent=a7" data-role="inbound" data-status="stopped" data-tags="FAQ,Поддержка" data-sort-name="поддержка сайта" data-stamp="3"  aria-label="Открыть агента Поддержка сайта">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#584442">С</span></span><span class="agent-main"><span class="agent-name">Поддержка сайта</span><span class="agent-description">Обращения из каналов компании</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Менеджер обращений</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">FAQ</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span></span></div>
+<div class="cell tags" role="cell"><span class="soft-chip agent-tag" title="FAQ">FAQ</span><span class="soft-chip agent-tag" title="Поддержка">Поддержка</span></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status stopped"><b></b>Остановлен</span></div>
-<div class="cell cases" role="cell">8</div>
 <div class="cell activity" role="cell">Вчера</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a7" aria-label="Действия с агентом Поддержка сайта" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a8" data-href="./agent-detail.html?agent=a8" data-role="recruiter" data-status="draft" data-tags="Подбор" data-sort-name="новый рекрутер" data-stamp="1" data-count="0"  aria-label="Открыть агента Новый рекрутер">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a8" data-href="./agent-detail.html?agent=a8" data-role="recruiter" data-status="draft" data-tags="Подбор" data-sort-name="новый рекрутер" data-stamp="1"  aria-label="Открыть агента Новый рекрутер">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#3f4c68">Н</span></span><span class="agent-main"><span class="agent-name">Новый рекрутер</span><span class="agent-description">Инструкция и подключения не завершены</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Рекрутер</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Подбор</span></div>
-<div class="cell channels" role="cell"><span class="no-integrations">—</span></div>
+<div class="cell tags" role="cell"><span class="soft-chip agent-tag" title="Подбор">Подбор</span></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status draft"><b></b>Черновик</span></div>
-<div class="cell cases" role="cell">—</div>
 <div class="cell activity" role="cell">—</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a8" aria-label="Действия с агентом Новый рекрутер" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a9" data-href="./agent-detail.html?agent=a9" data-role="recruiter" data-status="active" data-tags="Подбор" data-sort-name="рекрутер · it" data-stamp="4" data-count="58" hidden aria-label="Открыть агента Рекрутер · IT">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a9" data-href="./agent-detail.html?agent=a9" data-role="recruiter" data-status="active" data-tags="Подбор,IT,Вакансии,Собеседования" data-sort-name="рекрутер · it" data-stamp="4" hidden aria-label="Открыть агента Рекрутер · IT">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#4a454d">Р</span></span><span class="agent-main"><span class="agent-name">Рекрутер · IT</span><span class="agent-description">Подбор технических специалистов</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Рекрутер</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">Подбор</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span><span class="connect-icon amo" title="amoCRM" aria-label="amoCRM">amo</span></span></div>
+<div class="cell tags has-overflow" role="cell"><span class="soft-chip agent-tag" title="Подбор">Подбор</span><span class="soft-chip agent-tag" title="IT">IT</span><button class="tag-more" type="button" data-more-tags="a9" aria-controls="agentTagsPopover" aria-expanded="false" aria-haspopup="dialog" aria-label="Показать ещё 2 тега агента Рекрутер · IT" title="Ещё 2 тега">•••</button></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status active"><b></b>Работает</span></div>
-<div class="cell cases" role="cell">58</div>
 <div class="cell activity" role="cell">3 часа назад</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a9" aria-label="Действия с агентом Рекрутер · IT" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div>
-<div class="agent-record" role="row" tabindex="0" data-agent-id="a10" data-href="./agent-detail.html?agent=a10" data-role="inbound" data-status="stopped" data-tags="FAQ" data-sort-name="менеджер · архив" data-stamp="2" data-count="4" hidden aria-label="Открыть агента Менеджер · Архив">
+<div class="agent-record" role="row" tabindex="0" data-agent-id="a10" data-href="./agent-detail.html?agent=a10" data-role="inbound" data-status="stopped" data-tags="FAQ,Архив" data-sort-name="менеджер · архив" data-stamp="2" hidden aria-label="Открыть агента Менеджер · Архив">
 <div class="cell identity" role="cell"><span class="agent-person"><span class="avatar initials" style="--av:#345258">М</span></span><span class="agent-main"><span class="agent-name">Менеджер · Архив</span><span class="agent-description">Обработка архивных запросов</span></span></div>
 <div class="cell role" role="cell"><span class="soft-chip">Менеджер обращений</span></div>
-<div class="cell tags" role="cell"><span class="soft-chip agent-tag">FAQ</span></div>
-<div class="cell channels" role="cell"><span class="connect-icons"><span class="connect-icon tg" title="Telegram Bot API" aria-label="Telegram Bot API">➤</span></span></div>
+<div class="cell tags" role="cell"><span class="soft-chip agent-tag" title="FAQ">FAQ</span><span class="soft-chip agent-tag" title="Архив">Архив</span></div>
 <div class="cell state" role="cell"><span class="agent-status catalog-status stopped"><b></b>Остановлен</span></div>
-<div class="cell cases" role="cell">4</div>
 <div class="cell activity" role="cell">24 окт.</div>
 <div class="cell row-action" role="cell"><button type="button" class="row-more" data-more="a10" aria-label="Действия с агентом Менеджер · Архив" aria-expanded="false"><svg class="list-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button></div>
 </div></div>
@@ -122,7 +102,7 @@
     <footer class="agents-footerbar"><span id="agentsCount">Показано 1–8 из 10</span><nav class="pager" aria-label="Страницы списка агентов"><button id="agentsPrev" type="button" aria-label="Предыдущая страница" disabled>‹</button><span id="agentsPage">1</span><span class="pager-separator">/</span><span id="agentsPages">2</span><button id="agentsNext" type="button" aria-label="Следующая страница">›</button></nav></footer>
   </section>
 </section>
-<div id="agentContextMenu" class="agent-context-menu" hidden role="menu" aria-label="Действия с агентом"><a id="agentMenuOpen" href="./agent-detail.html" role="menuitem">Открыть агента</a><a id="agentMenuDialog" href="./dialogs.html" role="menuitem">Диалоги агента</a><a id="agentMenuJournal" href="./journal.html" role="menuitem">Журнал действий</a></div></main></div><div id="workspaceMenu" class="demo-popover" role="menu" aria-label="Выбор пространства" hidden>
+<div id="agentTagsPopover" class="agent-tags-popover" role="dialog" aria-label="Остальные теги агента" hidden><div class="tag-popover-heading" id="agentTagsHeading">Остальные теги</div><div class="tag-popover-items" id="agentTagsItems"></div></div><div id="agentContextMenu" class="agent-context-menu" hidden role="menu" aria-label="Действия с агентом"><a id="agentMenuOpen" href="./agent-detail.html" role="menuitem">Открыть агента</a><a id="agentMenuDialog" href="./dialogs.html" role="menuitem">Диалоги агента</a><a id="agentMenuJournal" href="./journal.html" role="menuitem">Журнал действий</a></div></main></div><div id="workspaceMenu" class="demo-popover" role="menu" aria-label="Выбор пространства" hidden>
   <div class="menu-caption">Пространства</div>
   <button type="button" class="menu-option is-selected" data-space="company" role="menuitemradio" aria-checked="true"><span class="menu-glyph">A</span><span><strong>Acme Corp</strong><small>Пространство компании</small></span><span class="menu-check">✓</span></button>
   <button type="button" class="menu-option" data-space="personal" role="menuitemradio" aria-checked="false"><span class="menu-glyph personal-glyph">Д</span><span><strong>Личное</strong><small>Личное пространство</small></span><span class="menu-check">✓</span></button>
