@@ -110,3 +110,47 @@
 .settings-jump:hover{color:#effff3}
 .model-select-container{padding-top:12px}
 @media(max-width:1130px){.v6-settings{grid-template-columns:minmax(0,1fr)}}
+
+/* Sharing & Copying v1.0 — dialog presentation shared with agent detail. */
+.hero-actions{row-gap:8px}
+.share-dialog{width:min(640px,calc(100vw - 30px));max-height:min(88dvh,850px);overflow:hidden;display:none;flex-direction:column}
+.share-dialog[open]{display:flex}
+.share-dialog .modal-heading{flex:none}
+.share-dialog .modal-heading>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.share-dialog .modal-heading small{color:#8f9c94;font-size:10.8px}
+.share-dialog-body{min-height:0;overflow-y:auto;padding:8px 22px 18px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin}
+.share-dialog-section{border:1px solid #303d34;background:#1c2420;border-radius:11px;padding:14px 15px;display:flex;flex-direction:column;gap:10px}
+.share-dialog-section h3{font-size:12.5px;color:#e0ebe1;font-weight:620}
+.share-dialog-section>p{font-size:11px;color:#94a99b;line-height:1.55}
+.share-included{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:11px;color:#b6cbbf}
+.share-included strong{font-size:10.5px;color:#8ddfba;font-weight:540}
+.share-warning{padding:10px 12px;border-left:2px solid #77be9b;background:#28382e;color:#d2e3d5!important;border-radius:0 6px 6px 0}
+.share-materials{display:flex;flex-direction:column;gap:7px}
+.share-material{display:flex;align-items:flex-start;gap:9px;cursor:pointer;padding:10px;border:1px solid #37473d;background:#242e27;border-radius:8px}
+.share-material input{accent-color:#47cca0;width:15px;height:15px;margin:3px 0 0;flex:none}
+.share-material span{display:flex;flex-direction:column;gap:3px}
+.share-material strong{font-size:11.5px;font-weight:560}
+.share-material small{color:#8fa597;font-size:10px;line-height:1.45}
+.share-section-heading{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.share-badge{font-size:10px;color:#dcbf92;background:#443b2d;border-radius:7px;padding:5px 8px}
+.share-link-label{font-size:10.5px;color:#a4b5a9}
+.share-link-row{display:flex;gap:6px;min-width:0}
+.share-link-row input{min-width:0;flex:1;background:#131a16;color:#c4d6cb;border:1px solid #3e5143;border-radius:8px;padding:10px;font:inherit;font-size:10.6px}
+.share-link-row button,.share-preview-button{border:1px solid #57745d;color:#e0f6e7;background:#334c3c;border-radius:8px;font:inherit;font-size:10.9px;padding:8px 11px;cursor:pointer;white-space:nowrap}
+.share-link-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px}
+.share-link-actions a{color:#a5e3bd;text-decoration:underline;text-underline-offset:3px}
+.share-link-actions button{border:0;background:transparent;color:#aabbb0;font:inherit;font-size:11px;cursor:pointer}
+.share-link-actions button:disabled{color:#718379;cursor:not-allowed}
+.share-status{font-size:10.5px;color:#8ca497;line-height:1.5}
+.share-two-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.share-field{display:flex;flex-direction:column;gap:7px;font-size:11px}
+.share-field select{width:100%;background:#29352c;border:1px solid #496251;padding:9px;color:#e1f2e5;border-radius:8px;min-width:0;font:inherit}
+.share-field small{color:#91a499;font-size:10px;line-height:1.5}
+.share-preview[hidden]{display:none!important}
+.share-preview{display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid #3c5143;border-radius:9px;background:#222f26}
+.share-preview>div{display:flex;gap:14px;justify-content:space-between;font-size:10.4px}
+.share-preview>div>span{color:#a5bfb0;text-align:right}
+.share-preview p{color:#8eae99;font-size:10.5px;line-height:1.5}
+.share-dialog footer{flex:none}
+.share-dialog footer button:disabled{opacity:.42;cursor:not-allowed}
+@media(max-width:730px){.share-two-fields{grid-template-columns:1fr}.share-dialog-body{padding:6px 14px 14px}.share-link-row{flex-wrap:wrap}.share-link-row input{flex-basis:100%}}
