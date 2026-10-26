@@ -69,6 +69,15 @@ function render(){
  const ready=agent.status!=='draft';text('readinessLabel',ready?'Готов':'Нужна настройка');
  el('readinessLabel').classList.toggle('warning',!ready);
  text('readinessInstructions',ready?'Настроены':'Нужно заполнить');text('readinessChannel',ready?'Telegram подключён':'Не подключён');
+ document.querySelectorAll('[data-pane="integrations"] .service-line em').forEach(e=>{
+   e.textContent=ready?'Подключено':'Не подключено';
+   e.style.color=ready?'':'#d9b47e';
+ });
+ const workDescriptions=recruiter?['Вопрос о вакансии','Ожидает ответа','Информация получена']:['Вопрос по продукту','Ожидает решения','Обращение получено'];
+ document.querySelectorAll('[data-pane="work"] .work-row small').forEach((e,i)=>{e.textContent=workDescriptions[i]});
+ const firstKnowledge=document.querySelector('[data-pane="knowledge"] .file-row strong');
+ if(firstKnowledge)firstKnowledge.textContent=recruiter?'Информация о вакансиях':'Материалы о продуктах';
+
  const avatar=el('agentDetailAvatar');avatar.style.setProperty('--av',agent.color);avatar.textContent=agent.avatarData?'':agent.initial;
  avatar.style.backgroundImage=agent.avatarData?'url('+JSON.stringify(agent.avatarData)+')':'none';
  const hero=el('detailHero');hero.style.backgroundImage=agent.coverData?'linear-gradient(180deg,#080e0e8c,#0a1010ed),url('+JSON.stringify(agent.coverData)+')':'';
