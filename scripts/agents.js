@@ -1,107 +1,117 @@
-
-/* Visual-only interactions for AIMock / Agents; no server operations. */
+/* AIMock Agents — local visual interactions only. */
 (() => {
-'use strict';
-const root=document.querySelector('.agents-page');
-if(!root)return;
-const byId=id=>document.getElementById(id);
-const rows=[...root.querySelectorAll('.agent-record')];
-const rowsHost=byId('agentsRows');
-const tabs=[...root.querySelectorAll('[data-tab]')];
-const search=byId('agentSearch'),role=byId('roleFilter'),tag=byId('tagFilter'),sort=byId('sortAgents');
-const pagePrev=byId('agentsPrev'),pageNext=byId('agentsNext'),pageIndex=byId('agentsPage'),pagesTotal=byId('agentsPages'),count=byId('agentsCount');
-const empty=byId('agentsEmpty');
-const menu=byId('agentContextMenu');
-const tagsPopover=byId('agentTagsPopover'),tagsHeading=byId('agentTagsHeading'),tagsItems=byId('agentTagsItems');
-let activeTagButton=null;
-const availableTags=[...new Set(rows.flatMap(row=>row.dataset.tags.split(',').map(s=>s.trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b,'ru'));
-tag.replaceChildren(new Option('Все теги','all'),...availableTags.map(s=>new Option(s,s)));
-function closeTags(refocus=false){
- if(!activeTagButton)return;
- tagsPopover.hidden=true;activeTagButton.setAttribute('aria-expanded','false');
- if(refocus)activeTagButton.focus();
- activeTagButton=null;
-}
-function openTags(button){
- if(activeTagButton===button){closeTags();return}
- closeMenu();closeTags();
- const row=button.closest('.agent-record');if(!row)return;
- const extras=row.dataset.tags.split(',').map(s=>s.trim()).filter(Boolean).slice(2);if(!extras.length)return;
- activeTagButton=button;button.setAttribute('aria-expanded','true');
- tagsHeading.textContent='Остальные теги · '+row.querySelector('.agent-name').textContent;
- tagsItems.replaceChildren();
- for(const tag of extras){const chip=document.createElement('span');chip.className='soft-chip agent-tag';chip.textContent=tag;tagsItems.append(chip)}
- tagsPopover.hidden=false;
- const bounds=button.getBoundingClientRect(),w=tagsPopover.offsetWidth,h=tagsPopover.offsetHeight;
- tagsPopover.style.left=Math.max(8,Math.min(innerWidth-w-8,bounds.left))+'px';
- tagsPopover.style.top=(bounds.bottom+h+8<=innerHeight?bounds.bottom+8:Math.max(8,bounds.top-h-8))+'px';
-}
-const perPage=8;
-let activeTab='all',currentPage=0,visible=[],currentMenuButton=null;
-const normalize=s=>String(s||'').trim().toLocaleLowerCase('ru-RU');
-function filtered(){
- const query=normalize(search.value);
- return rows.filter(row=>(activeTab==='all'||row.dataset.status===activeTab)
-  &&(role.value==='all'||row.dataset.role===role.value)
-  &&(tag.value==='all'||row.dataset.tags.split(',').includes(tag.value))
-  &&normalize(row.textContent+' '+row.dataset.tags).includes(query))
-  .sort((a,b)=>sort.value==='name'?a.dataset.sortName.localeCompare(b.dataset.sortName,'ru')
-   :Number(b.dataset.stamp)-Number(a.dataset.stamp));
-}
-function render(){
- closeTags();
- visible=filtered();
- const total=Math.max(1,Math.ceil(visible.length/perPage));
- currentPage=Math.min(currentPage,total-1);
- rows.forEach(row=>{row.hidden=true});
- const shown=visible.slice(currentPage*perPage,(currentPage+1)*perPage);
- for(const row of shown){row.hidden=false;rowsHost.append(row)}
- empty.hidden=visible.length!==0;
- const start=visible.length?currentPage*perPage+1:0;
- count.textContent='Показано '+start+'–'+Math.min((currentPage+1)*perPage,visible.length)+' из '+visible.length;
- pageIndex.textContent=String(currentPage+1);pagesTotal.textContent=String(total);
- pagePrev.disabled=currentPage===0;pageNext.disabled=currentPage>=total-1;
- tabs.forEach(tab=>{const on=tab.dataset.tab===activeTab;tab.classList.toggle('selected',on);tab.setAttribute('aria-selected',String(on))});
-}
-function closeMenu(){
- menu.hidden=true;
- currentMenuButton?.setAttribute('aria-expanded','false');
- currentMenuButton=null;
-}
-function openMenu(btn){
- closeTags();
- if(currentMenuButton===btn){closeMenu();return}
- closeMenu();
- currentMenuButton=btn;btn.setAttribute('aria-expanded','true');
- const id=btn.dataset.more;
- byId('agentMenuOpen').href='./agent-detail.html?agent='+encodeURIComponent(id);
- byId('agentMenuDialog').href='./dialogs.html?agent='+encodeURIComponent(id);
- byId('agentMenuJournal').href='./journal.html?agent='+encodeURIComponent(id);
- menu.hidden=false;
- const r=btn.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
- menu.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';
- menu.style.top=(r.bottom+h+6>innerHeight?Math.max(8,r.top-h-6):r.bottom+6)+'px';
-}
-tabs.forEach(tab=>tab.addEventListener('click',()=>{activeTab=tab.dataset.tab;currentPage=0;closeMenu();render()}));
-for(const input of [search,role,tag,sort])input.addEventListener(input===search?'input':'change',()=>{currentPage=0;closeMenu();render()});
-pagePrev.addEventListener('click',()=>{if(currentPage>0){currentPage--;render()}});
-pageNext.addEventListener('click',()=>{if(currentPage+1<Math.ceil(visible.length/perPage)){currentPage++;render()}});
-byId('clearAgentFilters').addEventListener('click',()=>{search.value='';role.value='all';tag.value='all';sort.value='recent';activeTab='all';currentPage=0;render();search.focus()});
-root.addEventListener('click',e=>{
- const tagsButton=e.target.closest('[data-more-tags]');
- if(tagsButton){e.preventDefault();e.stopPropagation();openTags(tagsButton);return}
- const toggle=e.target.closest('[data-more]');
- if(toggle){e.preventDefault();e.stopPropagation();openMenu(toggle);return}
- const row=e.target.closest('.agent-record');
- if(row&&!e.target.closest('a,button,input,select'))location.href=row.dataset.href;
-});
-root.addEventListener('keydown',e=>{const row=e.target.closest('.agent-record');if(row&&e.target===row&&(e.key==='Enter'||e.key===' ')){e.preventDefault();location.href=row.dataset.href}});
-document.addEventListener('pointerdown',e=>{
- if(!menu.hidden&&!e.target.closest('#agentContextMenu')&&!e.target.closest('[data-more]'))closeMenu();
- if(!tagsPopover.hidden&&!e.target.closest('#agentTagsPopover')&&!e.target.closest('[data-more-tags]'))closeTags();
-});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!tagsPopover.hidden)closeTags(true);closeMenu()}});
-window.addEventListener('resize',()=>{closeMenu();closeTags()});
-byId('agentsTable')?.closest('.agents-table-scroller')?.addEventListener('scroll',()=>{closeMenu();closeTags()},{passive:true});
-render();
+  'use strict';
+  const root = document.querySelector('.agents-page');
+  if (!root) return;
+  const byId = id => document.getElementById(id);
+  const rows = [...root.querySelectorAll('.agent-record')];
+  const host = byId('agentsRows');
+  const tabs = [...root.querySelectorAll('[data-tab]')];
+  const search = byId('agentSearch'), role = byId('roleFilter'), tag = byId('tagFilter'), sort = byId('sortAgents');
+  const prev = byId('agentsPrev'), next = byId('agentsNext');
+  const pageNumber = byId('agentsPage'), pageTotal = byId('agentsPages'), count = byId('agentsCount');
+  const empty = byId('agentsEmpty');
+  const pop = byId('agentTagsPopover'), popTitle = byId('agentTagsHeading'), popItems = byId('agentTagsItems');
+  let tab = 'all', page = 0, visible = [], activeTrigger = null;
+  const perPage = 8;
+  const normalize = value => String(value || '').trim().toLocaleLowerCase('ru-RU');
+
+  const allTags = [...new Set(rows.flatMap(row => row.dataset.tags.split(',').map(t => t.trim()).filter(Boolean)))].sort((a,b) => a.localeCompare(b,'ru'));
+  tag.replaceChildren(new Option('Все теги','all'), ...allTags.map(t => new Option(t,t)));
+
+  function isOpen() {
+    return pop.matches(':popover-open') || pop.classList.contains('is-open');
+  }
+  function closeTags(restoreFocus=false) {
+    if (!activeTrigger && !isOpen()) return;
+    const previousTrigger = activeTrigger;
+    if (pop.matches(':popover-open')) pop.hidePopover();
+    pop.classList.remove('is-open');
+    if (previousTrigger) previousTrigger.setAttribute('aria-expanded','false');
+    activeTrigger = null;
+    if (restoreFocus && previousTrigger && previousTrigger.isConnected) previousTrigger.focus();
+  }
+  function positionTags() {
+    if (!activeTrigger || !isOpen()) return;
+    const r = activeTrigger.getBoundingClientRect();
+    const width = pop.offsetWidth, height = pop.offsetHeight;
+    pop.style.left = Math.max(8, Math.min(innerWidth - width - 8, r.left)) + 'px';
+    pop.style.top = (r.bottom + height + 8 <= innerHeight ? r.bottom + 8 : Math.max(8, r.top - height - 8)) + 'px';
+  }
+  function openTags(trigger) {
+    if (activeTrigger === trigger && isOpen()) { closeTags(); return; }
+    closeTags();
+    const row = trigger.closest('.agent-record');
+    if (!row) return;
+    const extras = row.dataset.tags.split(',').map(t => t.trim()).filter(Boolean).slice(2);
+    if (!extras.length) return;
+    activeTrigger = trigger;
+    popTitle.textContent = 'Остальные теги · ' + row.querySelector('.agent-name').textContent;
+    popItems.replaceChildren();
+    for (const tagName of extras) {
+      const chip = document.createElement('span');
+      chip.className = 'soft-chip agent-tag';
+      chip.textContent = tagName;
+      popItems.append(chip);
+    }
+    if (typeof pop.showPopover === 'function') pop.showPopover();
+    else pop.classList.add('is-open');
+    trigger.setAttribute('aria-expanded','true');
+    positionTags();
+  }
+
+  function filtered() {
+    const query = normalize(search.value);
+    return rows.filter(row =>
+      (tab === 'all' || row.dataset.status === tab) &&
+      (role.value === 'all' || row.dataset.role === role.value) &&
+      (tag.value === 'all' || row.dataset.tags.split(',').includes(tag.value)) &&
+      normalize(row.textContent + ' ' + row.dataset.tags).includes(query)
+    ).sort((a,b) => sort.value === 'name'
+       ? a.dataset.sortName.localeCompare(b.dataset.sortName,'ru')
+       : Number(b.dataset.stamp) - Number(a.dataset.stamp));
+  }
+  function render() {
+    closeTags();
+    visible = filtered();
+    const total = Math.max(1,Math.ceil(visible.length / perPage));
+    page = Math.min(page,total - 1);
+    for (const row of rows) row.hidden = true;
+    for (const row of visible.slice(page*perPage,(page+1)*perPage)) {row.hidden = false; host.append(row)}
+    empty.hidden = !!visible.length;
+    const first = visible.length ? page*perPage+1 : 0;
+    count.textContent = 'Показано '+first+'–'+Math.min((page+1)*perPage,visible.length)+' из '+visible.length;
+    pageNumber.textContent = String(page+1); pageTotal.textContent = String(total);
+    prev.disabled = page===0; next.disabled = page >= total-1;
+    for (const item of tabs) {
+      const selected = item.dataset.tab === tab;
+      item.classList.toggle('selected',selected);
+      item.setAttribute('aria-selected',String(selected));
+    }
+  }
+
+  for (const item of tabs) item.addEventListener('click',() => {tab=item.dataset.tab;page=0;render()});
+  for (const input of [search,role,tag,sort]) input.addEventListener(input===search?'input':'change',() => {page=0;render()});
+  prev.addEventListener('click',() => {if(page>0){page--;render()}});
+  next.addEventListener('click',() => {if(page+1<Math.ceil(visible.length/perPage)){page++;render()}});
+  byId('clearAgentFilters').addEventListener('click',() => {
+    search.value='';role.value='all';tag.value='all';sort.value='recent';tab='all';page=0;render();search.focus()
+  });
+  root.addEventListener('click',e => {
+    const moreTags = e.target.closest('[data-more-tags]');
+    if (moreTags) {e.preventDefault();e.stopPropagation();openTags(moreTags);return}
+    const row = e.target.closest('.agent-record');
+    if (row && !e.target.closest('a,button,input,select')) location.href=row.dataset.href;
+  });
+  root.addEventListener('keydown',e => {
+    const row = e.target.closest('.agent-record');
+    if (row && e.target===row && (e.key==='Enter'||e.key===' ')) {e.preventDefault();location.href=row.dataset.href}
+  });
+  document.addEventListener('pointerdown',e => {
+    if (isOpen() && !e.target.closest('#agentTagsPopover') && !e.target.closest('[data-more-tags]')) closeTags();
+  });
+  document.addEventListener('keydown',e => {if(e.key==='Escape' && isOpen()) {e.preventDefault();closeTags(true)}});
+  window.addEventListener('resize',closeTags);
+  host.closest('.agents-table-scroller')?.addEventListener('scroll',closeTags,{passive:true});
+  render();
 })();
