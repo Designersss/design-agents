@@ -16,6 +16,49 @@
   const perPage = 8;
   const normalize = value => String(value || '').trim().toLocaleLowerCase('ru-RU');
 
+  // Reflect per-agent local edits made on the detail page when returning to the catalog.
+  function applyLocalChanges(){
+    let overrides={};
+    try{overrides=JSON.parse(localStorage.getItem('aimock-agent-overrides-v1')||'{}')||{}}catch(_){}
+    for(const row of rows){
+      const override=overrides[row.dataset.agentId];
+      if(!override)continue;
+      const name=row.querySelector('.agent-name'),description=row.querySelector('.agent-description');
+      if(typeof override.name==='string' && override.name.trim()){
+        name.textContent=override.name;row.dataset.sortName=override.name.toLocaleLowerCase('ru-RU');
+        row.setAttribute('aria-label','Открыть агента '+override.name);
+      }
+      if(typeof override.description==='string')description.textContent=override.description;
+      if(['active','stopped','draft'].includes(override.status)){
+        row.dataset.status=override.status;
+        const status=row.querySelector('.agent-status');
+        status.className='agent-status catalog-status '+override.status;
+        const stateLabel={active:'Работает',stopped:'Остановлен',draft:'Черновик'}[override.status];
+        status.replaceChildren(document.createElement('b'),document.createTextNode(stateLabel));
+      }
+      const avatar=row.querySelector('.agent-person .avatar');
+      if(avatar){
+        if(typeof override.initial==='string')avatar.textContent=override.initial;
+        if(override.avatarData){avatar.style.backgroundImage='url('+JSON.stringify(override.avatarData)+')';avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';avatar.textContent=''}
+      }
+      if(typeof override.tags==='string'){
+        const tags=override.tags.split(',').map(t=>t.trim()).filter(Boolean);
+        row.dataset.tags=tags.join(',');
+        const cell=row.querySelector('.cell.tags');cell.replaceChildren();
+        cell.classList.toggle('has-overflow',tags.length>2);
+        for(const tagName of tags.slice(0,2)){
+          const pill=document.createElement('span');pill.className='soft-chip agent-tag';pill.title=tagName;pill.textContent=tagName;cell.append(pill);
+        }
+        if(tags.length>2){
+          const b=document.createElement('button');b.type='button';b.className='tag-more';b.dataset.moreTags=row.dataset.agentId;
+          b.setAttribute('aria-controls','agentTagsPopover');b.setAttribute('aria-expanded','false');
+          b.setAttribute('aria-haspopup','dialog');b.textContent='•••';b.title='Остальные теги';
+          b.setAttribute('aria-label','Показать остальные теги агента '+name.textContent);cell.append(b);
+        }
+      }
+    }
+  }
+  applyLocalChanges();
   const allTags = [...new Set(rows.flatMap(row => row.dataset.tags.split(',').map(t => t.trim()).filter(Boolean)))].sort((a,b) => a.localeCompare(b,'ru'));
   tag.replaceChildren(new Option('Все теги','all'), ...allTags.map(t => new Option(t,t)));
 
@@ -84,6 +127,8 @@
     pageNumber.textContent = String(page+1); pageTotal.textContent = String(total);
     prev.disabled = page===0; next.disabled = page >= total-1;
     for (const item of tabs) {
+      const badge=item.querySelector('span');
+      if(badge)badge.textContent=String(rows.filter(row=>item.dataset.tab==='all'||row.dataset.status===item.dataset.tab).length);
       const selected = item.dataset.tab === tab;
       item.classList.toggle('selected',selected);
       item.setAttribute('aria-selected',String(selected));
