@@ -71,8 +71,8 @@ function render(){
  el('editProfileButton').title=active?'Сначала остановите агента':'Изменить профиль';
  document.querySelectorAll('[data-editable]').forEach(input=>input.disabled=active);
  text('autosaveState',active?'Только просмотр':'Автосохранение включено');
- el('instructionInput').value=agent.instruction??(recruiter?'Помогай кандидатам, уточняй опыт и собирай контактные данные.':'Принимай обращения и отвечай на вопросы клиентов.');
- el('handoffInput').value=agent.handoff??(recruiter?'Передавай диалог HR, когда кандидат готов к собеседованию.':'Передавай сотруднику сложные запросы.');
+ el('instructionInput').value=agent.instruction??(recruiter?'Первичный отбор откликов по назначенным вакансиям и передача подтверждённых данных ответственному HR.':'Обработка входящих обращений клиентов и подготовка заявок для сотрудников.');
+ el('handoffInput').value=agent.handoff??(recruiter?'Кандидат попросил связаться с HR; собраны сведения для рассмотрения; необходима ручная проверка.':'Клиент запросил живого сотрудника; вопрос требует ручного подтверждения.');
  el('tagsInput').value=agent.tags;el('accessInput').value=agent.access||'team';
  el('taskSpecificInput').value=agent.taskSpecific??'';
  el('hrRecipientInput').value=agent.hrRecipient??'owner';
