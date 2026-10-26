@@ -22,7 +22,7 @@ function filtered(){
   &&(role.value==='all'||row.dataset.role===role.value)
   &&(group.value==='all'||row.dataset.group===group.value)
   &&(tag.value==='all'||row.dataset.tags.split(',').includes(tag.value))
-  &&normalize(row.textContent).includes(query))
+  &&normalize(row.textContent+' '+row.dataset.tags).includes(query))
   .sort((a,b)=>sort.value==='name'?a.dataset.sortName.localeCompare(b.dataset.sortName,'ru')
    :sort.value==='cases'?Number(b.dataset.count)-Number(a.dataset.count)
    :Number(b.dataset.stamp)-Number(a.dataset.stamp));
