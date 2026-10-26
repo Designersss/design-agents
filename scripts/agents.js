@@ -8,7 +8,7 @@ const byId=id=>document.getElementById(id);
 const rows=[...root.querySelectorAll('.agent-record')];
 const rowsHost=byId('agentsRows');
 const tabs=[...root.querySelectorAll('[data-tab]')];
-const search=byId('agentSearch'),role=byId('roleFilter'),group=byId('groupFilter'),tag=byId('tagFilter'),sort=byId('sortAgents');
+const search=byId('agentSearch'),role=byId('roleFilter'),tag=byId('tagFilter'),sort=byId('sortAgents');
 const pagePrev=byId('agentsPrev'),pageNext=byId('agentsNext'),pageIndex=byId('agentsPage'),pagesTotal=byId('agentsPages'),count=byId('agentsCount');
 const empty=byId('agentsEmpty');
 const menu=byId('agentContextMenu');
@@ -19,7 +19,6 @@ function filtered(){
  const query=normalize(search.value);
  return rows.filter(row=>(activeTab==='all'||row.dataset.status===activeTab)
   &&(role.value==='all'||row.dataset.role===role.value)
-  &&(group.value==='all'||row.dataset.group===group.value)
   &&(tag.value==='all'||row.dataset.tags.split(',').includes(tag.value))
   &&normalize(row.textContent+' '+row.dataset.tags).includes(query))
   .sort((a,b)=>sort.value==='name'?a.dataset.sortName.localeCompare(b.dataset.sortName,'ru')
@@ -59,10 +58,10 @@ function openMenu(btn){
  menu.style.top=(r.bottom+h+6>innerHeight?Math.max(8,r.top-h-6):r.bottom+6)+'px';
 }
 tabs.forEach(tab=>tab.addEventListener('click',()=>{activeTab=tab.dataset.tab;currentPage=0;closeMenu();render()}));
-for(const input of [search,role,group,tag,sort])input.addEventListener(input===search?'input':'change',()=>{currentPage=0;closeMenu();render()});
+for(const input of [search,role,tag,sort])input.addEventListener(input===search?'input':'change',()=>{currentPage=0;closeMenu();render()});
 pagePrev.addEventListener('click',()=>{if(currentPage>0){currentPage--;render()}});
 pageNext.addEventListener('click',()=>{if(currentPage+1<Math.ceil(visible.length/perPage)){currentPage++;render()}});
-byId('clearAgentFilters').addEventListener('click',()=>{search.value='';role.value='all';group.value='all';tag.value='all';sort.value='recent';activeTab='all';currentPage=0;render();search.focus()});
+byId('clearAgentFilters').addEventListener('click',()=>{search.value='';role.value='all';tag.value='all';sort.value='recent';activeTab='all';currentPage=0;render();search.focus()});
 root.addEventListener('click',e=>{
  const toggle=e.target.closest('[data-more]');
  if(toggle){e.preventDefault();e.stopPropagation();openMenu(toggle);return}
