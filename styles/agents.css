@@ -27,17 +27,14 @@
 .agent-filter option{color:#fff;background:#252a29}
 .agents-table-frame{min-width:0;min-height:0;display:flex;flex-direction:column;border:1px solid #2d3432;border-radius:12px;background:#111617;overflow:hidden}
 .agents-table-scroller{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin;flex:1}
-.agents-table{min-width:1070px;width:100%;display:flex;flex-direction:column}
-.agents-table-head,.agent-record{display:grid;grid-template-columns:30px minmax(235px,2.5fr) minmax(150px,1.25fr) minmax(91px,.8fr) minmax(116px,1fr) minmax(114px,1fr) minmax(70px,.63fr) minmax(106px,.88fr) 28px;column-gap:11px;align-items:center;padding:0 17px}
+.agents-table{min-width:1020px;width:100%;display:flex;flex-direction:column}
+.agents-table-head,.agent-record{display:grid;grid-template-columns:minmax(235px,2.5fr) minmax(150px,1.25fr) minmax(91px,.8fr) minmax(116px,1fr) minmax(114px,1fr) minmax(70px,.63fr) minmax(106px,.88fr) 28px;column-gap:11px;align-items:center;padding:0 17px}
 .agents-table-head{min-height:44px;background:#171c1d;border-bottom:1px solid #303735;color:#8d9995;font-size:11px;position:sticky;top:0;z-index:1}
 .agent-record{min-height:61px;border-bottom:1px solid #232b29;cursor:pointer;transition:background .14s}
 .agent-record:last-child{border-bottom:0}
 .agent-record:hover,.agent-record:focus-visible{background:#1a2322;outline:0}
 .agent-record:focus-visible{box-shadow:inset 0 0 0 2px #4f9278}
-.agent-record.is-selected{background:#172923}
 .cell{min-width:0}
-.row-select{display:flex;align-items:center}
-.row-select input{width:16px;height:16px;accent-color:#44d1a2;cursor:pointer}
 .identity{display:flex;align-items:center;gap:11px;min-width:0}
 .agent-portrait{width:39px;height:39px;border-radius:10px;flex-shrink:0;display:block}
 .name-lines{min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -61,11 +58,11 @@
 .row-more{border:0;background:transparent;width:29px;height:29px;border-radius:7px;color:#9dadab;cursor:pointer;display:grid;place-items:center}
 .row-more:hover,.row-more[aria-expanded="true"]{background:#29332f;color:#fff}
 .agents-empty{margin:auto;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#8c9e96;padding:32px;text-align:center}
-.agents-empty[hidden],.agent-record[hidden],.selection-strip[hidden],.agent-context-menu[hidden]{display:none!important}
+.agents-empty[hidden],.agent-record[hidden],.agent-context-menu[hidden]{display:none!important}
 .agents-empty-mark{width:45px;height:45px;border-radius:13px;display:grid;place-items:center;background:#23372e;color:#77d6a5}
 .agents-empty strong{color:#edf4ef;font-size:15px}
 .agents-empty p{font-size:11.5px}
-.agents-empty button,.selection-strip button{border:1px solid #42594d;border-radius:7px;background:#25392f;color:#cbe9d8;padding:8px 12px;cursor:pointer}
+.agents-empty button{border:1px solid #42594d;border-radius:7px;background:#25392f;color:#cbe9d8;padding:8px 12px;cursor:pointer}
 .agents-footerbar{min-height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 18px;background:#141a1b;border-top:1px solid #2c3530;color:#8c9a96;font-size:11.5px}
 .pager{display:flex;align-items:center;gap:9px;color:#bdccc4}
 .pager button{background:transparent;border:1px solid transparent;border-radius:7px;min-width:29px;height:29px;cursor:pointer;color:#cad8d0;font-size:20px;line-height:1}
@@ -73,12 +70,11 @@
 .pager button:disabled{opacity:.28;cursor:default}
 #agentsPage{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:#26362f;color:#f0fcf5;font-weight:600}
 .pager-separator{color:#6e7f76}
-.selection-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;padding:6px 18px;border-top:1px solid #34433b;background:#1d2a23;color:#a7d9c1;font-size:11.5px}
 .agent-context-menu{position:fixed;z-index:90;display:flex;flex-direction:column;width:200px;padding:6px;border:1px solid #3a4d43;border-radius:10px;box-shadow:0 12px 32px #0009;background:#202928}
 .agent-context-menu a{padding:11px 10px;font-size:12px;color:#dfebe4;border-radius:7px}
 .agent-context-menu a:hover,.agent-context-menu a:focus-visible{background:#324239}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-@media(max-width:1450px){.agents-page{padding-inline:25px;gap:15px}.agents-controls{align-items:flex-start}.agents-table-head,.agent-record{padding:0 12px;column-gap:8px}.agents-table{min-width:1050px}}
+@media(max-width:1450px){.agents-page{padding-inline:25px;gap:15px}.agents-controls{align-items:flex-start}.agents-table-head,.agent-record{padding:0 12px;column-gap:8px}.agents-table{min-width:990px}}
 @media(max-width:1130px){.agents-page{padding-inline:18px;gap:15px}.agents-page-heading{align-items:flex-start}.agents-search{width:220px}.agents-controls{align-items:flex-start;flex-direction:column}.agents-filters{justify-content:flex-start}.agents-page{grid-template-rows:auto auto minmax(0,1fr)}}
-@media(max-width:780px){.agents-page{padding:16px 12px;gap:13px}.agents-page-heading h1{font-size:24px}.agents-page-heading p{font-size:11px}.heading-actions{gap:6px}.agents-search{width:40px;padding:0 10px}.agents-search:focus-within{width:175px}.agents-search input{width:0}.agents-search:focus-within input{width:120px}.create-agent{padding:0 10px}.create-agent span{display:none}.agents-tabs{gap:5px}.agent-tab{padding:0 8px;font-size:10px}.agent-filter{padding:0 8px}.agents-table{min-width:920px}}
+@media(max-width:780px){.agents-page{padding:16px 12px;gap:13px}.agents-page-heading h1{font-size:24px}.agents-page-heading p{font-size:11px}.heading-actions{gap:6px}.agents-search{width:40px;padding:0 10px}.agents-search:focus-within{width:175px}.agents-search input{width:0}.agents-search:focus-within input{width:120px}.create-agent{padding:0 10px}.create-agent span{display:none}.agents-tabs{gap:5px}.agent-tab{padding:0 8px;font-size:10px}.agent-filter{padding:0 8px}.agents-table{min-width:870px}}
 @media(max-height:760px) and (min-width:1131px){.agents-page{padding-top:16px;padding-bottom:13px;gap:12px}.agents-table-head{min-height:39px}.agent-record{min-height:54px}.agents-footerbar{min-height:43px}}

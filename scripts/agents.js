@@ -10,12 +10,11 @@ const rowsHost=byId('agentsRows');
 const tabs=[...root.querySelectorAll('[data-tab]')];
 const search=byId('agentSearch'),role=byId('roleFilter'),group=byId('groupFilter'),tag=byId('tagFilter'),sort=byId('sortAgents');
 const pagePrev=byId('agentsPrev'),pageNext=byId('agentsNext'),pageIndex=byId('agentsPage'),pagesTotal=byId('agentsPages'),count=byId('agentsCount');
-const empty=byId('agentsEmpty'),selectAll=byId('selectAllAgents'),selectedBar=byId('agentSelection'),selectedCount=byId('selectedCount');
+const empty=byId('agentsEmpty');
 const menu=byId('agentContextMenu');
 const perPage=8;
 let activeTab='all',currentPage=0,visible=[],currentMenuButton=null;
 const normalize=s=>String(s||'').trim().toLocaleLowerCase('ru-RU');
-const selected=new Set();
 function filtered(){
  const query=normalize(search.value);
  return rows.filter(row=>(activeTab==='all'||row.dataset.status===activeTab)
@@ -26,15 +25,6 @@ function filtered(){
   .sort((a,b)=>sort.value==='name'?a.dataset.sortName.localeCompare(b.dataset.sortName,'ru')
    :sort.value==='cases'?Number(b.dataset.count)-Number(a.dataset.count)
    :Number(b.dataset.stamp)-Number(a.dataset.stamp));
-}
-function updateSelection(){
- const pageRows=visible.slice(currentPage*perPage,(currentPage+1)*perPage);
- for(const row of rows){const isSelected=selected.has(row.dataset.agentId);row.classList.toggle('is-selected',isSelected);row.querySelector('.agent-check').checked=isSelected;}
- const onPage=pageRows.filter(row=>selected.has(row.dataset.agentId)).length;
- selectAll.checked=pageRows.length>0&&onPage===pageRows.length;
- selectAll.indeterminate=onPage>0&&onPage<pageRows.length;
- selectedBar.hidden=selected.size===0;
- selectedCount.textContent='Выбрано: '+selected.size;
 }
 function render(){
  visible=filtered();
@@ -49,7 +39,6 @@ function render(){
  pageIndex.textContent=String(currentPage+1);pagesTotal.textContent=String(total);
  pagePrev.disabled=currentPage===0;pageNext.disabled=currentPage>=total-1;
  tabs.forEach(tab=>{const on=tab.dataset.tab===activeTab;tab.classList.toggle('selected',on);tab.setAttribute('aria-selected',String(on))});
- updateSelection();
 }
 function closeMenu(){
  menu.hidden=true;
@@ -73,14 +62,10 @@ tabs.forEach(tab=>tab.addEventListener('click',()=>{activeTab=tab.dataset.tab;cu
 for(const input of [search,role,group,tag,sort])input.addEventListener(input===search?'input':'change',()=>{currentPage=0;closeMenu();render()});
 pagePrev.addEventListener('click',()=>{if(currentPage>0){currentPage--;render()}});
 pageNext.addEventListener('click',()=>{if(currentPage+1<Math.ceil(visible.length/perPage)){currentPage++;render()}});
-selectAll.addEventListener('change',()=>{for(const row of visible.slice(currentPage*perPage,(currentPage+1)*perPage)){if(selectAll.checked)selected.add(row.dataset.agentId);else selected.delete(row.dataset.agentId)}updateSelection()});
-byId('clearSelection').addEventListener('click',()=>{selected.clear();updateSelection()});
 byId('clearAgentFilters').addEventListener('click',()=>{search.value='';role.value='all';group.value='all';tag.value='all';sort.value='recent';activeTab='all';currentPage=0;render();search.focus()});
 root.addEventListener('click',e=>{
  const toggle=e.target.closest('[data-more]');
  if(toggle){e.preventDefault();e.stopPropagation();openMenu(toggle);return}
- const checkbox=e.target.closest('.agent-check');
- if(checkbox){e.stopPropagation();if(checkbox.checked)selected.add(checkbox.value);else selected.delete(checkbox.value);updateSelection();return}
  const row=e.target.closest('.agent-record');
  if(row&&!e.target.closest('a,button,input,select'))location.href=row.dataset.href;
 });
