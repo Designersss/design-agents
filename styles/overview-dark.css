@@ -105,3 +105,35 @@ button:hover,[role="button"]:hover{transition:background-color .15s,border-color
 .search-result{width:100%;border:0;background:transparent;color:inherit;padding:0;text-align:left;cursor:pointer}
 .search-result:hover{background:#26302d;border-radius:8px}
 .search-result .dialog-row{padding-left:10px;padding-right:10px}
+/* Compact overview, consistent footer navigation, sidebar logo reveal */
+a{color:inherit;text-decoration:none}
+.navrow,.agents-footer,.section-link,.action-small{cursor:pointer}
+.navrow:hover{color:#fff;background:#202726}
+.navrow.selected:hover{background:#1b332c}
+.section-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#a9b4b1;transition:color .15s}
+.section-link:hover,.section-link:focus-visible{color:#fff}
+.agent-line{height:50px}
+.agent-line .avatar{height:31px;width:31px;font-size:10px}
+.agentlist-head{height:27px}
+.center{gap:12px}
+.metrics .metric{height:100px}
+.bodylayout{padding-top:17px;padding-bottom:17px}
+.bottomcols .surface{display:flex;flex-direction:column;padding-bottom:0}
+.bottomcols .surface .panel-footer{margin-top:auto;margin-left:-16px;margin-right:-16px;min-height:36px;width:calc(100% + 32px);border-top:1px solid #2a2e2f;border-radius:0 0 12px 12px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
+.bottomcols .panel-title{margin-bottom:8px}
+.bottomcols .chatline,.bottomcols .alertline{min-height:51px}
+.plan{height:148px;min-height:148px;display:flex;flex-direction:column}
+.plan .panel-title{margin-bottom:12px}
+.plan-body{display:flex;flex-direction:column;gap:5px}
+.plan-body p{margin:0;line-height:1.45}
+.planfooter{margin-top:auto;padding-top:10px;border-top:1px solid #2b3031;line-height:1.4}
+.brand{position:relative}
+.is-collapsed .brand{position:relative}
+.is-collapsed .brand>.collapse{display:flex!important;position:absolute;inset:0;margin:0;width:100%;height:36px;align-items:center;justify-content:center;z-index:5;opacity:0;background:#101213;transform:none;transition:opacity .14s}
+.is-collapsed .brand:hover>.collapse,.is-collapsed .brand:focus-within>.collapse{opacity:1}
+.is-collapsed .brand>.collapse .icon{transform:rotate(180deg)}
+.search-empty{color:#9aa6a2;font-size:12px;padding:14px 4px}
+@media(max-width:1140px){.bottomcols .surface{min-height:235px}}
+
+.navrow[hidden]{display:none!important}
+.demo-popover[hidden]{display:none!important}

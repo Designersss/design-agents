@@ -1,0 +1,9 @@
+
+.unfinished{flex:1;min-height:0;display:grid;place-items:center;padding:35px;background:#0e1011}
+.unfinished-inner{max-width:520px;text-align:center;display:flex;align-items:center;flex-direction:column}
+.unfinished-symbol{width:65px;height:65px;border-radius:18px;background:#183029;color:#6bcfac;display:grid;place-items:center;font-size:38px;margin-bottom:20px}
+.unfinished h1{font-size:35px;letter-spacing:-.8px;font-weight:630;line-height:1.2}
+.unfinished-sub{color:#9ba6a3;font-size:14px;line-height:1.5;margin-top:12px}
+.unfinished-state{font-size:12px;border:1px solid #32483e;color:#9fe0c6;background:#1b2823;border-radius:999px;padding:9px 15px;margin-top:25px}
+.unfinished-back{margin-top:25px;padding:10px 17px;border-radius:10px;border:1px solid #38403e;font-size:12px;color:#eceeed}
+.unfinished-back:hover{background:#222a28;border-color:#678274}
