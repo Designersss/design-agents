@@ -22,7 +22,7 @@ $('publicAvatar').style.setProperty('--av',color);
 $('publicPurpose').textContent=role==='AI-рекрутер'
  ?'Проводит первичные беседы с кандидатами, собирает ответы на вопросы и передаёт результаты на решение HR.'
  :'Обрабатывает обращения и вопросы клиентов, собирает информацию и передаёт запросы сотруднику.';
-const all={guide:'Описание вакансий',faq:'Частые вопросы',policy:'Информация о компании'};
+const all={guide:'Информация о вакансиях',faq:'Частые вопросы',policy:'Условия и правила'};
 const selected=(p.get('materials')||'').split(',').filter(x=>Object.hasOwn(all,x));
 const items=$('publicMaterials');
 for(const key of [...new Set(selected)]){const row=document.createElement('div');row.className='public-material';const strong=document.createElement('strong');strong.textContent=all[key];const small=document.createElement('small');small.textContent='Разрешённый материал';row.append(strong,small);items.append(row)}
