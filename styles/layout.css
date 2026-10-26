@@ -107,3 +107,7 @@ a{color:inherit;text-decoration:none}a:focus-visible,button:focus-visible,[role=
  .agentlist-head,.agent-channel,.agent-status,.agent-last{display:none}
  .agent-line{grid-template-columns:30px minmax(0,1fr) 12px}
 }
+/* At shorter desktop heights keep the two footer links fully visible. */
+@media(max-height:870px) and (min-width:1051px){
+ .chatpanel .chatline:nth-of-type(n+4),.attention .alertline:nth-of-type(n+4){display:none}
+}
