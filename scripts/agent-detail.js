@@ -39,13 +39,76 @@ function selectedTab(tab,push=false){
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
-function syncSpace(){let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}el('companyAccess').hidden=personal}
+const chartSamples={
+  7:{dialog:[147,134,138,120,112,123,91,102,83,69,81,50],done:[173,166,158,150,153,139,130,134,118,111,100,92]},
+  30:{dialog:[169,140,127,138,94,110,83,92,68,79,51,32],done:[176,171,163,153,144,152,127,135,112,123,97,84]}
+};
+function updateOverviewMetrics(){
+ const period=Number(el('overviewPeriod')?.value||7);
+ const multiplier=period===30?4:1;
+ text('metricDialogs',Math.round(agent.dialogs*multiplier).toLocaleString('ru-RU'));
+ text('metricProcessed',Math.round(agent.processed*multiplier).toLocaleString('ru-RU'));
+ text('metricTransferred',Math.round(agent.transferred*multiplier).toLocaleString('ru-RU'));
+ text('metricResponse',agent.response);
+ const lines=chartSamples[period]||chartSamples[7];
+ const toPoints=arr=>arr.map((y,i)=>[32+i*676/(arr.length-1),y]);
+ const make=arr=>toPoints(arr).map(([x,y])=>x.toFixed(1)+','+y).join(' ');
+ el('trendDialogs').setAttribute('points',make(lines.dialog));
+ el('trendHandled').setAttribute('points',make(lines.done));
+ const start=toPoints(lines.dialog);
+ const path='M'+start.map(([x,y])=>x.toFixed(1)+' '+y).join(' L')+' L708 182 L32 182Z';
+ el('trendArea').setAttribute('d',path);
+}
+function closeProfileTags(){
+ el('detailTagsPopup').hidden=true;
+ el('detailTagsMore').setAttribute('aria-expanded','false');
+}
+function renderProfileTags(){
+ const tags=String(agent.tags||'').split(',').map(s=>s.trim()).filter(Boolean);
+ const container=el('detailTags'),popup=el('detailTagsPopup'),button=el('detailTagsMore');
+ container.replaceChildren();popup.replaceChildren();closeProfileTags();
+ for(const label of tags.slice(0,3)){
+   const chip=document.createElement('span');chip.className='profile-tag';chip.textContent=label;container.append(chip);
+ }
+ for(const label of tags.slice(3)){
+   const chip=document.createElement('span');chip.className='profile-tag';chip.textContent=label;popup.append(chip);
+ }
+ button.hidden=tags.length<=3;
+ button.textContent='+'+(tags.length-3);
+ button.setAttribute('aria-label','Показать ещё '+(tags.length-3)+' тегов агента');
+}
+function showSettingSection(key){
+ const views=[...document.querySelectorAll('[data-setting-view]')];
+ const allowed=['basics','hr','model','access','sources','preflight'];
+ const choice=allowed.includes(key)?key:'basics';
+ const target=choice==='hr'&&agent.role!=='recruiter'?'basics':choice;
+ views.forEach(view=>{view.hidden=view.dataset.settingView!==target});
+ document.querySelectorAll('[data-setting-key]').forEach(button=>{
+   const active=button.dataset.settingKey===target;button.classList.toggle('active',active);
+   button.setAttribute('aria-current',String(active));
+ });
+}
+
+function syncSpace(){
+ let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}
+ el('companyAccess').hidden=personal;
+ const staff=el('hrRecipientTeamOption');staff.disabled=personal;staff.hidden=personal;
+ if(personal&&el('hrRecipientInput').value==='hr'){
+   el('hrRecipientInput').value='owner';
+   if(agent.status!=='active'){agent.hrRecipient='owner';persist()}
+ }
+}
 function render(){
+  const titles=agent.role==='recruiter'
+   ?[['Новый отклик','Кандидат оставил обращение'],['Интервью завершено','Результаты переданы HR'],['Диалог завершён','Кандидат получил ответ']]
+   :[['Новое обращение','Клиент написал через канал связи'],['Передано сотруднику','Требуется ручное рассмотрение'],['Обращение обработано','Клиент получил ответ']];
+ titles.forEach(([title,note],i)=>{text('agentEventTitle'+(i+1),title);text('agentEventNote'+(i+1),note)});
+
  const recruiter=agent.role==='recruiter',active=agent.status==='active';
  text('agentName',agent.name);text('agentDescription',agent.description);
  text('topAgentCrumb',agent.name);text('detailCrumb',agent.name);
  text('agentRole',recruiter?'Рекрутер':'Менеджер обращений');text('heroRole',recruiter?'AI-рекрутер':'AI-менеджер обращений');
- text('metricDialogs',agent.dialogs);text('metricProcessed',agent.processed);text('metricTransferred',agent.transferred);text('metricResponse',agent.response);
+ updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
  text('workTitle',recruiter?'Кандидаты':'Заявки');
  const workTab=document.querySelector('[data-agent-tab="work"]');workTab.textContent=recruiter?'Кандидаты':'Заявки';
@@ -62,13 +125,36 @@ function render(){
  el('editProfileButton').disabled=active;
  el('editProfileButton').title=active?'Сначала остановите агента':'Изменить профиль';
  document.querySelectorAll('[data-editable]').forEach(input=>input.disabled=active);
+ // The Admin-published model catalog is not connected in this prototype.
+ el('publicModelInput').disabled=true;
  text('autosaveState',active?'Только просмотр':'Автосохранение включено');
- el('instructionInput').value=agent.instruction??(recruiter?'Помогай кандидатам, уточняй опыт и собирай контактные данные.':'Принимай обращения и отвечай на вопросы клиентов.');
- el('handoffInput').value=agent.handoff??(recruiter?'Передавай диалог HR, когда кандидат готов к собеседованию.':'Передавай сотруднику сложные запросы.');
+ el('instructionInput').value=agent.instruction??(recruiter?'Первичный отбор откликов по назначенным вакансиям и передача подтверждённых данных ответственному HR.':'Обработка входящих обращений клиентов и подготовка заявок для сотрудников.');
+ el('handoffInput').value=agent.handoff??(recruiter?'Кандидат попросил связаться с HR; собраны сведения для рассмотрения; необходима ручная проверка.':'Клиент запросил живого сотрудника; вопрос требует ручного подтверждения.');
  el('tagsInput').value=agent.tags;el('accessInput').value=agent.access||'team';
- const ready=agent.status!=='draft';text('readinessLabel',ready?'Готов':'Нужна настройка');
+ el('taskSpecificInput').value=agent.taskSpecific??'';
+ el('hrRecipientInput').value=agent.hrRecipient??'owner';
+ const notify=agent.hrNotifications||{new:true,review:true,clarify:true};
+ el('hrNotifyNew').checked=notify.new!==false;
+ el('hrNotifyReview').checked=notify.review!==false;
+ el('hrNotifyClarify').checked=notify.clarify!==false;
+ const assigned=agent.assignedVacancies||['vacancyFrontend'];
+ el('vacancyFrontend').checked=assigned.includes('vacancyFrontend');
+ el('vacancyDesigner').checked=assigned.includes('vacancyDesigner');
+ el('modelModeInput').value=agent.modelMode||'automatic';
+ el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
+ const hr=agent.role==='recruiter';
+ el('hrSettings').hidden=!hr;
+ const hrMenu=document.querySelector('[data-setting-key="hr"]');
+ if(hrMenu)hrMenu.hidden=!hr;
+ if(!hr&&document.querySelector('[data-setting-key="hr"].active'))showSettingSection('basics');
+ el('settingsLockNote').hidden=!active;
+
+ const ready=agent.status!=='draft';
+ text('readinessLabel',ready?'Проверка при запуске':'Черновик — не проверено');
  el('readinessLabel').classList.toggle('warning',!ready);
- text('readinessInstructions',ready?'Настроены':'Нужно заполнить');text('readinessChannel',ready?'Telegram подключён':'Не подключён');
+ const instructionValue=agent.instruction??el('instructionInput').value;
+ text('readinessInstructions',instructionValue.trim()?'Заполнено (макет)':'Не заполнено');
+ text('readinessChannel','Проверит сервер');
  document.querySelectorAll('[data-pane="integrations"] .service-line em').forEach(e=>{
    e.textContent=ready?'Подключено':'Не подключено';
    e.style.color=ready?'':'#d9b47e';
@@ -80,11 +166,23 @@ function render(){
 
  const avatar=el('agentDetailAvatar');avatar.style.setProperty('--av',agent.color);avatar.textContent=agent.avatarData?'':agent.initial;
  avatar.style.backgroundImage=agent.avatarData?'url('+JSON.stringify(agent.avatarData)+')':'none';
- const hero=el('detailHero');hero.style.backgroundImage=agent.coverData?'linear-gradient(180deg,#080e0e8c,#0a1010ed),url('+JSON.stringify(agent.coverData)+')':'';
- hero.style.backgroundSize='cover';hero.style.backgroundPosition='center';
+ renderProfileTags();
  document.title=agent.name+' — AIMock';syncSpace();
  document.querySelectorAll('[data-internal-tab]').forEach(a=>a.href=link(a.dataset.internalTab));
 }
+el('overviewPeriod').addEventListener('change',updateOverviewMetrics);
+document.querySelectorAll('[data-setting-key]').forEach(button=>button.addEventListener('click',()=>showSettingSection(button.dataset.settingKey)));
+el('detailTagsMore').addEventListener('click',e=>{
+ e.preventDefault();e.stopPropagation();
+ const open=el('detailTagsPopup').hidden;
+ el('detailTagsPopup').hidden=!open;el('detailTagsMore').setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('click',e=>{
+ if(!e.target.closest('.profile-tags'))closeProfileTags();
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape')closeProfileTags();
+});
 for(const a of document.querySelectorAll('[data-agent-tab],[data-internal-tab]'))a.addEventListener('click',e=>{e.preventDefault();selectedTab(a.dataset.agentTab||a.dataset.internalTab,true)});
 window.addEventListener('popstate',()=>selectedTab(new URLSearchParams(location.search).get('tab')));
 document.addEventListener('click',e=>{if(e.target.closest('[data-space]'))queueMicrotask(syncSpace)});
@@ -92,7 +190,19 @@ function saveSettings(){
  if(agent.status==='active')return;
  agent.instruction=el('instructionInput').value;agent.handoff=el('handoffInput').value;
  agent.tags=el('tagsInput').value;agent.access=el('accessInput').value;
+ agent.taskSpecific=el('taskSpecificInput').value;
+ agent.hrRecipient=el('hrRecipientInput').value;
+ agent.hrNotifications={
+   new:el('hrNotifyNew').checked,
+   review:el('hrNotifyReview').checked,
+   clarify:el('hrNotifyClarify').checked
+ };
+ agent.assignedVacancies=['vacancyFrontend','vacancyDesigner'].filter(v=>el(v).checked);
+ agent.modelMode=el('modelModeInput').value;
+ el('explicitModelWrap').hidden=agent.modelMode!=='explicit';
+
  text('autosaveState',persist()?'Изменения сохранены':'Не удалось сохранить');
+ renderProfileTags();
 }
 for(const input of document.querySelectorAll('[data-editable]')){
  input.addEventListener('input',()=>{if(agent.status==='active')return;text('autosaveState','Сохранение…');clearTimeout(settingsTimer);settingsTimer=setTimeout(saveSettings,250)});
@@ -103,7 +213,7 @@ el('lifecycleButton').addEventListener('click',()=>{
  if(agent.status==='active'){stopDialog.showModal();return}
  const instruction=agent.instruction??el('instructionInput').value;
  const handoff=agent.handoff??el('handoffInput').value;
- if(agent.status==='draft'||!instruction.trim()||!handoff.trim()){
+ if(agent.status==='draft'||!instruction.trim()||!handoff.trim()||(agent.modelMode==='explicit'&&!agent.publicModelId)){
  selectedTab('settings',true);text('autosaveState','Проверьте инструкции и подключение перед запуском');return;
  }
  agent.status='active';persist();render();
@@ -129,7 +239,7 @@ el('editProfileButton').addEventListener('click',()=>{
 for(const button of document.querySelectorAll('[data-close-profile]'))button.addEventListener('click',()=>editDialog.close());
 for(const id of ['profileName','profileDescription'])el(id).addEventListener('input',()=>{text('profileSaveState','Сохранение…');clearTimeout(profileTimer);profileTimer=setTimeout(saveProfile,250)});
 editDialog.addEventListener('close',()=>{clearTimeout(profileTimer);if(agent.status!=='active')saveProfile()});
-for(const [inputId,property] of [['coverUpload','coverData'],['avatarUpload','avatarData']]){
+for(const [inputId,property] of [['avatarUpload','avatarData']]){
  el(inputId).addEventListener('change',e=>{
  const file=e.target.files?.[0];if(!file||agent.status==='active')return;
  if(!file.type.startsWith('image/')||file.size>1700000){text('profileSaveState','Изображение должно быть меньше 1,7 МБ');return}
@@ -138,5 +248,5 @@ for(const [inputId,property] of [['coverUpload','coverData'],['avatarUpload','av
  reader.readAsDataURL(file);
  });
 }
-render();selectedTab(query.get('tab'));
+render();showSettingSection('basics');selectedTab(query.get('tab'));
 })();
