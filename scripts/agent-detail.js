@@ -97,11 +97,17 @@ const sampleEmployers=[
 {id:'demo-sole',kind:'sole',name:'ИП Мария Орлова',industry:'Дизайн и брендинг',website:'',location:'Санкт-Петербург / удалённо',description:'Небольшая студия графического и продуктового дизайна.'}
 ];
 function loadEmployers(){
- try{const custom=JSON.parse(localStorage.getItem(employerStorageKey)||'[]');return [...sampleEmployers,...(Array.isArray(custom)?custom:[]).filter(x=>x&&x.id&&!sampleEmployers.some(s=>s.id===x.id))]}catch(_){return [...sampleEmployers]}
+ try{
+  const custom=JSON.parse(localStorage.getItem(employerStorageKey)||'[]');
+  if(!Array.isArray(custom))return [...sampleEmployers];
+  const byId=new Map(sampleEmployers.map(x=>[x.id,x]));
+  for(const item of custom){if(item&&typeof item.id==='string'&&typeof item.name==='string')byId.set(item.id,item)}
+  return [...byId.values()];
+ }catch(_){return [...sampleEmployers]}
 }
 let employers=loadEmployers(),editingEmployer=null;
 function persistEmployers(){
- try{localStorage.setItem(employerStorageKey,JSON.stringify(employers.filter(e=>!e.id.startsWith('demo-'))));return true}catch(_){return false}
+ try{localStorage.setItem(employerStorageKey,JSON.stringify(employers));return true}catch(_){return false}
 }
 const kindLabels={company:'Компания',sole:'ИП',project:'Проект',agency:'Агентство'};
 function updateCustomCount(){text('customInstructionsCount',el('customInstructionsInput').value.length+' / 2500')}
@@ -243,7 +249,7 @@ el('employerForm').addEventListener('submit',event=>{
  for(const field of ['kind','name','industry','website','location','description'])values[field]=el('employerForm').elements[field].value.trim();
  if(!values.name){text('employerFormStatus','Введите название работодателя');return}
  // The form is a local UI prototype, not a public employer directory.
- const employerId=editingEmployer&& !editingEmployer.startsWith('demo-')?editingEmployer:'local-'+Date.now().toString(36);
+ const employerId=editingEmployer||'local-'+Date.now().toString(36);
  const entry={id:employerId,...values};
  const oldIndex=employers.findIndex(x=>x.id===employerId);
  if(oldIndex>=0)employers[oldIndex]=entry;else employers.push(entry);
