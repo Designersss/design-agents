@@ -47,14 +47,14 @@ function selectedTab(tab,push=false){
  el('detailHero').hidden=subpage;
  document.querySelectorAll('[data-pane]').forEach(panel=>panel.hidden=panel.dataset.pane!==current);
  const back=link('overview');
- el('detailCrumb').href=back;
+ el('topAgentCrumb').href=back;
  el('agentBackLink').href=back;
  el('agentBackLink').hidden=!subpage;
- el('detailSectionDivider').hidden=!subpage;
- el('detailSectionCrumb').hidden=!subpage;
+ el('topSectionSeparator').hidden=!subpage;
+ el('topSectionCrumb').hidden=!subpage;
  if(subpage){
    const config=sectionInfo[current]||sectionInfo.settings;
-   text('detailSectionCrumb',current==='work'&&agent.role!=='recruiter'?'Заявки':config[2]);
+   text('topSectionCrumb',current==='work'&&agent.role!=='recruiter'?'Заявки':config[2]);
    document.title=(current==='work'&&agent.role!=='recruiter'?'Заявки':config[0])+' · '+agent.name+' — AIMock';
  }else{document.title=agent.name+' — AIMock'}
  if(push)history.pushState({},'',link(current));
@@ -181,7 +181,7 @@ function render(){
 
  const recruiter=agent.role==='recruiter',active=agent.status==='active';
  text('agentName',agent.name);text('agentDescription',agent.description);
- text('topAgentCrumb',agent.name);text('detailCrumb',agent.name);
+ text('topAgentCrumb',agent.name);
  text('agentRole',recruiter?'Рекрутер':'Менеджер обращений');text('heroRole',recruiter?'AI-рекрутер':'AI-менеджер обращений');
  updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
