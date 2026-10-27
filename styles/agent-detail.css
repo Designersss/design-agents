@@ -342,3 +342,5 @@
 .knowledge-local-disclaimer{font-size:10px;color:#8d97a5;line-height:1.5;margin-top:11px}
 @media(max-width:1050px){.employer-choice-row{flex-wrap:wrap}.employer-choice-row>.detail-field{flex-basis:100%}}
 @media(max-width:700px){.employer-profile{flex-direction:column}.employer-top-actions{width:100%}.business-button{flex:1}.information-destinations>div{grid-template-columns:1fr}.information-destinations button,.information-destinations a{grid-column:1;grid-row:3;justify-self:start;margin-top:6px}.agent-settings-pane .detail-card{padding:15px}}
+
+.settings-try-draft{color:#c9b5ff;text-decoration:underline;text-underline-offset:3px;margin-left:5px}.settings-try-draft:hover{color:#eee3ff}
