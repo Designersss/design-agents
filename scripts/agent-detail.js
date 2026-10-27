@@ -23,26 +23,40 @@ try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(_){}
 const agent={...base,...(saved[id]||{})};
 const text=(id,v)=>{if(el(id))el(id).textContent=String(v)};
 const link=tab=>'?agent='+encodeURIComponent(id)+'&tab='+encodeURIComponent(tab);
-const valid=['overview','settings','integrations','work','knowledge','testing','journal'];
+const valid=['overview','settings','vacancies','integrations','work','knowledge','testing','journal'];
 let settingsTimer,profileTimer;
 document.querySelector('.navrow[href$="/agents.html"]')?.classList.add('selected');
 function persist(){saved[id]={...agent};try{localStorage.setItem(key,JSON.stringify(saved));return true}catch(_){return false}}
+const sectionInfo={
+ settings:['Настройки агента','Профессиональные параметры, подключения и доступы','Настройки'],
+ vacancies:['Вакансии','Позиции, требования и условия отбора','Вакансии'],
+ work:['Кандидаты','Обращения и результаты работы агента','Кандидаты'],
+ knowledge:['База знаний','Разрешённые документы и материалы','База знаний'],
+ integrations:['Интеграции','Подключённые сервисы и разрешения','Интеграции'],
+ journal:['Журнал действий','События и результаты работы','Журнал'],
+ testing:['Тестирование агента','Проверка сценариев и ответов','Тестирование']
+};
 function selectedTab(tab,push=false){
- const current=valid.includes(tab)?tab:'overview';
- document.querySelectorAll('[data-agent-tab]').forEach(a=>{
- const selected=a.dataset.agentTab===current;
- a.classList.toggle('active',selected);
- a.href=link(a.dataset.agentTab);
- if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
- });
+ const requested=valid.includes(tab)?tab:'overview';
+ const current=requested==='vacancies'&&agent.role!=='recruiter'?'overview':requested;
+ const subpage=current!=='overview';
+ root.classList.toggle('agent-section-mode',subpage);
+ root.classList.toggle('agent-home-mode',!subpage);
  document.querySelectorAll('[data-pane]').forEach(panel=>panel.hidden=panel.dataset.pane!==current);
+ const back=link('overview');
+ el('detailCrumb').href=back;
+ el('agentBackLink').href=back;
+ el('agentBackLink').hidden=!subpage;
+ el('detailSectionDivider').hidden=!subpage;
+ el('detailSectionCrumb').hidden=!subpage;
+ if(subpage){
+   const config=sectionInfo[current]||sectionInfo.settings;
+   text('detailSectionCrumb',current==='work'&&agent.role!=='recruiter'?'Заявки':config[2]);
+   document.title=(current==='work'&&agent.role!=='recruiter'?'Заявки':config[0])+' · '+agent.name+' — AIMock';
+ }else{document.title=agent.name+' — AIMock'}
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
-const chartSamples={
-  7:{dialog:[147,134,138,120,112,123,91,102,83,69,81,50],done:[173,166,158,150,153,139,130,134,118,111,100,92]},
-  30:{dialog:[169,140,127,138,94,110,83,92,68,79,51,32],done:[176,171,163,153,144,152,127,135,112,123,97,84]}
-};
 function updateOverviewMetrics(){
  const period=Number(el('overviewPeriod')?.value||7);
  const multiplier=period===30?4:1;
@@ -50,14 +64,6 @@ function updateOverviewMetrics(){
  text('metricProcessed',Math.round(agent.processed*multiplier).toLocaleString('ru-RU'));
  text('metricTransferred',Math.round(agent.transferred*multiplier).toLocaleString('ru-RU'));
  text('metricResponse',agent.response);
- const lines=chartSamples[period]||chartSamples[7];
- const toPoints=arr=>arr.map((y,i)=>[32+i*676/(arr.length-1),y]);
- const make=arr=>toPoints(arr).map(([x,y])=>x.toFixed(1)+','+y).join(' ');
- el('trendDialogs').setAttribute('points',make(lines.dialog));
- el('trendHandled').setAttribute('points',make(lines.done));
- const start=toPoints(lines.dialog);
- const path='M'+start.map(([x,y])=>x.toFixed(1)+' '+y).join(' L')+' L708 182 L32 182Z';
- el('trendArea').setAttribute('d',path);
 }
 function closeProfileTags(){
  el('detailTagsPopup').hidden=true;
@@ -171,8 +177,10 @@ function render(){
  updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
  text('workTitle',recruiter?'Кандидаты':'Заявки');
- const workTab=document.querySelector('[data-agent-tab="work"]');workTab.textContent=recruiter?'Кандидаты':'Заявки';
- const workQuick=document.querySelector('[data-internal-tab="work"]>span>span');if(workQuick)workQuick.textContent=recruiter?'Кандидаты':'Заявки';
+ document.querySelectorAll('[data-role-card]').forEach(card=>{
+  card.hidden=(card.dataset.roleCard==='hr'&&!recruiter)||(card.dataset.roleCard==='other'&&recruiter);
+ });
+ text('quickWorkLabel',recruiter?'Открыть кандидатов':'Открыть заявки');
  const purpose=document.getElementById('agentPurpose');
  if(purpose)purpose.textContent=recruiter?'Проводит первичный диалог с кандидатами, уточняет опыт и передаёт анкеты на рассмотрение HR-специалисту.':'Принимает обращения, отвечает на вопросы клиентов и передаёт сложные запросы сотруднику.';
  const tasks=recruiter?['Уточняет опыт и ожидания','Собирает ответы на вопросы','Передаёт анкеты сотруднику']:['Определяет цель обращения','Помогает решить типовой вопрос','Передаёт сложные запросы сотруднику'];
@@ -234,6 +242,7 @@ function render(){
  renderProfileTags();renderKnowledge();
  document.title=agent.name+' — AIMock';syncSpace();
  document.querySelectorAll('[data-internal-tab]').forEach(a=>a.href=link(a.dataset.internalTab));
+ document.querySelectorAll('[data-route-card]').forEach(a=>a.href=link(a.dataset.routeCard));
 }
 
 el('employerSelect').addEventListener('change',()=>{
@@ -303,7 +312,8 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeProfileTags();
 });
-for(const a of document.querySelectorAll('[data-agent-tab],[data-internal-tab]'))a.addEventListener('click',e=>{e.preventDefault();selectedTab(a.dataset.agentTab||a.dataset.internalTab,true)});
+// Cards and in-content links use native navigation to dedicated URLs.
+ // No horizontal tab bar or intercepted in-place tab switching.
 window.addEventListener('popstate',()=>selectedTab(new URLSearchParams(location.search).get('tab')));
 document.addEventListener('click',e=>{if(e.target.closest('[data-space]'))queueMicrotask(syncSpace)});
 function saveSettings(){
