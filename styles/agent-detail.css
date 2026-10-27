@@ -598,3 +598,68 @@
  .agent-home-mode .agent-overview .agent-navigation-card{min-height:66px}
  .agent-home-mode .agent-overview .agent-purpose-copy p{font-size:11.6px;line-height:1.75}
 }
+
+/* Agent mission stretches to the combined height of KPIs + activity at desktop.
+   Three read-only prose sections use vertical space rather than filler controls. */
+.agent-home-mode .agent-overview .agent-overview-dashboard{
+ align-items:stretch;
+}
+.agent-home-mode .agent-overview .agent-overview-secondary{
+ align-self:stretch;
+ height:100%;
+ min-height:0;
+}
+.agent-home-mode .agent-overview .agent-purpose-card{
+ display:flex;
+ flex-direction:column;
+ flex:1 1 auto;
+ min-height:100%;
+}
+.agent-home-mode .agent-overview .agent-purpose-card .card-title{
+ flex:none;
+ margin-bottom:9px;
+}
+.agent-home-mode .agent-overview .agent-purpose-copy{
+ flex:1 1 auto;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+ gap:0;
+}
+.agent-home-mode .agent-overview .agent-purpose-section{
+ flex:0 0 auto;
+ padding:13px 0 14px;
+ border-bottom:1px solid #2a3430;
+}
+.agent-home-mode .agent-overview .agent-purpose-section:first-child{
+ padding-top:9px;
+}
+.agent-home-mode .agent-overview .agent-purpose-section:last-child{
+ padding-bottom:0;
+ border-bottom:0;
+}
+.agent-home-mode .agent-overview .agent-purpose-kicker{
+ display:block;
+ margin-bottom:7px;
+ color:#82bba0;
+ font-size:10px;
+ font-weight:620;
+ letter-spacing:.02em;
+}
+.agent-home-mode .agent-overview .agent-purpose-section p{
+ color:#b7c2bc;
+ font-size:11.65px;
+ line-height:1.7;
+}
+@media(max-width:1080px){
+ .agent-home-mode .agent-overview .agent-overview-secondary{
+  height:auto;
+ }
+ .agent-home-mode .agent-overview .agent-purpose-card{
+  min-height:0;
+ }
+ .agent-home-mode .agent-overview .agent-purpose-section{
+  padding-top:13px;
+  padding-bottom:14px;
+ }
+}
