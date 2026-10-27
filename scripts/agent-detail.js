@@ -168,8 +168,24 @@ const settingsGuidance={
   note:'Это макет. Надписи здесь не подтверждают готовность, права, активную подписку или реальный запуск.'
  }
 };
+const nonRecruiterGuidance={
+ custom:{
+  example:'«Если клиент запрашивает нестандартные условия, передай запрос ответственному менеджеру».'
+ },
+ access:{
+  example:'Теги: «Входящие», «Поддержка». Группа: «Команда обслуживания».'
+ },
+ sources:{
+  example:'FAQ о продукте — для типовых ответов; разрешённый Telegram-канал — для обращений.'
+ },
+ preflight:{
+  input:'Проверьте категории обращений, ответственного сотрудника, каналы, модель и необходимые разрешения.',
+  example:'Рабочие данные заполнены → канал подключён → ответственный указан → серверная проверка пройдена.'
+ }
+};
 function updateSettingsGuidance(key){
- const data=settingsGuidance[key]||settingsGuidance.employer;
+ const base=settingsGuidance[key]||settingsGuidance.employer;
+ const data=agent.role==='recruiter'?base:{...base,...(nonRecruiterGuidance[key]||{})};
  text('settingsGuidanceTitle',data.title);
  text('settingsGuidanceLead',data.lead);
  text('settingsGuidanceBuiltin',data.builtin);
