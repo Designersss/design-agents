@@ -374,7 +374,7 @@ function saveProfile(){
  agent.initial=agent.name.charAt(0).toLocaleUpperCase('ru-RU');
  text('profileSaveState',persist()?'Изменения сохранены':'Не удалось сохранить');
  text('agentName',agent.name);text('agentDescription',agent.description);
- text('topAgentCrumb',agent.name);text('detailCrumb',agent.name);
+ text('topAgentCrumb',agent.name);
  el('agentDetailAvatar').textContent=agent.avatarData?'':agent.initial;
  document.title=agent.name+' — AIMock';
 }
