@@ -413,7 +413,7 @@
 .agent-quick-tile>span>span{color:#dde7e0;font-size:10.7px}
 .agent-quick-tile small{color:#899b91;font-size:9.5px}
 .agent-detail .agent-overview .detail-card h4{color:#e3eae7}
-.agent-detail .agent-section-mode .detail-profile{display:none!important}
+.agent-detail.agent-section-mode > .detail-profile,.agent-detail > .detail-profile[hidden]{display:none!important}
 .agent-section-mode .detail-breadcrumb{margin-bottom:10px}
 .agent-back-link{color:#8faaa0;font-size:11px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;width:fit-content;margin-bottom:9px}
 .agent-back-link:hover{color:#62d8a7}
@@ -465,3 +465,31 @@
 @media(max-width:1080px){.agent-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.agent-overview-dashboard{grid-template-columns:1fr}.agent-detail .agent-overview .detail-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.agent-section-mode .agent-settings-pane .settings-workbench{grid-template-columns:185px minmax(0,1fr)}}
 @media(max-width:800px){.agent-card-grid{grid-template-columns:1fr 1fr}.agent-navigation-card{min-height:92px;padding:12px}.agent-card-icon{height:35px;width:35px}.agent-section-mode .agent-settings-pane .settings-workbench{grid-template-columns:1fr}.agent-section-mode .settings-section-nav{position:static;display:flex;flex-direction:row;overflow-x:auto}.agent-section-mode .settings-section-button{width:auto;flex:none;white-space:nowrap}.agent-section-mode .settings-section-button .detail-ico{display:none}}
 @media(max-width:570px){.agent-card-grid{grid-template-columns:1fr}.agent-navigation-card{min-height:73px}.agent-detail .agent-overview .detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:8px}.agent-detail .agent-overview .detail-metric:nth-child(2){border-right:0!important}.agent-detail .agent-overview .detail-metric:nth-child(3){padding-left:0}.agent-detail .agent-overview .agent-quick-grid{grid-template-columns:1fr}.agent-detail .profile-title-line h1{font-size:20px}.agent-section-mode .agent-pane>.detail-section-head h2{font-size:22px}}
+
+/* Metrics range: compact segmented control using the established AIMock charcoal/green palette. */
+.agent-detail .agent-overview .metric-period-switch{
+  display:inline-flex;align-items:center;flex:none;gap:2px;
+  padding:3px;min-height:33px;border-radius:9px;
+  border:1px solid #303c36;background:#141a18;
+}
+.agent-detail .agent-overview .metric-period-button{
+  appearance:none;-webkit-appearance:none;border:1px solid transparent;
+  border-radius:6px;background:transparent;color:#98a8a0;
+  padding:6px 11px;font:inherit;font-size:10.8px;font-weight:540;
+  line-height:1.35;white-space:nowrap;cursor:pointer;
+  transition:background-color .15s,color .15s,border-color .15s;
+}
+.agent-detail .agent-overview .metric-period-button:hover:not(.is-active){
+  color:#e5f3eb;background:#202a25;
+}
+.agent-detail .agent-overview .metric-period-button.is-active{
+  color:#b5f1d1;background:#244435;border-color:#345a45;
+  font-weight:650;
+}
+.agent-detail .agent-overview .metric-period-button:focus-visible{
+  outline:2px solid #69cda8;outline-offset:2px;
+}
+@media(max-width:570px){
+  .agent-detail .agent-overview .metric-period-switch{min-height:31px}
+  .agent-detail .agent-overview .metric-period-button{padding:5px 8px;font-size:10px}
+}
