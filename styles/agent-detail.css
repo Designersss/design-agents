@@ -493,3 +493,36 @@
   .agent-detail .agent-overview .metric-period-switch{min-height:31px}
   .agent-detail .agent-overview .metric-period-button{padding:5px 8px;font-size:10px}
 }
+
+/* Agent uses the application's global topbar as its only breadcrumb trail. */
+.topbar .agent-top-breadcrumb{
+ display:flex;align-items:center;gap:8px;min-width:0;
+ color:#899690;font-size:11.5px;white-space:nowrap;
+}
+.topbar .agent-top-breadcrumb>span{
+ padding:0;color:inherit;
+}
+.topbar .agent-top-breadcrumb .agent-crumb-separator{
+ padding:0;color:#54615b;
+}
+.topbar .agent-top-breadcrumb a{
+ color:#b5c3bb;text-decoration:none;min-width:0;
+}
+.topbar .agent-top-breadcrumb a:hover{
+ color:#72ddb0;
+}
+.topbar .agent-top-breadcrumb #topAgentCrumb{
+ overflow:hidden;text-overflow:ellipsis;max-width:clamp(100px,21vw,280px);
+}
+.topbar .agent-top-breadcrumb #topSectionCrumb{
+ color:#edf2ee;overflow:hidden;text-overflow:ellipsis;
+}
+.topbar .agent-top-breadcrumb [hidden]{
+ display:none!important;
+}
+@media(max-width:750px){
+ .topbar .agent-top-breadcrumb{gap:5px;font-size:10.5px}
+ .topbar .agent-top-breadcrumb>span:first-child{display:none}
+ .topbar .agent-top-breadcrumb>span:first-child + .agent-crumb-separator{display:none}
+ .topbar .agent-top-breadcrumb #topAgentCrumb{max-width:120px}
+}
