@@ -42,6 +42,9 @@ function selectedTab(tab,push=false){
  const subpage=current!=='overview';
  root.classList.toggle('agent-section-mode',subpage);
  root.classList.toggle('agent-home-mode',!subpage);
+ // Hide the entire home-only profile, including avatar, title, status and actions.
+ // The native hidden property complements scoped CSS and keeps it inaccessible.
+ el('detailHero').hidden=subpage;
  document.querySelectorAll('[data-pane]').forEach(panel=>panel.hidden=panel.dataset.pane!==current);
  const back=link('overview');
  el('detailCrumb').href=back;
@@ -57,8 +60,14 @@ function selectedTab(tab,push=false){
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
+let currentOverviewPeriod=7;
 function updateOverviewMetrics(){
- const period=Number(el('overviewPeriod')?.value||7);
+ const period=currentOverviewPeriod;
+ document.querySelectorAll('[data-overview-period]').forEach(button=>{
+  const active=Number(button.dataset.overviewPeriod)===period;
+  button.classList.toggle('is-active',active);
+  button.setAttribute('aria-pressed',String(active));
+ });
  const multiplier=period===30?4:1;
  text('metricDialogs',Math.round(agent.dialogs*multiplier).toLocaleString('ru-RU'));
  text('metricProcessed',Math.round(agent.processed*multiplier).toLocaleString('ru-RU'));
@@ -299,7 +308,12 @@ knowledgeInput.addEventListener('change',event=>{
  persist();renderKnowledge();knowledgeInput.value='';
 });
 
-el('overviewPeriod').addEventListener('change',updateOverviewMetrics);
+document.querySelectorAll('[data-overview-period]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  currentOverviewPeriod=Number(button.dataset.overviewPeriod)===30?30:7;
+  updateOverviewMetrics();
+ });
+});
 document.querySelectorAll('[data-setting-key]').forEach(button=>button.addEventListener('click',()=>showSettingSection(button.dataset.settingKey)));
 el('detailTagsMore').addEventListener('click',e=>{
  e.preventDefault();e.stopPropagation();
