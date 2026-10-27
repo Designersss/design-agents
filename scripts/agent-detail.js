@@ -79,14 +79,74 @@ function renderProfileTags(){
 }
 function showSettingSection(key){
  const views=[...document.querySelectorAll('[data-setting-view]')];
- const allowed=['basics','hr','model','access','sources','preflight'];
- const choice=allowed.includes(key)?key:'basics';
- const target=choice==='hr'&&agent.role!=='recruiter'?'basics':choice;
+ const allowed=['employer','vacancies','recipient','domain','custom','model','access','sources','preflight'];
+ const initial=agent.role==='recruiter'?'employer':'domain';
+ const choice=allowed.includes(key)?key:initial;
+ const target=(agent.role==='recruiter'&&choice==='domain')||(agent.role!=='recruiter'&&['employer','vacancies','recipient'].includes(choice))?initial:choice;
  views.forEach(view=>{view.hidden=view.dataset.settingView!==target});
  document.querySelectorAll('[data-setting-key]').forEach(button=>{
    const active=button.dataset.settingKey===target;button.classList.toggle('active',active);
    button.setAttribute('aria-current',String(active));
  });
+}
+
+
+const employerStorageKey='aimock-employer-profiles-preview-v1';
+const sampleEmployers=[
+{id:'demo-tech',kind:'company',name:'Технологии Плюс',industry:'IT и разработка',website:'https://techplus.example',location:'Москва / удалённо',description:'Разработка корпоративных веб-сервисов и цифровых продуктов.'},
+{id:'demo-sole',kind:'sole',name:'ИП Мария Орлова',industry:'Дизайн и брендинг',website:'',location:'Санкт-Петербург / удалённо',description:'Небольшая студия графического и продуктового дизайна.'}
+];
+function loadEmployers(){
+ try{
+  const custom=JSON.parse(localStorage.getItem(employerStorageKey)||'[]');
+  if(!Array.isArray(custom))return [...sampleEmployers];
+  const byId=new Map(sampleEmployers.map(x=>[x.id,x]));
+  for(const item of custom){if(item&&typeof item.id==='string'&&typeof item.name==='string')byId.set(item.id,item)}
+  return [...byId.values()];
+ }catch(_){return [...sampleEmployers]}
+}
+let employers=loadEmployers(),editingEmployer=null;
+function persistEmployers(){
+ try{localStorage.setItem(employerStorageKey,JSON.stringify(employers));return true}catch(_){return false}
+}
+const kindLabels={company:'Компания',sole:'ИП',project:'Проект',agency:'Агентство'};
+function updateCustomCount(){text('customInstructionsCount',el('customInstructionsInput').value.length+' / 2500')}
+function setEmployerActions(){
+ const locked=agent.status==='active';
+ el('addEmployer').disabled=locked;
+ el('editEmployer').disabled=locked||!el('employerSelect').value;
+ el('insertInstructionExample').disabled=locked;
+ el('knowledgeFileInput').disabled=locked;
+ el('knowledgeUploadLabel').classList.toggle('is-disabled',locked);
+}
+function renderEmployerProfile(){
+ const select=el('employerSelect'),selectedId=agent.previewEmployerId===undefined?'demo-tech':agent.previewEmployerId;
+ select.replaceChildren();
+ const empty=document.createElement('option');empty.value='';empty.textContent='Выберите работодателя';select.append(empty);
+ for(const employer of employers){const option=document.createElement('option');option.value=employer.id;option.textContent=employer.name;select.append(option)}
+ select.value=employers.some(e=>e.id===selectedId)?selectedId:'';
+ const employer=employers.find(e=>e.id===select.value),present=!!employer;
+ el('employerProfile').hidden=!present;el('employerEmpty').hidden=present;
+ if(present){
+  text('employerAvatar',(employer.name||'К').trim().slice(0,1).toLocaleUpperCase('ru-RU'));
+  text('employerDisplayName',employer.name);
+  text('employerDisplayType',(kindLabels[employer.kind]||'Работодатель')+(employer.industry?' · '+employer.industry:''));
+  text('employerDisplayDescription',employer.description||'Описание ещё не заполнено');
+  text('employerDisplayLocation',employer.location||'Локация не указана');
+  text('employerDisplayWebsite',employer.website||'Сайт не указан');
+ }
+ el('editEmployer').disabled=agent.status==='active'||!present;
+}
+function openEmployerForm(existing){
+ if(agent.status==='active')return;
+ editingEmployer=existing?.id||null;
+ text('employerEditorTitle',existing?'Изменить работодателя':'Добавить работодателя');
+ for(const name of ['kind','name','industry','website','location','description']){
+  el('employerForm').elements[name].value=existing?.[name]||'';
+ }
+ if(!existing)el('employerKind').value='company';
+ text('employerFormStatus','Данные пока сохраняются только в этом браузере. Реальный аккаунт и права будут подключены через API.');
+ el('employerEditorDialog').showModal();
 }
 
 function syncSpace(){
@@ -128,10 +188,14 @@ function render(){
  // The Admin-published model catalog is not connected in this prototype.
  el('publicModelInput').disabled=true;
  text('autosaveState',active?'Только просмотр':'Автосохранение включено');
- el('instructionInput').value=agent.instruction??(recruiter?'Первичный отбор откликов по назначенным вакансиям и передача подтверждённых данных ответственному HR.':'Обработка входящих обращений клиентов и подготовка заявок для сотрудников.');
- el('handoffInput').value=agent.handoff??(recruiter?'Кандидат попросил связаться с HR; собраны сведения для рассмотрения; необходима ручная проверка.':'Клиент запросил живого сотрудника; вопрос требует ручного подтверждения.');
  el('tagsInput').value=agent.tags;el('accessInput').value=agent.access||'team';
- el('taskSpecificInput').value=agent.taskSpecific??'';
+ el('customInstructionsInput').value=agent.customInstructions??agent.taskSpecific??'';
+ el('businessContextInput').value=agent.businessContext??'';
+ el('serviceTypesInput').value=agent.serviceTypes??'';
+ el('resultDestinationInput').value=agent.resultDestination??'owner';
+ updateCustomCount();
+ text('builtinProfessionTitle',recruiter?'HR-рекрутер уже подготовлен к работе':'Профессиональные навыки уже встроены');
+ text('builtinProfessionDescription',recruiter?'Он умеет проводить интервью, уточнять сведения, проверять факты и передавать результаты HR. Ничего из этого не нужно прописывать вручную.':'Агент умеет обрабатывать типовые обращения, проверять сведения и передавать сложные случаи человеку. Добавляйте только сведения своего бизнеса.');
  el('hrRecipientInput').value=agent.hrRecipient??'owner';
  const notify=agent.hrNotifications||{new:true,review:true,clarify:true};
  el('hrNotifyNew').checked=notify.new!==false;
@@ -143,17 +207,18 @@ function render(){
  el('modelModeInput').value=agent.modelMode||'automatic';
  el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
  const hr=agent.role==='recruiter';
- el('hrSettings').hidden=!hr;
- const hrMenu=document.querySelector('[data-setting-key="hr"]');
- if(hrMenu)hrMenu.hidden=!hr;
- if(!hr&&document.querySelector('[data-setting-key="hr"].active'))showSettingSection('basics');
+ document.querySelectorAll('[data-setting-scope]').forEach(button=>{
+  button.hidden=(button.dataset.settingScope==='hr'&&!hr)||(button.dataset.settingScope==='other'&&hr);
+ });
+ if(!hr&&document.querySelector('[data-setting-key="employer"].active'))showSettingSection('domain');
+ setEmployerActions();renderEmployerProfile();
+ document.querySelectorAll('[data-go-setting][data-hr-only]').forEach(button=>button.hidden=!hr);
  el('settingsLockNote').hidden=!active;
 
  const ready=agent.status!=='draft';
  text('readinessLabel',ready?'Проверка при запуске':'Черновик — не проверено');
  el('readinessLabel').classList.toggle('warning',!ready);
- const instructionValue=agent.instruction??el('instructionInput').value;
- text('readinessInstructions',instructionValue.trim()?'Заполнено (макет)':'Не заполнено');
+ text('readinessInstructions','Встроены в профессию');
  text('readinessChannel','Проверит сервер');
  document.querySelectorAll('[data-pane="integrations"] .service-line em').forEach(e=>{
    e.textContent=ready?'Подключено':'Не подключено';
@@ -166,10 +231,65 @@ function render(){
 
  const avatar=el('agentDetailAvatar');avatar.style.setProperty('--av',agent.color);avatar.textContent=agent.avatarData?'':agent.initial;
  avatar.style.backgroundImage=agent.avatarData?'url('+JSON.stringify(agent.avatarData)+')':'none';
- renderProfileTags();
+ renderProfileTags();renderKnowledge();
  document.title=agent.name+' — AIMock';syncSpace();
  document.querySelectorAll('[data-internal-tab]').forEach(a=>a.href=link(a.dataset.internalTab));
 }
+
+el('employerSelect').addEventListener('change',()=>{
+ if(agent.status==='active')return;
+ agent.previewEmployerId=el('employerSelect').value;persist();renderEmployerProfile();text('autosaveState','Работодатель выбран · локально сохранено');
+});
+el('addEmployer').addEventListener('click',()=>openEmployerForm(null));
+el('editEmployer').addEventListener('click',()=>openEmployerForm(employers.find(e=>e.id===el('employerSelect').value)));
+for(const id of ['employerCancel','employerCancelTop'])el(id).addEventListener('click',()=>el('employerEditorDialog').close());
+el('employerForm').addEventListener('submit',event=>{
+ event.preventDefault();if(agent.status==='active')return;
+ const values={};
+ for(const field of ['kind','name','industry','website','location','description'])values[field]=el('employerForm').elements[field].value.trim();
+ if(!values.name){text('employerFormStatus','Введите название работодателя');return}
+ // The form is a local UI prototype, not a public employer directory.
+ const employerId=editingEmployer||'local-'+Date.now().toString(36);
+ const entry={id:employerId,...values};
+ const oldIndex=employers.findIndex(x=>x.id===employerId);
+ if(oldIndex>=0)employers[oldIndex]=entry;else employers.push(entry);
+ const savedOk=persistEmployers();
+ if(!savedOk){text('employerFormStatus','Не удалось сохранить данные в браузере');return}
+ agent.previewEmployerId=employerId;persist();renderEmployerProfile();el('employerEditorDialog').close();
+ text('autosaveState','Данные работодателя сохранены локально');
+});
+el('insertInstructionExample').addEventListener('click',()=>{
+ if(agent.status==='active')return;
+ const textarea=el('customInstructionsInput');
+ const sample='Для удалённых вакансий уточняй готовность работать по московскому времени. Если кандидат просит нестандартный график, передавай этот вопрос HR. Не обещай индивидуальные условия без согласования.';
+ textarea.value=(textarea.value?textarea.value.trim()+'\n\n':'')+sample;
+ textarea.value=textarea.value.slice(0,2500);
+ saveSettings();textarea.focus();
+});
+document.querySelectorAll('[data-go-setting]').forEach(button=>button.addEventListener('click',()=>showSettingSection(button.dataset.goSetting)));
+const knowledgeInput=el('knowledgeFileInput');
+function renderKnowledge(){
+ const container=el('knowledgeLocalList');container.replaceChildren();
+ for(const entry of agent.previewKnowledge||[]){
+  const row=document.createElement('div');row.className='knowledge-preview-item';
+  const info=document.createElement('div'),name=document.createElement('strong'),details=document.createElement('small');
+  name.textContent=entry.name;details.textContent='Только локальный список · файл не загружен';
+  info.append(name,details);
+  const remove=document.createElement('button');remove.type='button';remove.textContent='Убрать';
+  remove.disabled=agent.status==='active';
+  remove.addEventListener('click',()=>{agent.previewKnowledge=(agent.previewKnowledge||[]).filter(x=>x.id!==entry.id);persist();renderKnowledge()});
+  row.append(info,remove);container.append(row);
+ }
+}
+knowledgeInput.addEventListener('change',event=>{
+ if(agent.status==='active')return;
+ const files=Array.from(event.target.files||[]);
+ const safeFiles=files.filter(file=>/\.(pdf|docx?|txt|md)$/i.test(file.name)&&file.size<=10*1024*1024);
+ const current=agent.previewKnowledge||[];
+ agent.previewKnowledge=[...current,...safeFiles.map((file,i)=>({id:'item-'+Date.now()+'-'+i,name:file.name.slice(0,110)}))].slice(-12);
+ persist();renderKnowledge();knowledgeInput.value='';
+});
+
 el('overviewPeriod').addEventListener('change',updateOverviewMetrics);
 document.querySelectorAll('[data-setting-key]').forEach(button=>button.addEventListener('click',()=>showSettingSection(button.dataset.settingKey)));
 el('detailTagsMore').addEventListener('click',e=>{
@@ -188,9 +308,12 @@ window.addEventListener('popstate',()=>selectedTab(new URLSearchParams(location.
 document.addEventListener('click',e=>{if(e.target.closest('[data-space]'))queueMicrotask(syncSpace)});
 function saveSettings(){
  if(agent.status==='active')return;
- agent.instruction=el('instructionInput').value;agent.handoff=el('handoffInput').value;
  agent.tags=el('tagsInput').value;agent.access=el('accessInput').value;
- agent.taskSpecific=el('taskSpecificInput').value;
+ agent.customInstructions=el('customInstructionsInput').value;
+ agent.businessContext=el('businessContextInput').value;
+ agent.serviceTypes=el('serviceTypesInput').value;
+ agent.resultDestination=el('resultDestinationInput').value;
+ updateCustomCount();
  agent.hrRecipient=el('hrRecipientInput').value;
  agent.hrNotifications={
    new:el('hrNotifyNew').checked,
@@ -211,10 +334,10 @@ for(const input of document.querySelectorAll('[data-editable]')){
 const stopDialog=el('stopAgentDialog'),editDialog=el('profileDialog');
 el('lifecycleButton').addEventListener('click',()=>{
  if(agent.status==='active'){stopDialog.showModal();return}
- const instruction=agent.instruction??el('instructionInput').value;
- const handoff=agent.handoff??el('handoffInput').value;
- if(agent.status==='draft'||!instruction.trim()||!handoff.trim()||(agent.modelMode==='explicit'&&!agent.publicModelId)){
- selectedTab('settings',true);text('autosaveState','Проверьте инструкции и подключение перед запуском');return;
+ if(agent.status==='draft'||(agent.modelMode==='explicit'&&!agent.publicModelId)){
+ selectedTab('settings',true);
+ showSettingSection('preflight');
+ text('autosaveState','Проверьте реальные подключения, права и модель перед запуском');return;
  }
  agent.status='active';persist();render();
 });
@@ -248,5 +371,5 @@ for(const [inputId,property] of [['avatarUpload','avatarData']]){
  reader.readAsDataURL(file);
  });
 }
-render();showSettingSection('basics');selectedTab(query.get('tab'));
+render();showSettingSection(agent.role==='recruiter'?'employer':'domain');selectedTab(query.get('tab'));
 })();

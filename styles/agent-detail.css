@@ -272,3 +272,75 @@
 @media(max-width:1060px){.agent-overview-lower{grid-template-columns:1fr}.agent-overview-stack{display:grid;grid-template-columns:1fr 1fr;gap:11px}.agent-overview-pair{grid-template-columns:1fr 1fr}.settings-workbench{grid-template-columns:164px minmax(0,1fr)}}
 @media(max-width:800px){.agent-overview-pair,.agent-overview-stack{grid-template-columns:1fr}.agent-overview .detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-workbench{grid-template-columns:1fr}.settings-section-nav{position:static;display:flex;flex-direction:row;overflow-x:auto;gap:5px;padding:6px}.settings-section-button{width:auto;flex:none;white-space:nowrap}.settings-section-button .detail-ico{display:none}.profile-text>p{white-space:normal}.detail-profile .detail-avatar.avatar{height:55px;width:55px}.profile-title-line h1{font-size:21px}.detail-profile .hero-actions{flex-wrap:wrap}.agent-detail-tabs .agent-tab{padding:0 10px}}
 @media(max-height:780px) and (min-width:900px){.agent-detail{padding-top:6px}.detail-profile{min-height:98px;padding-top:5px;padding-bottom:10px}.detail-profile .detail-avatar.avatar{height:54px;width:54px}.agent-detail-tabs .agent-tab{min-height:38px}.agent-pane-scroll{padding-top:10px}.agent-overview .detail-metric{min-height:90px;padding:10px 13px}.agent-overview .detail-metric strong{font-size:23px}.overview-trend{height:140px}}
+
+/* Profession-ready configuration — local to agent detail, v1 review. */
+.agent-settings-pane .settings-section-nav{gap:4px}
+.agent-settings-pane .settings-section-button{min-height:37px;font-size:11px}
+.agent-settings-pane .detail-card .card-title:has(.business-card-subtitle){align-items:flex-start}
+.business-card-subtitle{font-size:10.8px;line-height:1.5;color:#94a3b4;margin-top:5px;max-width:620px}
+.settings-demo-tag{flex:none;border:1px solid #4a4560;color:#bfb0f0;background:#2b293b;border-radius:7px;font-size:10px;padding:5px 8px}
+.employer-choice-row{display:flex;align-items:flex-end;gap:12px;margin:17px 0}
+.employer-choice-row>.detail-field{flex:1;min-width:210px}
+.employer-top-actions{display:flex;align-items:center;gap:7px;flex:none;padding-bottom:1px}
+.business-button,.subtle-action,.knowledge-file-pick{font:inherit;font-size:11px;border:1px solid #485061;border-radius:8px;padding:9px 12px;background:#252b36;color:#dfe2ef;cursor:pointer}
+.business-button:hover:not(:disabled),.subtle-action:hover:not(:disabled),.knowledge-file-pick:hover:not(.is-disabled){background:#34364a;border-color:#7968b5;color:#fff}
+.business-button.primary-outline{border-color:#7562ab;color:#cbb9ff;background:#2e2942}
+.business-button:disabled,.subtle-action:disabled{opacity:.43;cursor:not-allowed}
+.employer-profile{display:flex;align-items:flex-start;gap:14px;background:linear-gradient(115deg,#242533,#212630);border:1px solid #444258;border-radius:11px;padding:18px 17px}
+.employer-profile[hidden],.employer-empty[hidden]{display:none!important}
+.employer-symbol{display:grid;place-items:center;flex:none;width:41px;height:41px;background:#4a3b75;border:1px solid #68568e;border-radius:11px;color:#e8dcff;font-weight:670;font-size:17px}
+.employer-profile-main{min-width:0;display:flex;flex-direction:column;gap:6px}
+.employer-profile-main>strong{font-size:14px;font-weight:630;color:#eef1fb}
+.employer-profile-main>span{font-size:10.5px;color:#a99ecb}
+.employer-profile-main>p{font-size:11.4px;color:#bdc5d4;line-height:1.58}
+.employer-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.employer-facts span{color:#aeb8c6;border:1px solid #434757;border-radius:6px;font-size:10px;background:#292e3b;padding:5px 9px}
+.employer-empty{border:1px dashed #4d5263;color:#9eaab8;border-radius:9px;padding:22px;font-size:11.5px}
+.setting-info-note{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:#242332;border:1px solid #3d3a58;border-radius:9px;margin-top:15px}
+.setting-info-note>span{font-size:14px;color:#b6a2fb}
+.setting-info-note p{color:#aeb6c7;font-size:10.7px;line-height:1.65;margin:0}
+.employer-material-types{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+.employer-material-types span{background:#252b37;color:#c2c6d5;border:1px solid #3c4552;padding:8px 10px;font-size:10.6px;border-radius:8px}
+.business-panel .detail-field select{height:39px}
+.agent-settings-pane .settings-view:not([hidden])>.detail-card{min-height:0}
+.builtin-profession{display:flex;align-items:flex-start;gap:13px;border:1px solid #464263;border-radius:11px;padding:16px;background:linear-gradient(110deg,#30283f,#232735);margin:14px 0 19px}
+.builtin-profession-icon{width:37px;height:37px;border-radius:10px;background:#5c497e;color:#efe6ff;display:grid;place-items:center;font-size:19px;flex:none}
+.builtin-profession strong{font-size:12.4px;color:#eee8ff}
+.builtin-profession p{font-size:10.9px;line-height:1.6;margin-top:5px;color:#b8accb}
+.builtin-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.builtin-chips>span{font-size:9.6px;color:#cebffa;border:1px solid #584c77;border-radius:6px;background:#393049;padding:4px 7px}
+.custom-instruction-field textarea{min-height:122px;resize:vertical}
+.custom-instructions-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
+.custom-instructions-footer>span{font-size:10.4px;color:#8997aa}
+.subtle-action{background:transparent;padding:7px 11px}
+.information-destinations{display:flex;flex-direction:column;gap:0}
+.information-destinations>div{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:4px;border-top:1px solid #323948;padding:11px 0}
+.information-destinations>div:first-child{border-top:0}
+.information-destinations strong{font-size:11.4px;color:#d6dce7}
+.information-destinations small{grid-row:2;color:#8e9aaa;font-size:10.4px}
+.information-destinations button,.information-destinations a{grid-column:2;grid-row:1/span 2;align-self:center;border:0;background:none;color:#b9a9ff;cursor:pointer;font:inherit;font-size:10.8px;white-space:nowrap;text-decoration:none}
+.information-destinations button:hover,.information-destinations a:hover{color:#ebdfff}
+.information-destinations button[hidden]{display:none}
+.agent-settings-pane .settings-card-copy strong{color:#e0d7ff;font-weight:590}
+.employer-edit-dialog{width:min(510px,calc(100vw - 26px));max-height:87vh;overflow-y:auto}
+.employer-edit-dialog form{display:flex;flex-direction:column}
+.employer-form-content{padding:10px 22px 22px;display:flex;flex-direction:column;gap:12px}
+.employer-form-content .detail-field{font-size:11.3px}
+.employer-form-content input,.employer-form-content select,.employer-form-content textarea{font:inherit;width:100%;background:#252b34;border:1px solid #444a59;border-radius:8px;color:#eef1fb;padding:10px;resize:vertical}
+.employer-form-content input:focus,.employer-form-content select:focus,.employer-form-content textarea:focus{outline:1px solid #9380ec}
+.employer-form-content .settings-help{margin:0}
+.employer-edit-dialog form footer{position:sticky;bottom:0;z-index:1}
+.employer-edit-dialog form footer button[type="submit"]{background:#6d5ac0;border-color:#7865c9;color:#fff}
+.knowledge-file-pick{background:#302942;border-color:#69568e;color:#dbccff;display:inline-flex;align-items:center}
+.knowledge-file-pick.is-disabled{opacity:.43;cursor:not-allowed}
+.knowledge-local-list{margin-top:8px;display:flex;flex-direction:column;gap:7px}
+.knowledge-preview-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#222835;border:1px solid #354153;padding:10px;border-radius:8px}
+.knowledge-preview-item>div{display:flex;flex-direction:column;gap:5px}
+.knowledge-preview-item strong{font-size:11px;overflow-wrap:anywhere}.knowledge-preview-item small{font-size:10px;color:#94a0af}
+.knowledge-preview-item button{background:none;border:1px solid #454d61;border-radius:7px;padding:6px 9px;font:inherit;color:#b5a6ff;font-size:10.5px;cursor:pointer}
+.knowledge-preview-item button:disabled{opacity:.35;cursor:not-allowed}
+.knowledge-local-disclaimer{font-size:10px;color:#8d97a5;line-height:1.5;margin-top:11px}
+@media(max-width:1050px){.employer-choice-row{flex-wrap:wrap}.employer-choice-row>.detail-field{flex-basis:100%}}
+@media(max-width:700px){.employer-profile{flex-direction:column}.employer-top-actions{width:100%}.business-button{flex:1}.information-destinations>div{grid-template-columns:1fr}.information-destinations button,.information-destinations a{grid-column:1;grid-row:3;justify-self:start;margin-top:6px}.agent-settings-pane .detail-card{padding:15px}}
+
+.settings-try-draft{color:#c9b5ff;text-decoration:underline;text-underline-offset:3px;margin-left:5px}.settings-try-draft:hover{color:#eee3ff}
