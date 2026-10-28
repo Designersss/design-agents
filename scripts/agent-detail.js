@@ -40,23 +40,24 @@ function selectedTab(tab,push=false){
  const requested=valid.includes(tab)?tab:'overview';
  const current=requested==='vacancies'&&agent.role!=='recruiter'?'overview':requested;
  const subpage=current!=='overview';
+ // One consistent agent screen: avatar, status, actions and tabs stay visible.
  root.classList.toggle('agent-section-mode',subpage);
  root.classList.toggle('agent-home-mode',!subpage);
- // Hide the entire home-only profile, including avatar, title, status and actions.
- // The native hidden property complements scoped CSS and keeps it inaccessible.
- el('detailHero').hidden=subpage;
- document.querySelectorAll('[data-pane]').forEach(panel=>panel.hidden=panel.dataset.pane!==current);
- const back=link('overview');
- el('topAgentCrumb').href=back;
- el('agentBackLink').href=back;
- el('agentBackLink').hidden=!subpage;
- el('topSectionSeparator').hidden=!subpage;
- el('topSectionCrumb').hidden=!subpage;
- if(subpage){
-   const config=sectionInfo[current]||sectionInfo.settings;
-   text('topSectionCrumb',current==='work'&&agent.role!=='recruiter'?'Заявки':config[2]);
-   document.title=(current==='work'&&agent.role!=='recruiter'?'Заявки':config[0])+' · '+agent.name+' — AIMock';
- }else{document.title=agent.name+' — AIMock'}
+ root.classList.add('agent-tabs-layout');
+ el('detailHero').hidden=false;
+ document.querySelectorAll('[data-pane]').forEach(panel=>{panel.hidden=panel.dataset.pane!==current});
+ document.querySelectorAll('[data-agent-tab]').forEach(button=>{
+  const active=button.dataset.agentTab===current;
+  button.classList.toggle('is-active',active);
+  button.setAttribute('aria-selected',String(active));
+  button.tabIndex=active?0:-1;
+ });
+ el('topAgentCrumb').href=link('overview');
+ el('topSectionSeparator').hidden=true;
+ el('topSectionCrumb').hidden=true;
+ const currentTitle=current==='work'&&agent.role!=='recruiter'
+  ?'Заявки':current==='overview'?'Обзор':sectionInfo[current]?.[2]||'Обзор';
+ document.title=currentTitle+' · '+agent.name+' — AIMock';
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
@@ -320,9 +321,9 @@ function render(){
  updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
  text('workTitle',recruiter?'Кандидаты':'Заявки');
- document.querySelectorAll('[data-role-card]').forEach(card=>{
-  card.hidden=(card.dataset.roleCard==='hr'&&!recruiter)||(card.dataset.roleCard==='other'&&recruiter);
- });
+ text('agentWorkTabLabel',recruiter?'Кандидаты':'Заявки');
+ el('agentTab-vacancies').hidden=!recruiter;
+
  const profession=agent.role==='recruiter'
   ?'recruiter'
   :(['a3','a7'].includes(id)?'support':id==='a5'?'partners':id==='a10'?'archive':'inbound');
@@ -388,7 +389,7 @@ function render(){
  renderProfileTags();renderKnowledge();
  document.title=agent.name+' — AIMock';syncSpace();
  document.querySelectorAll('[data-internal-tab]').forEach(a=>a.href=link(a.dataset.internalTab));
- document.querySelectorAll('[data-route-card]').forEach(a=>a.href=link(a.dataset.routeCard));
+
 }
 
 el('employerSelect').addEventListener('change',()=>{
@@ -463,8 +464,22 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeProfileTags();
 });
-// Cards and in-content links use native navigation to dedicated URLs.
- // No horizontal tab bar or intercepted in-place tab switching.
+// Horizontal tabs and in-page agent links switch visible panels without reloading.
+document.querySelectorAll('[data-agent-tab]').forEach(button=>{
+ button.addEventListener('click',()=>selectedTab(button.dataset.agentTab,true));
+ button.addEventListener('keydown',event=>{
+  if(!['ArrowRight','ArrowLeft','Home','End'].includes(event.key))return;
+  const tabs=[...document.querySelectorAll('[data-agent-tab]')].filter(t=>!t.hidden);
+  const i=tabs.indexOf(button);
+  const target=event.key==='Home'?tabs[0]
+   :event.key==='End'?tabs[tabs.length-1]
+   :tabs[(i+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];
+  event.preventDefault();target.focus();selectedTab(target.dataset.agentTab,true);
+ });
+});
+document.querySelectorAll('[data-internal-tab]').forEach(a=>a.addEventListener('click',event=>{
+ event.preventDefault();selectedTab(a.dataset.internalTab,true);
+}));
 window.addEventListener('popstate',()=>selectedTab(new URLSearchParams(location.search).get('tab')));
 document.addEventListener('click',e=>{if(e.target.closest('[data-space]'))queueMicrotask(syncSpace)});
 function saveSettings(){
