@@ -617,6 +617,8 @@ body.agent-refined .agent-content-area .agent-pane .detail-section-head h2{
 }
 @media(max-width:1340px){
  body.agent-refined .agent-detail-columns{grid-template-columns:minmax(205px,226px) minmax(0,1fr)}
+}
+@media(max-width:1130px){
  body.agent-refined .agent-overview-compact .detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 @media(max-width:1040px){
