@@ -273,6 +273,7 @@ function openEmployerForm(existing){
 
 function syncSpace(){
  let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}
+ text('agentInspectorScope',personal?'Личное пространство':'Компания (демо)');
  el('companyAccess').hidden=personal;
  const staff=el('hrRecipientTeamOption');staff.disabled=personal;staff.hidden=personal;
  if(personal&&el('hrRecipientInput').value==='hr'){
@@ -318,6 +319,10 @@ function render(){
  text('agentName',agent.name);text('agentDescription',agent.description);
  text('topAgentCrumb',agent.name);
  text('heroRole',recruiter?'AI-рекрутер':'AI-менеджер обращений');
+ const professionLabels={recruiter:'HR-рекрутер',inbound:'Менеджер заявок',support:'Поддержка',partners:'Менеджер партнёров',archive:'Менеджер обращений'};
+ const inspectorProfession=agent.role==='recruiter'?'recruiter'
+  :['a3','a7'].includes(id)?'support':id==='a5'?'partners':id==='a10'?'archive':'inbound';
+ text('agentInspectorProfession',professionLabels[inspectorProfession]);
  updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
  text('workTitle',recruiter?'Кандидаты':'Заявки');
@@ -358,6 +363,7 @@ function render(){
  el('vacancyFrontend').checked=assigned.includes('vacancyFrontend');
  el('vacancyDesigner').checked=assigned.includes('vacancyDesigner');
  el('modelModeInput').value=agent.modelMode||'automatic';
+ text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
  const hr=agent.role==='recruiter';
  document.querySelectorAll('[data-setting-scope]').forEach(button=>{
@@ -519,6 +525,7 @@ function saveSettings(){
  };
  agent.assignedVacancies=['vacancyFrontend','vacancyDesigner'].filter(v=>el(v).checked);
  agent.modelMode=el('modelModeInput').value;
+ text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=agent.modelMode!=='explicit';
 
  text('autosaveState',persist()?'Изменения сохранены':'Не удалось сохранить');
