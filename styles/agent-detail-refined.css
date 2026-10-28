@@ -497,9 +497,16 @@ body.agent-refined .agent-content-area .agent-pane-scroll .agent-pane{
  max-width:100%;
  margin:0;
 }
+body.agent-refined .agent-content-area .agent-pane-scroll #agentPanel-overview{
+ display:flex;
+ flex-direction:column;
+ min-height:100%;
+}
 body.agent-refined .agent-overview-compact{
  display:flex;
  flex-direction:column;
+ flex:1 1 auto;
+ min-height:100%;
  gap:14px;
  width:100%;
 }
@@ -517,37 +524,24 @@ body.agent-refined .agent-overview-compact .card-title h2{
  font-weight:645;
  letter-spacing:-.1px;
 }
+/* KPI stays compact at the top; the readable purpose card fills remaining viewport space. */
 body.agent-refined .agent-overview-compact .agent-purpose-card{
- display:block!important;
- flex:none!important;
+ display:flex!important;
+ flex-direction:column;
+ flex:1 1 auto!important;
  min-height:0!important;
 }
 body.agent-refined .agent-overview-compact .agent-purpose-copy{
- display:flex!important;
- flex-direction:column!important;
- gap:16px!important;
- justify-content:flex-start!important;
+ display:block!important;
+ flex:1 1 auto;
  height:auto!important;
 }
-body.agent-refined .agent-overview-compact .agent-purpose-section{
- padding:0!important;
- border:0!important;
-}
-body.agent-refined .agent-overview-compact .agent-purpose-section+.agent-purpose-section{
- padding-top:14px!important;
- border-top:1px solid #2a2e2f!important;
-}
-body.agent-refined .agent-overview-compact .agent-purpose-section .agent-purpose-kicker{
- color:#8f9697!important;
- font-size:10px!important;
- letter-spacing:.02em;
- margin-bottom:8px;
-}
-body.agent-refined .agent-overview-compact .agent-purpose-section p{
+body.agent-refined .agent-overview-compact .agent-purpose-copy p{
  color:#b7bbbb!important;
- font-size:11.7px!important;
- line-height:1.78!important;
- max-width:82ch;
+ font-size:13px!important;
+ line-height:1.85!important;
+ max-width:90ch;
+ margin:0;
 }
 body.agent-refined .agent-overview-compact .detail-key-metrics{
  flex:none!important;
