@@ -16,18 +16,19 @@
       </div>
     </div>
   </div>
-  <div class="agent-action-area"><button id="agentActionsToggle" class="agent-actions-toggle" type="button" aria-expanded="false" aria-controls="agentActionsMenu">Действия <span aria-hidden="true">⌄</span></button><div class="hero-actions" id="agentActionsMenu" hidden>
-    <button id="shareAgentButton" type="button" class="hero-button"><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg> Поделиться</button>
-    <button id="transferAgentButton" type="button" class="hero-button" title="Перенести в другой аккаунт или Workspace" aria-label="Перенести в другой аккаунт"><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg> Перенести</button>
-    <button id="editProfileButton" type="button" class="hero-button compact-edit" title="Сначала остановите агента" disabled><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4 16-1 5 5-1L20 8a3 3 0 0 0-4-4L4 16Z"/></svg> <span>Редактировать</span></button>
-    <button id="lifecycleButton" type="button" class="hero-button primary">Остановить</button>
-  </div></div>
+
 </header>
 <div class="agent-inspector-metadata" aria-label="Сведения об агенте">
  <div class="agent-inspector-fact"><span>Профессия</span><strong id="agentInspectorProfession">HR-рекрутер</strong></div>
  <div class="agent-inspector-fact"><span>Пространство</span><strong id="agentInspectorScope">Компания (демо)</strong></div>
  <div class="agent-inspector-fact"><span>Модель</span><strong id="agentInspectorModel">Автоматически</strong></div>
 </div>
+  <div class="agent-action-area"><button id="agentActionsToggle" class="agent-actions-toggle" type="button" aria-expanded="false" aria-controls="agentActionsMenu">Действия <span aria-hidden="true">⌄</span></button><div class="hero-actions" id="agentActionsMenu" hidden>
+    <button id="shareAgentButton" type="button" class="hero-button"><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg> Поделиться</button>
+    <button id="transferAgentButton" type="button" class="hero-button" title="Перенести в другой аккаунт или Workspace" aria-label="Перенести в другой аккаунт"><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg> Перенести</button>
+    <button id="editProfileButton" type="button" class="hero-button compact-edit" title="Сначала остановите агента" disabled><svg class="detail-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4 16-1 5 5-1L20 8a3 3 0 0 0-4-4L4 16Z"/></svg> <span>Редактировать</span></button>
+    <button id="lifecycleButton" type="button" class="hero-button primary">Остановить</button>
+  </div></div>
 </aside>
 <div class="agent-content-area">
 <nav class="agent-tabbar" id="agentTabbar" role="tablist" aria-label="Разделы агента">
@@ -41,9 +42,8 @@
   <button type="button" id="agentTab-journal" class="agent-tab" role="tab" aria-selected="false" tabindex="-1" aria-controls="agentPanel-journal" data-agent-tab="journal">Журнал</button>
 </nav>
 <div class="agent-pane-scroll" id="detailScroll"><section class="agent-pane agent-overview" id="agentPanel-overview" role="tabpanel" aria-labelledby="agentTab-overview" data-pane="overview">
-<div class="agent-overview-mono">
- <div class="agent-overview-left">
-  <section class="detail-card agent-purpose-card" aria-labelledby="agentPurposeTitle">
+  <div class="agent-overview-compact">
+    <section class="detail-card agent-purpose-card" aria-labelledby="agentPurposeTitle">
     <div class="card-title"><h2 id="agentPurposeTitle">Основная задача</h2></div>
     <div class="agent-purpose-copy">
       <div class="agent-purpose-section"><span class="agent-purpose-kicker">Назначение</span>
@@ -54,7 +54,7 @@
         <p id="agentPurposeDetails">Готовит сводку для ответственного HR. Решения о приёме и окончательном отказе принимает только человек.</p></div>
     </div>
   </section>
-  <section class="detail-card detail-key-metrics" aria-labelledby="agentMetricsTitle">
+    <section class="detail-card detail-key-metrics" aria-labelledby="agentMetricsTitle">
    <div class="card-title metric-title"><div><h2 id="agentMetricsTitle">Ключевые показатели</h2><p>Демонстрационные данные</p></div>
     <div class="metric-period-switch" role="group" aria-label="Период показателей">
       <button type="button" class="metric-period-button is-active" data-overview-period="7" aria-pressed="true">7 дней</button>
@@ -68,17 +68,7 @@
     <div class="detail-metric"><span>Среднее время ответа</span><strong id="metricResponse">28 сек</strong><small>За период · пример</small></div>
    </div>
   </section>
- </div>
- <section class="detail-card agent-events-card" aria-labelledby="agentEventsTitle">
-  <div class="card-title"><h2 id="agentEventsTitle">Последние события</h2><a class="inline-action" data-internal-tab="journal" href="?agent=a1&amp;tab=journal">Все события <span aria-hidden="true">→</span></a></div>
-  <ol class="agent-event-timeline">
-   <li class="activity-row"><span class="timeline-mark" aria-hidden="true"></span><span class="event-content"><strong id="agentEventTitle1">Новый отклик</strong><small id="agentEventNote1">Кандидат оставил обращение</small></span><time>12:42</time></li>
-   <li class="activity-row"><span class="timeline-mark" aria-hidden="true"></span><span class="event-content"><strong id="agentEventTitle2">Интервью завершено</strong><small id="agentEventNote2">Результаты переданы HR</small></span><time>11:56</time></li>
-   <li class="activity-row"><span class="timeline-mark" aria-hidden="true"></span><span class="event-content"><strong id="agentEventTitle3">Диалог завершён</strong><small id="agentEventNote3">Кандидат получил ответ</small></span><time>10:18</time></li>
-  </ol>
-  <p class="event-demo-note">События показаны для демонстрации интерфейса.</p>
- </section>
-</div>
+  </div>
 </section>
 <section class="agent-pane agent-vacancies-pane" id="agentPanel-vacancies" role="tabpanel" aria-labelledby="agentTab-vacancies" data-pane="vacancies" hidden>
 <div class="detail-section-head"><div><h2>Вакансии</h2><p>Управление доступными позициями этого HR-рекрутера</p></div></div>
