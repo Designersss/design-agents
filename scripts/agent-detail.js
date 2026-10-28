@@ -464,6 +464,27 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeProfileTags();
 });
+function closeAgentActions(){
+ const menu=el('agentActionsMenu'),toggle=el('agentActionsToggle');
+ menu.hidden=true;
+ toggle.setAttribute('aria-expanded','false');
+}
+el('agentActionsToggle').addEventListener('click',()=>{
+ const menu=el('agentActionsMenu');
+ const open=menu.hidden;
+ menu.hidden=!open;
+ el('agentActionsToggle').setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('click',event=>{
+ if(!event.target.closest('.agent-action-area'))closeAgentActions();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!el('agentActionsMenu').hidden){closeAgentActions();el('agentActionsToggle').focus();}
+});
+el('agentActionsMenu').addEventListener('click',event=>{
+ if(event.target.closest('button'))closeAgentActions();
+});
+
 // Horizontal tabs and in-page agent links switch visible panels without reloading.
 document.querySelectorAll('[data-agent-tab]').forEach(button=>{
  button.addEventListener('click',()=>selectedTab(button.dataset.agentTab,true));
