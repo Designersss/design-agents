@@ -846,3 +846,10 @@ html[data-theme="light"] .public-activities>span,html[data-theme="light"] .publi
 html[data-theme="light"] .public-copy-dialog{background:#fff;color:#263335;border-color:#dce5e6}
 html[data-theme="light"] .public-copy-field select{background:#fff;color:#293638;border-color:#dce5e6}
 @media(max-width:560px){.theme-toggle{width:32px;height:32px}}
+
+html[data-theme="light"] .hr-nav-parent{color:#677477}
+html[data-theme="light"] .hr-nav-parent:hover,html[data-theme="light"] .hr-nav-parent.selected{background:#edf3f0;color:#28654b}
+html[data-theme="light"] .hr-nav-links a{color:#6c7a7d}
+html[data-theme="light"] .hr-nav-links a:hover{background:#f1f5f4;color:#294b40}
+html[data-theme="light"] .hr-nav-links a.selected{color:#216448;background:#e7f1eb}
+html[data-theme="light"] .is-collapsed .hr-nav-links{background:#fff;border-color:#e2e7e8;box-shadow:0 15px 35px #25353620}
