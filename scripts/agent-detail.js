@@ -40,23 +40,24 @@ function selectedTab(tab,push=false){
  const requested=valid.includes(tab)?tab:'overview';
  const current=requested==='vacancies'&&agent.role!=='recruiter'?'overview':requested;
  const subpage=current!=='overview';
+ // One consistent agent screen: avatar, status, actions and tabs stay visible.
  root.classList.toggle('agent-section-mode',subpage);
  root.classList.toggle('agent-home-mode',!subpage);
- // Hide the entire home-only profile, including avatar, title, status and actions.
- // The native hidden property complements scoped CSS and keeps it inaccessible.
- el('detailHero').hidden=subpage;
- document.querySelectorAll('[data-pane]').forEach(panel=>panel.hidden=panel.dataset.pane!==current);
- const back=link('overview');
- el('topAgentCrumb').href=back;
- el('agentBackLink').href=back;
- el('agentBackLink').hidden=!subpage;
- el('topSectionSeparator').hidden=!subpage;
- el('topSectionCrumb').hidden=!subpage;
- if(subpage){
-   const config=sectionInfo[current]||sectionInfo.settings;
-   text('topSectionCrumb',current==='work'&&agent.role!=='recruiter'?'Заявки':config[2]);
-   document.title=(current==='work'&&agent.role!=='recruiter'?'Заявки':config[0])+' · '+agent.name+' — AIMock';
- }else{document.title=agent.name+' — AIMock'}
+ root.classList.add('agent-tabs-layout');
+ el('detailHero').hidden=false;
+ document.querySelectorAll('[data-pane]').forEach(panel=>{panel.hidden=panel.dataset.pane!==current});
+ document.querySelectorAll('[data-agent-tab]').forEach(button=>{
+  const active=button.dataset.agentTab===current;
+  button.classList.toggle('is-active',active);
+  button.setAttribute('aria-selected',String(active));
+  button.tabIndex=active?0:-1;
+ });
+ el('topAgentCrumb').href=link('overview');
+ el('topSectionSeparator').hidden=true;
+ el('topSectionCrumb').hidden=true;
+ const currentTitle=current==='work'&&agent.role!=='recruiter'
+  ?'Заявки':current==='overview'?'Обзор':sectionInfo[current]?.[2]||'Обзор';
+ document.title=currentTitle+' · '+agent.name+' — AIMock';
  if(push)history.pushState({},'',link(current));
  el('detailScroll').scrollTop=0;
 }
@@ -272,6 +273,7 @@ function openEmployerForm(existing){
 
 function syncSpace(){
  let personal=false;try{personal=sessionStorage.getItem('aimock-space')==='personal'}catch(_){}
+ text('agentInspectorScope',personal?'Личное пространство':'Компания (демо)');
  el('companyAccess').hidden=personal;
  const staff=el('hrRecipientTeamOption');staff.disabled=personal;staff.hidden=personal;
  if(personal&&el('hrRecipientInput').value==='hr'){
@@ -281,32 +283,67 @@ function syncSpace(){
 }
 // The purpose is a read-only explanation of the built-in profession, not a user prompt.
 const professionSummaries={
- recruiter:[
-  'HR-рекрутер помогает проводить первичный отбор кандидатов на назначенные вакансии. Он опирается на подтверждённые требования каждой позиции и сведения работодателя.',
-  'Принимает отклики, проводит первичное интервью, уточняет опыт и ожидания кандидатов. Проверяет полноту информации и отмечает, какие сведения ещё требуют уточнения.',
-  'Готовит понятную сводку по каждому кандидату и передаёт её ответственному HR. Решения о приёме и окончательном отказе принимает только человек.'
- ],
- inbound:[
-  'Менеджер заявок обрабатывает входящие обращения из подключённых каналов. Он помогает клиентам по вопросам услуг компании и фиксирует запросы в пределах назначенных полномочий.',
-  'Уточняет потребность, собирает необходимые сведения и отвечает на типовые вопросы, используя разрешённую информацию о продуктах и условиях. Не придумывает отсутствующие данные.',
-  'Формирует структурированную заявку для ответственного сотрудника. Нестандартные случаи и действия, требующие согласования, передаются человеку вместе с контекстом обращения.'
- ],
- support:[
-  'Специалист поддержки помогает пользователям разобраться с распространёнными вопросами по продуктам и сервисам компании, используя актуальные разрешённые материалы.',
-  'Уточняет обстоятельства проблемы, следует проверенным инструкциям, предлагает доступные безопасные шаги и сообщает, когда сведений для решения недостаточно.',
-  'Фиксирует результат обращения и, если требуется участие сотрудника, передаёт ему контекст проблемы. Агент не запрашивает секреты и не обещает неподтверждённые сроки.'
- ],
- partners:[
-  'Менеджер партнёров принимает обращения потенциальных и действующих партнёров, помогает разобраться в общих условиях сотрудничества и собирает сведения о запросе.',
-  'Уточняет направление партнёрства и необходимые детали, отвечает на вопросы по утверждённым материалам и фиксирует договорённости только в разрешённых пределах.',
-  'Готовит информацию для ответственного менеджера и передаёт вопросы, требующие коммерческого согласования. Самостоятельно не принимает обязательства от имени компании.'
- ],
- archive:[
-  'Менеджер обращений помогает разбирать запросы по ранее поступившим заявкам и доступным архивным материалам, не выходя за установленные права доступа.',
-  'Определяет предмет обращения, проверяет разрешённые источники, уточняет недостающую информацию и отделяет подтверждённые сведения от предположений.',
-  'Готовит результат для сотрудника либо передаёт запрос на ручную проверку, если документов недостаточно или операция требует дополнительных прав.'
- ]
+ recruiter:"HR-рекрутер самостоятельно ведёт первичный этап подбора по назначенным вакансиям. Он принимает отклики и общается с кандидатами через подключённые каналы, объясняет подтверждённые условия вакансии, задаёт вопросы об опыте, навыках и ожиданиях, уточняет недостающие сведения и сопоставляет ответы с требованиями работодателя. По итогам общения агент сохраняет контекст диалога, готовит понятную сводку и передаёт кандидата ответственному HR на рассмотрение. Если данных недостаточно или вопрос требует решения человека, агент сообщает об этом и передаёт обращение. Самостоятельно он не принимает окончательное решение о найме или отказе.",
+ inbound:"Менеджер заявок обрабатывает входящие обращения из подключённых каналов и помогает клиентам разобраться в услугах компании. Он отвечает на типовые вопросы по доступным материалам, уточняет потребность и детали запроса, собирает необходимую контактную информацию в пределах разрешённых настроек и формирует структурированную заявку. Агент сохраняет контекст общения, чтобы сотруднику не пришлось повторно задавать те же вопросы. Если информация не подтверждена, запрос нестандартный или требуется согласование условий, менеджер не придумывает ответ и передаёт заявку ответственному человеку вместе с собранными сведениями.",
+ support:"Агент поддержки отвечает на обращения пользователей по продуктам и сервисам компании через подключённые каналы. Он уточняет обстоятельства вопроса, ищет ответы в разрешённой базе знаний, объясняет проверенные инструкции и помогает выполнить доступные безопасные действия. В ходе разговора агент сохраняет контекст и фиксирует результат, чтобы обращение было понятно и пользователю, и сотруднику. Если проблема не решается по имеющимся инструкциям, не хватает информации или нужны дополнительные полномочия, агент передаёт случай человеку. Он не запрашивает секретные данные и не обещает сроки, которые компания не подтвердила.",
+ partners:"Менеджер партнёров помогает обрабатывать обращения действующих и потенциальных партнёров. Он рассказывает об условиях сотрудничества по утверждённым материалам, уточняет направление партнёрства, собирает сведения о компании и потребностях, отвечает на стандартные вопросы и фиксирует договорённости в пределах предоставленных полномочий. По результатам общения агент формирует краткое резюме и передаёт запрос ответственному менеджеру с сохранением контекста. Вопросы о нестандартных коммерческих условиях, юридических обязательствах и индивидуальных соглашениях он не решает самостоятельно, а направляет сотруднику.",
+ archive:"Менеджер архивных обращений помогает разбирать повторные вопросы по ранее поступившим заявкам и доступным материалам компании. Он выясняет, к какому запросу относится сообщение, проверяет сведения только в разрешённых источниках, уточняет недостающие детали и объясняет подтверждённую информацию. Агент фиксирует результат и сохраняет контекст обращения для дальнейшей работы. Если нужных документов нет, сведения противоречат друг другу или действие требует прав, которых у агента нет, он передаёт запрос сотруднику на ручную проверку, не выдавая предположения за факты."
 };
+
+function renderHRWorkspacePanels(){
+ const store=window.AIMockHR;
+ const options=el('vacancyAssignmentOptions'),list=el('agentAssignedVacancies'),candidates=el('agentCandidateRecords');
+ options.replaceChildren();list.replaceChildren();candidates.replaceChildren();
+ if(!store)return;
+ const vacancies=store.data().vacancies;
+ const assigned=Array.isArray(agent.assignedVacancies)?agent.assignedVacancies:store.assignmentIds(id);
+ for(const vacancy of vacancies){
+  const label=document.createElement('label');label.className='vacancy-option';
+  const box=document.createElement('input');box.type='checkbox';box.value=vacancy.id;
+  box.dataset.vacancyAssignment='true';box.checked=assigned.includes(vacancy.id);
+  box.disabled=agent.status==='active';
+  const block=document.createElement('span'),name=document.createElement('strong'),note=document.createElement('small');
+  name.textContent=vacancy.title;note.textContent=vacancy.employer+' · '+store.statuses[vacancy.status];
+  block.append(name,note);label.append(box,block);options.append(label);
+  box.addEventListener('change',()=>{if(agent.status!=='active'){saveSettings();renderHRWorkspacePanels()}});
+  if(assigned.includes(vacancy.id)){
+   const row=document.createElement('a');row.className='vacancy-preview-row';row.href='./vacancy-detail.html?id='+encodeURIComponent(vacancy.id);
+   const inner=document.createElement('span'),title=document.createElement('strong'),meta=document.createElement('small'),state=document.createElement('span');
+   title.textContent=vacancy.title;meta.textContent=vacancy.employer;state.className='vacancy-preview-status'+(vacancy.status==='open'?'':' neutral');
+   state.textContent=store.statuses[vacancy.status];inner.append(title,meta);row.append(inner,state);list.append(row);
+  }
+ }
+ if(!vacancies.length){
+  const text=document.createElement('p');text.className='settings-card-copy';text.textContent='В этом Workspace пока нет вакансий. Создайте первую в общем каталоге.';options.append(text);
+ }
+ if(!list.children.length){
+  const text=document.createElement('p');text.className='settings-card-copy';text.textContent='Этому агенту ещё не назначены вакансии.';list.append(text);
+ }
+ const recruiter=agent.role==='recruiter';
+ el('agentWorkDemoRows').hidden=recruiter;
+ candidates.hidden=!recruiter;
+ const link=el('agentWorkAllLink');
+ link.href=recruiter?'./candidates.html?agent='+encodeURIComponent(id):'./dialogs.html';
+ link.firstChild.textContent=recruiter?'Все кандидаты ':'Все диалоги ';
+ if(!recruiter)return;
+ const applications=store.data().applications.filter(app=>app.agentId===id);
+ for(const app of applications){
+  const person=store.candidate(app.candidateId),vacancy=store.vacancy(app.vacancyId);
+  const row=document.createElement('a');row.href='./candidate-detail.html?application='+encodeURIComponent(app.id);
+  row.className='work-row';row.style.textDecoration='none';
+  const badge=document.createElement('span');badge.className='work-avatar';
+  badge.textContent=(person?.name||'К').split(' ').slice(0,2).map(part=>part[0]).join('').toUpperCase();
+  const info=document.createElement('span'),name=document.createElement('strong'),note=document.createElement('small'),status=document.createElement('em');
+  name.textContent=person?.name||'Кандидат';note.textContent=vacancy?.title||'Вакансия';status.textContent=store.applicationStatuses[app.status]||app.status;
+  info.append(name,note);row.append(badge,info,status);candidates.append(row);
+ }
+ if(!applications.length){
+  const text=document.createElement('p');text.className='settings-card-copy';
+  text.textContent='Откликов этого агента пока нет. Все кандидаты Workspace доступны в общем каталоге.';candidates.append(text);
+ }
+}
+window.addEventListener('aimock:hr-update',renderHRWorkspacePanels);
+window.addEventListener('aimock:workspace-change',renderHRWorkspacePanels);
 function render(){
   const titles=agent.role==='recruiter'
    ?[['Новый отклик','Кандидат оставил обращение'],['Интервью завершено','Результаты переданы HR'],['Диалог завершён','Кандидат получил ответ']]
@@ -317,19 +354,21 @@ function render(){
  text('agentName',agent.name);text('agentDescription',agent.description);
  text('topAgentCrumb',agent.name);
  text('heroRole',recruiter?'AI-рекрутер':'AI-менеджер обращений');
+ const professionLabels={recruiter:'HR-рекрутер',inbound:'Менеджер заявок',support:'Поддержка',partners:'Менеджер партнёров',archive:'Менеджер обращений'};
+ const inspectorProfession=agent.role==='recruiter'?'recruiter'
+  :['a3','a7'].includes(id)?'support':id==='a5'?'partners':id==='a10'?'archive':'inbound';
+ text('agentInspectorProfession',professionLabels[inspectorProfession]);
  updateOverviewMetrics();
  text('metricResultLabel',recruiter?'Кандидатов обработано':'Заявок обработано');
  text('workTitle',recruiter?'Кандидаты':'Заявки');
- document.querySelectorAll('[data-role-card]').forEach(card=>{
-  card.hidden=(card.dataset.roleCard==='hr'&&!recruiter)||(card.dataset.roleCard==='other'&&recruiter);
- });
+ text('agentWorkTabLabel',recruiter?'Кандидаты':'Заявки');
+ el('agentTab-vacancies').hidden=!recruiter;
+
  const profession=agent.role==='recruiter'
   ?'recruiter'
   :(['a3','a7'].includes(id)?'support':id==='a5'?'partners':id==='a10'?'archive':'inbound');
  const summary=professionSummaries[profession];
- text('agentPurpose',summary[0]);
- text('agentPurposeProcess',summary[1]);
- text('agentPurposeDetails',summary[2]);
+ text('agentPurpose',summary);
  text('agentStatusText',active?'Работает':agent.status==='stopped'?'Остановлен':'Черновик');
  el('agentStatus').className='status-pill '+agent.status;
  el('lifecycleButton').textContent=active?'Остановить':'Запустить';
@@ -353,10 +392,9 @@ function render(){
  el('hrNotifyNew').checked=notify.new!==false;
  el('hrNotifyReview').checked=notify.review!==false;
  el('hrNotifyClarify').checked=notify.clarify!==false;
- const assigned=agent.assignedVacancies||['vacancyFrontend'];
- el('vacancyFrontend').checked=assigned.includes('vacancyFrontend');
- el('vacancyDesigner').checked=assigned.includes('vacancyDesigner');
+ renderHRWorkspacePanels();
  el('modelModeInput').value=agent.modelMode||'automatic';
+ text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
  const hr=agent.role==='recruiter';
  document.querySelectorAll('[data-setting-scope]').forEach(button=>{
@@ -388,7 +426,7 @@ function render(){
  renderProfileTags();renderKnowledge();
  document.title=agent.name+' — AIMock';syncSpace();
  document.querySelectorAll('[data-internal-tab]').forEach(a=>a.href=link(a.dataset.internalTab));
- document.querySelectorAll('[data-route-card]').forEach(a=>a.href=link(a.dataset.routeCard));
+
 }
 
 el('employerSelect').addEventListener('change',()=>{
@@ -463,8 +501,43 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeProfileTags();
 });
-// Cards and in-content links use native navigation to dedicated URLs.
- // No horizontal tab bar or intercepted in-place tab switching.
+function closeAgentActions(){
+ const menu=el('agentActionsMenu'),toggle=el('agentActionsToggle');
+ menu.hidden=true;
+ toggle.setAttribute('aria-expanded','false');
+}
+el('agentActionsToggle').addEventListener('click',()=>{
+ const menu=el('agentActionsMenu');
+ const open=menu.hidden;
+ menu.hidden=!open;
+ el('agentActionsToggle').setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('click',event=>{
+ if(!event.target.closest('.agent-action-area'))closeAgentActions();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!el('agentActionsMenu').hidden){closeAgentActions();el('agentActionsToggle').focus();}
+});
+el('agentActionsMenu').addEventListener('click',event=>{
+ if(event.target.closest('button'))closeAgentActions();
+});
+
+// Horizontal tabs and in-page agent links switch visible panels without reloading.
+document.querySelectorAll('[data-agent-tab]').forEach(button=>{
+ button.addEventListener('click',()=>selectedTab(button.dataset.agentTab,true));
+ button.addEventListener('keydown',event=>{
+  if(!['ArrowRight','ArrowLeft','Home','End'].includes(event.key))return;
+  const tabs=[...document.querySelectorAll('[data-agent-tab]')].filter(t=>!t.hidden);
+  const i=tabs.indexOf(button);
+  const target=event.key==='Home'?tabs[0]
+   :event.key==='End'?tabs[tabs.length-1]
+   :tabs[(i+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];
+  event.preventDefault();target.focus();selectedTab(target.dataset.agentTab,true);
+ });
+});
+document.querySelectorAll('[data-internal-tab]').forEach(a=>a.addEventListener('click',event=>{
+ event.preventDefault();selectedTab(a.dataset.internalTab,true);
+}));
 window.addEventListener('popstate',()=>selectedTab(new URLSearchParams(location.search).get('tab')));
 document.addEventListener('click',e=>{if(e.target.closest('[data-space]'))queueMicrotask(syncSpace)});
 function saveSettings(){
@@ -481,8 +554,9 @@ function saveSettings(){
    review:el('hrNotifyReview').checked,
    clarify:el('hrNotifyClarify').checked
  };
- agent.assignedVacancies=['vacancyFrontend','vacancyDesigner'].filter(v=>el(v).checked);
+ agent.assignedVacancies=[...document.querySelectorAll('[data-vacancy-assignment]:checked')].map(input=>input.value);
  agent.modelMode=el('modelModeInput').value;
+ text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=agent.modelMode!=='explicit';
 
  text('autosaveState',persist()?'Изменения сохранены':'Не удалось сохранить');

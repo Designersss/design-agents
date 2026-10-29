@@ -1,0 +1,111 @@
+/* AIMock HR direction — uses the approved compact graphite system, no extra shell. */
+.hr-page{flex:1;min-width:0;min-height:0;padding:26px clamp(18px,2.5vw,38px) 22px;display:flex;flex-direction:column;gap:17px;color:#e9edeb}
+.hr-page *{box-sizing:border-box}
+.hr-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex:none;flex-wrap:wrap}
+.hr-header h1{font-size:28px;line-height:1.18;font-weight:665;letter-spacing:-.8px}
+.hr-header p,.hr-subtitle{font-size:12px;color:#899597;margin-top:5px}
+.hr-demo{font-size:10.5px;color:#899897}
+.hr-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.hr-primary,.hr-secondary,.hr-danger{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #363e40;background:#1b2021;color:#e8edeb;border-radius:9px;padding:9px 14px;min-height:37px;cursor:pointer;font:inherit;font-weight:580;font-size:11.7px;text-decoration:none}
+.hr-primary{background:#cfeade;border-color:#cfeade;color:#163d30}
+.hr-primary:hover{background:#e0f5e8}
+.hr-secondary:hover{background:#2a3031}
+.hr-danger{color:#ebb9b4}
+.hr-filterbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.hr-filterbar input,.hr-filterbar select,.hr-form input,.hr-form select,.hr-form textarea,.hr-comment-box textarea{font:inherit;color:#edf2f1;background:#191e1f;border:1px solid #30393a;border-radius:9px;outline:none;min-width:0}
+.hr-filterbar input:focus,.hr-filterbar select:focus,.hr-form :is(input,textarea,select):focus,.hr-comment-box textarea:focus{border-color:#699d86}
+.hr-filterbar input{width:min(300px,100%);height:37px;padding:0 12px}
+.hr-filterbar select{height:37px;padding:0 12px;max-width:230px}
+.hr-filterbar option,.hr-form option{background:#191e1f;color:#edf2f1}
+.hr-panel{background:#16191a;border:1px solid #2a2e2f;border-radius:12px;min-width:0;min-height:0;overflow:hidden}
+.hr-panel-heading{font-size:12.5px;font-weight:630;padding:17px 20px;border-bottom:1px solid #2a3031}
+.hr-panel-heading small{display:block;color:#899798;font-size:11px;font-weight:400;margin-top:4px}
+.hr-list-wrap{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0}
+.hr-scroller{overflow:auto;flex:1;min-height:0;scrollbar-width:thin}
+.hr-table{min-width:750px}
+.hr-row{display:grid;grid-template-columns:minmax(240px,2fr) minmax(160px,1.25fr) minmax(110px,1fr) minmax(100px,.9fr) 70px;gap:13px;align-items:center;padding:0 18px;min-height:61px;border-bottom:1px solid #262b2d;color:inherit;text-decoration:none}
+.hr-row.hr-candidate-row{grid-template-columns:minmax(170px,1.4fr) minmax(165px,1.35fr) minmax(155px,1.2fr) minmax(125px,1fr) minmax(100px,.8fr) 85px}
+.hr-row:last-child{border-bottom:0}
+.hr-row:not(.hr-table-header):hover{background:#202527}
+.hr-table-header{min-height:36px;font-size:10px;color:#889394;background:#171a1b;position:sticky;top:0;z-index:1;border-bottom-color:#313738}
+.hr-cell{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
+.hr-cell strong{display:block;font-size:12.2px;color:#eef1f0;font-weight:595;overflow:hidden;text-overflow:ellipsis}
+.hr-cell small{display:block;color:#889596;font-size:10.7px;margin-top:4px;overflow:hidden;text-overflow:ellipsis}
+.hr-empty{padding:42px 25px;text-align:center;color:#8c9a9b;font-size:12px;line-height:1.7}
+.hr-empty strong{color:#e7eceb;font-size:14px;display:block;margin-bottom:4px}
+.hr-list-footer{border-top:1px solid #2a2e30;padding:10px 18px;font-size:10.5px;color:#8d9899;flex:none}
+.hr-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #353d3e;background:#242a2b;color:#c1c9c8;padding:5px 9px;border-radius:7px;font-size:10.4px;white-space:nowrap}
+.hr-pill:before{content:"";width:5px;height:5px;border-radius:50%;background:#9ca6a5}
+.hr-pill.open,.hr-pill.review,.hr-pill.approved{background:#203029;border-color:#2c4c3c;color:#a8d8bd}
+.hr-pill.open:before,.hr-pill.review:before,.hr-pill.approved:before{background:#44bd86}
+.hr-pill.potential,.hr-pill.clarify,.hr-pill.paused{background:#332a23;border-color:#584838;color:#d7b797}
+.hr-pill.potential:before,.hr-pill.clarify:before,.hr-pill.paused:before{background:#ddaa74}
+.hr-stats{display:flex;gap:10px;flex-wrap:wrap}
+.hr-stat{padding:14px 17px;min-width:150px;flex:1;background:#17191b;border:1px solid #292d2e;border-radius:10px}
+.hr-stat small{font-size:10px;color:#899798;display:block}
+.hr-stat strong{font-size:24px;font-weight:640;display:block;margin-top:2px;letter-spacing:-.5px}
+.hr-editor-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(240px,.9fr);gap:15px;flex:1;min-height:0;overflow:auto}
+.hr-editor-grid>.hr-panel{overflow:visible;align-self:start}
+.hr-form{padding:19px 22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.hr-form label,.hr-comment-box label{display:flex;flex-direction:column;gap:7px;color:#c2cbca;font-size:11.3px;font-weight:570;min-width:0}
+.hr-form label.hr-wide{grid-column:1/-1}
+.hr-form input,.hr-form select{height:40px;padding:0 12px}
+.hr-form textarea,.hr-comment-box textarea{padding:12px;min-height:88px;resize:vertical;line-height:1.55}
+.hr-form small{font-size:10.2px;color:#879495;font-weight:400}
+.hr-form-footer{display:flex;align-items:center;gap:14px;justify-content:flex-end;grid-column:1/-1;padding-top:9px;border-top:1px solid #2a3031}
+.hr-save-state{font-size:11px;color:#94bba9;margin-right:auto;min-height:16px}
+.hr-side-body{padding:17px 20px;display:grid;gap:14px}
+.hr-side-body p{font-size:11.5px;line-height:1.7;color:#abb6b5}
+.hr-fact{border-bottom:1px solid #2a3031;padding-bottom:12px}
+.hr-fact:last-child{border-bottom:0;padding-bottom:0}
+.hr-fact span{font-size:10px;color:#829091;display:block;margin-bottom:4px}
+.hr-fact strong{font-size:11.6px;font-weight:600;line-height:1.5}
+.hr-side-links{display:grid;gap:8px}
+.hr-side-links a{font-size:11.5px;color:#b9d9ca;text-decoration:none}
+.hr-side-links a:hover{text-decoration:underline}
+.hr-muted{color:#7f9090;font-size:11px;line-height:1.6}
+.hr-app-layout{display:grid;grid-template-columns:minmax(230px,.9fr) minmax(0,1.6fr);gap:15px;min-height:0;flex:1;overflow:auto}
+.hr-app-sidebar,.hr-app-details{overflow:auto}
+.hr-candidate-info{padding:20px}
+.hr-candidate-info h2{font-size:21px;letter-spacing:-.3px;margin-bottom:4px}
+.hr-candidate-info p{font-size:11.4px;color:#91a0a1;line-height:1.7}
+.hr-application-link{display:block;border-top:1px solid #2a2f30;padding:13px 19px;color:#b9c4c1;font-size:11.2px;cursor:pointer}
+.hr-application-link:hover,.hr-application-link.selected{background:#20292a;color:#fff}
+.hr-application-link small{display:block;margin-top:4px;color:#8c9a9a}
+.hr-application-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hr-comment-box{padding:19px 22px;display:flex;flex-direction:column;gap:15px}
+.hr-comment-box .hr-fact{padding-bottom:14px}
+.hr-comment-box textarea{width:100%;min-height:100px}
+.hr-note{background:#1b2021;border:1px solid #303738;border-radius:9px;padding:13px 14px;color:#b9c5c2;font-size:11.7px;line-height:1.7;white-space:pre-wrap}
+.hr-review-box{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.hr-review-box select{background:#191e1f;border:1px solid #344041;border-radius:8px;color:#e3ebe8;padding:9px 10px;font:inherit;font-size:11.5px}
+.hr-card-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hr-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:1000px){.hr-editor-grid,.hr-app-layout{grid-template-columns:1fr}.hr-page{overflow:auto}.hr-app-sidebar,.hr-app-details{overflow:visible}}
+@media(max-width:690px){.hr-page{padding:17px 12px;gap:12px}.hr-header h1{font-size:23px}.hr-form{grid-template-columns:1fr;padding:14px;gap:12px}.hr-form-footer{flex-wrap:wrap;justify-content:flex-start}.hr-filterbar input{width:100%}.hr-scroller{min-height:220px}}
+/* Shared theme state is set by scripts/theme.js before the page becomes visible. */
+html[data-theme="light"] .hr-page{color:#263034}
+html[data-theme="light"] .hr-header p,html[data-theme="light"] .hr-demo,html[data-theme="light"] .hr-subtitle{color:#6e7a7e}
+html[data-theme="light"] .hr-panel,html[data-theme="light"] .hr-stat{background:#fff;border-color:#dfe6e7}
+html[data-theme="light"] .hr-panel-heading,html[data-theme="light"] .hr-fact,html[data-theme="light"] .hr-form-footer,html[data-theme="light"] .hr-list-footer{border-color:#e3e9e9}
+html[data-theme="light"] .hr-panel-heading,html[data-theme="light"] .hr-fact strong,html[data-theme="light"] .hr-stat strong{color:#253235}
+html[data-theme="light"] .hr-table-header{background:#f7f9fa;border-color:#e4e9e9;color:#788587}
+html[data-theme="light"] .hr-row{border-color:#edf0f1;color:#3a494c}
+html[data-theme="light"] .hr-row:not(.hr-table-header):hover{background:#f4f8f6}
+html[data-theme="light"] .hr-cell strong,html[data-theme="light"] .hr-empty strong{color:#243135}
+html[data-theme="light"] .hr-cell small,html[data-theme="light"] .hr-empty,html[data-theme="light"] .hr-muted{color:#738285}
+html[data-theme="light"] .hr-pill{background:#f0f3f4;color:#59666a;border-color:#dfe5e6}
+html[data-theme="light"] .hr-pill.open,html[data-theme="light"] .hr-pill.review,html[data-theme="light"] .hr-pill.approved{background:#e8f4ec;border-color:#cee4d7;color:#236c50}
+html[data-theme="light"] .hr-pill.potential,html[data-theme="light"] .hr-pill.clarify,html[data-theme="light"] .hr-pill.paused{background:#fbf2e7;border-color:#ead8c2;color:#98692d}
+html[data-theme="light"] .hr-secondary{background:#fff;border-color:#dae3e4;color:#445356}
+html[data-theme="light"] .hr-secondary:hover{background:#f0f4f4}
+html[data-theme="light"] .hr-primary{background:#258968;border-color:#258968;color:#fff}
+html[data-theme="light"] .hr-primary:hover{background:#1b7456}
+html[data-theme="light"] .hr-form label,html[data-theme="light"] .hr-comment-box label{color:#425155}
+html[data-theme="light"] .hr-form input,html[data-theme="light"] .hr-form textarea,html[data-theme="light"] .hr-form select,html[data-theme="light"] .hr-comment-box textarea,html[data-theme="light"] .hr-review-box select,html[data-theme="light"] .hr-filterbar input,html[data-theme="light"] .hr-filterbar select{color:#263336;background:#fff;border-color:#dbe3e5}
+html[data-theme="light"] .hr-filterbar option,html[data-theme="light"] .hr-form option{background:#fff;color:#263336}
+html[data-theme="light"] .hr-form small,html[data-theme="light"] .hr-side-body p,html[data-theme="light"] .hr-candidate-info p{color:#68787b}
+html[data-theme="light"] .hr-note{background:#f8fafb;border-color:#e0e6e7;color:#47585b}
+html[data-theme="light"] .hr-application-link{border-color:#e3e9e9;color:#546568}
+html[data-theme="light"] .hr-application-link.selected,html[data-theme="light"] .hr-application-link:hover{background:#edf5f0;color:#236047}
+html[data-theme="light"] .hr-side-links a{color:#236b52}
