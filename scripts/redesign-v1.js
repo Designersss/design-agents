@@ -78,6 +78,7 @@ function renderRoute(){
  }
  document.title="AIMock — "+(isAgent?route.name+" / ":"")+route.title;
  closeMobile();closeNotifications();closeSearch();
+ document.querySelector(".workspace").scrollTop=0;
  window.scrollTo(0,0);
 }
 function updatePeriod(value){
