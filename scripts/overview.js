@@ -21,9 +21,10 @@
       personal=sessionStorage.getItem('aimock-space')==='personal';
       const snapshot=JSON.parse(localStorage.getItem('aimock-hr-workspace-demo-v1')||'{}');
       const workspace=snapshot[personal?'personal':'company'];
-      records=!!workspace&&(workspace.vacancies?.length>0||workspace.candidates?.length>0||workspace.applications?.length>0);
-    }catch(_){}
-    return !personal||records;
+      if(!workspace)return !personal; // Default demo company includes HR; personal starts empty.
+      records=workspace.hrEnabled===true||workspace.vacancies?.length>0||workspace.candidates?.length>0||workspace.applications?.length>0;
+    }catch(_){return !personal}
+    return !!records;
   }
   function updateHRNav(){
     const visible=visibleHR();

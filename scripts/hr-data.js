@@ -5,6 +5,7 @@ const key='aimock-hr-workspace-demo-v1';
 const bySpace={company:null,personal:null};
 const agents=[{id:'a1',name:'HR-рекрутер'},{id:'a4',name:'Рекрутер · Дизайн'},{id:'a6',name:'HR · Регионы'},{id:'a8',name:'Новый рекрутер'},{id:'a9',name:'Рекрутер · IT'}];
 const seed=()=>({
+ hrEnabled:true,
  vacancies:[
   {id:'vacancyFrontend',title:'Frontend-разработчик',employer:'Технологии Плюс',location:'Москва / удалённо',format:'Удалённо',salary:'от 180 000 ₽',status:'open',description:'Разработка интерфейсов веб-продуктов.',requirements:'React, TypeScript, опыт командной разработки',questions:'Расскажите о вашем опыте с React и TypeScript.\nКогда готовы приступить?',created:'2026-10-27'},
   {id:'vacancyDesigner',title:'Продуктовый дизайнер',employer:'ИП Мария Орлова',location:'Санкт-Петербург / удалённо',format:'Гибрид',salary:'По договорённости',status:'draft',description:'Проектирование цифровых продуктов.',requirements:'Figma, UX-исследования, портфолио',questions:'Какой проект из портфолио лучше отражает ваш опыт?',created:'2026-10-26'}
@@ -19,7 +20,7 @@ const seed=()=>({
   {id:'app-ivan',candidateId:'c-ivan',vacancyId:'vacancyFrontend',agentId:'a1',status:'clarify',source:'Telegram',date:'2026-10-28',summary:'Необходимо уточнить коммерческий опыт и доступность для начала работы.',notes:''},
   {id:'app-maria',candidateId:'c-maria',vacancyId:'vacancyDesigner',agentId:'a4',status:'potential',source:'Веб-форма',date:'2026-10-27',summary:'Портфолио получено. Есть вопросы к релевантности продуктовых исследований; решение остаётся за HR.',notes:''}
  ]});
-const empty=()=>({vacancies:[],candidates:[],applications:[]});
+const empty=()=>({hrEnabled:false,vacancies:[],candidates:[],applications:[]});
 function space(){try{return sessionStorage.getItem('aimock-space')==='personal'?'personal':'company'}catch(_){return 'company'}}
 function fromStorage(s){
  if(bySpace[s])return bySpace[s];
@@ -72,6 +73,6 @@ function assignmentIds(agentId){
 function assignedAgents(vacancyId){return agents.filter(a=>assignmentIds(a.id).includes(vacancyId))}
 const statuses={draft:'Черновик',open:'Открыта',paused:'Приостановлена',closed:'Закрыта'};
 const applicationStatuses={new:'Новый отклик',clarify:'Нужно уточнение',review:'На рассмотрении',potential:'Потенциальный отказ',approved:'Одобрен HR',rejected:'Отказ HR'};
-function hasModule(){const d=data();return (space()==='company')||d.vacancies.length>0||d.candidates.length>0||d.applications.length>0}
+function hasModule(){const d=data();return d.hrEnabled===true||d.vacancies.length>0||d.candidates.length>0||d.applications.length>0}
 window.AIMockHR={space,data,save,uid,vacancy,candidate,application,upsertVacancy,updateApplication,assignmentIds,assignedAgents,agents,statuses,applicationStatuses,hasModule};
 })();
