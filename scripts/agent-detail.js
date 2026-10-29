@@ -289,6 +289,61 @@ const professionSummaries={
  partners:"Менеджер партнёров помогает обрабатывать обращения действующих и потенциальных партнёров. Он рассказывает об условиях сотрудничества по утверждённым материалам, уточняет направление партнёрства, собирает сведения о компании и потребностях, отвечает на стандартные вопросы и фиксирует договорённости в пределах предоставленных полномочий. По результатам общения агент формирует краткое резюме и передаёт запрос ответственному менеджеру с сохранением контекста. Вопросы о нестандартных коммерческих условиях, юридических обязательствах и индивидуальных соглашениях он не решает самостоятельно, а направляет сотруднику.",
  archive:"Менеджер архивных обращений помогает разбирать повторные вопросы по ранее поступившим заявкам и доступным материалам компании. Он выясняет, к какому запросу относится сообщение, проверяет сведения только в разрешённых источниках, уточняет недостающие детали и объясняет подтверждённую информацию. Агент фиксирует результат и сохраняет контекст обращения для дальнейшей работы. Если нужных документов нет, сведения противоречат друг другу или действие требует прав, которых у агента нет, он передаёт запрос сотруднику на ручную проверку, не выдавая предположения за факты."
 };
+
+function renderHRWorkspacePanels(){
+ const store=window.AIMockHR;
+ const options=el('vacancyAssignmentOptions'),list=el('agentAssignedVacancies'),candidates=el('agentCandidateRecords');
+ options.replaceChildren();list.replaceChildren();candidates.replaceChildren();
+ if(!store)return;
+ const vacancies=store.data().vacancies;
+ const assigned=Array.isArray(agent.assignedVacancies)?agent.assignedVacancies:store.assignmentIds(id);
+ for(const vacancy of vacancies){
+  const label=document.createElement('label');label.className='vacancy-option';
+  const box=document.createElement('input');box.type='checkbox';box.value=vacancy.id;
+  box.dataset.vacancyAssignment='true';box.checked=assigned.includes(vacancy.id);
+  box.disabled=agent.status==='active';
+  const block=document.createElement('span'),name=document.createElement('strong'),note=document.createElement('small');
+  name.textContent=vacancy.title;note.textContent=vacancy.employer+' · '+store.statuses[vacancy.status];
+  block.append(name,note);label.append(box,block);options.append(label);
+  box.addEventListener('change',()=>{if(agent.status!=='active'){saveSettings();renderHRWorkspacePanels()}});
+  if(assigned.includes(vacancy.id)){
+   const row=document.createElement('a');row.className='vacancy-preview-row';row.href='./vacancy-detail.html?id='+encodeURIComponent(vacancy.id);
+   const inner=document.createElement('span'),title=document.createElement('strong'),meta=document.createElement('small'),state=document.createElement('span');
+   title.textContent=vacancy.title;meta.textContent=vacancy.employer;state.className='vacancy-preview-status'+(vacancy.status==='open'?'':' neutral');
+   state.textContent=store.statuses[vacancy.status];inner.append(title,meta);row.append(inner,state);list.append(row);
+  }
+ }
+ if(!vacancies.length){
+  const text=document.createElement('p');text.className='settings-card-copy';text.textContent='В этом Workspace пока нет вакансий. Создайте первую в общем каталоге.';options.append(text);
+ }
+ if(!list.children.length){
+  const text=document.createElement('p');text.className='settings-card-copy';text.textContent='Этому агенту ещё не назначены вакансии.';list.append(text);
+ }
+ const recruiter=agent.role==='recruiter';
+ el('agentWorkDemoRows').hidden=recruiter;
+ candidates.hidden=!recruiter;
+ const link=el('agentWorkAllLink');
+ link.href=recruiter?'./candidates.html?agent='+encodeURIComponent(id):'./dialogs.html';
+ link.firstChild.textContent=recruiter?'Все кандидаты ':'Все диалоги ';
+ if(!recruiter)return;
+ const applications=store.data().applications.filter(app=>app.agentId===id);
+ for(const app of applications){
+  const person=store.candidate(app.candidateId),vacancy=store.vacancy(app.vacancyId);
+  const row=document.createElement('a');row.href='./candidate-detail.html?application='+encodeURIComponent(app.id);
+  row.className='work-row';row.style.textDecoration='none';
+  const badge=document.createElement('span');badge.className='work-avatar';
+  badge.textContent=(person?.name||'К').split(' ').slice(0,2).map(part=>part[0]).join('').toUpperCase();
+  const info=document.createElement('span'),name=document.createElement('strong'),note=document.createElement('small'),status=document.createElement('em');
+  name.textContent=person?.name||'Кандидат';note.textContent=vacancy?.title||'Вакансия';status.textContent=store.applicationStatuses[app.status]||app.status;
+  info.append(name,note);row.append(badge,info,status);candidates.append(row);
+ }
+ if(!applications.length){
+  const text=document.createElement('p');text.className='settings-card-copy';
+  text.textContent='Откликов этого агента пока нет. Все кандидаты Workspace доступны в общем каталоге.';candidates.append(text);
+ }
+}
+window.addEventListener('aimock:hr-update',renderHRWorkspacePanels);
+window.addEventListener('aimock:workspace-change',renderHRWorkspacePanels);
 function render(){
   const titles=agent.role==='recruiter'
    ?[['Новый отклик','Кандидат оставил обращение'],['Интервью завершено','Результаты переданы HR'],['Диалог завершён','Кандидат получил ответ']]
@@ -337,9 +392,7 @@ function render(){
  el('hrNotifyNew').checked=notify.new!==false;
  el('hrNotifyReview').checked=notify.review!==false;
  el('hrNotifyClarify').checked=notify.clarify!==false;
- const assigned=agent.assignedVacancies||['vacancyFrontend'];
- el('vacancyFrontend').checked=assigned.includes('vacancyFrontend');
- el('vacancyDesigner').checked=assigned.includes('vacancyDesigner');
+ renderHRWorkspacePanels();
  el('modelModeInput').value=agent.modelMode||'automatic';
  text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=el('modelModeInput').value!=='explicit';
@@ -501,7 +554,7 @@ function saveSettings(){
    review:el('hrNotifyReview').checked,
    clarify:el('hrNotifyClarify').checked
  };
- agent.assignedVacancies=['vacancyFrontend','vacancyDesigner'].filter(v=>el(v).checked);
+ agent.assignedVacancies=[...document.querySelectorAll('[data-vacancy-assignment]:checked')].map(input=>input.value);
  agent.modelMode=el('modelModeInput').value;
  text('agentInspectorModel',agent.modelMode==='explicit'&&agent.publicModelId?'Выбрана вручную':'Автоматически');
  el('explicitModelWrap').hidden=agent.modelMode!=='explicit';
