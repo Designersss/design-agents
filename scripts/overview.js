@@ -14,6 +14,7 @@
   agentsNav?.after(hrSection);
   const hrToggle=$('.hr-nav-parent',hrSection),hrLinks=$('.hr-nav-links',hrSection);
   const onHRPage=/\/(?:vacancies|vacancy-detail|candidates|candidate-detail)\.html$/.test(location.pathname);
+  let hrNavOpen=onHRPage;
   function visibleHR(){
     let personal=false,records=false;
     try{
@@ -27,7 +28,7 @@
   function updateHRNav(){
     const visible=visibleHR();
     hrSection.hidden=!visible;
-    const expanded=visible&&(onHRPage||hrToggle.getAttribute('aria-expanded')==='true');
+    const expanded=visible&&hrNavOpen;
     hrToggle.setAttribute('aria-expanded',String(expanded));
     hrLinks.hidden=!expanded;
     hrToggle.classList.toggle('selected',onHRPage);
@@ -35,7 +36,7 @@
       a.classList.toggle('selected',location.pathname.endsWith('/vacancy-detail.html')?a.href.includes('vacancies.html'):location.pathname.endsWith('/candidate-detail.html')?a.href.includes('candidates.html'):new URL(a.href).pathname===location.pathname);
     });
   }
-  hrToggle?.addEventListener('click',()=>{hrToggle.setAttribute('aria-expanded',String(hrToggle.getAttribute('aria-expanded')!=='true'));updateHRNav()});
+  hrToggle?.addEventListener('click',()=>{hrNavOpen=!hrNavOpen;updateHRNav()});
   window.addEventListener('aimock:hr-update',updateHRNav);
   window.addEventListener('aimock:workspace-change',updateHRNav);
   updateHRNav();

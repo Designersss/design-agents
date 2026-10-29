@@ -175,6 +175,7 @@ function init(){
  }else if(page==='candidates'){
   updateCandidateFilters();
   const initial=q.get('vacancy');if(initial&&H.vacancy(initial))$('#candidateVacancy').value=initial;
+  const initialAgent=q.get('agent');if(initialAgent&&H.agents.some(a=>a.id===initialAgent))$('#candidateAgent').value=initialAgent;
   ['candidateSearch','candidateVacancy','candidateAgent','candidateStatus'].forEach(id=>$('#'+id).addEventListener(id==='candidateSearch'?'input':'change',renderCandidates));
   renderCandidates();
  }else if(page==='candidate'){
