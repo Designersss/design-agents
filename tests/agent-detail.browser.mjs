@@ -29,21 +29,22 @@ try {
  assert.match(await page.locator("#agentSidebarStatus").textContent(),/Остановлен/);
  assert.match(await page.locator("#detailToggleStatus").textContent(),/Запустить/);
  await page.locator('[data-agent-section="settings"]').click();
+ await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),true);
  assert.match(await page.locator("#placeholderDescription").textContent(),/Агент остановлен/);
  await page.goto(base+"#/overview");
  await page.waitForSelector("#overviewView:not([hidden])");
  assert.match(await page.locator(".agent-card").nth(1).locator(".state").textContent(),/Остановлен/);
  await page.goto(base+"#/agent/recruiter/overview");
- await page.waitForSelector("#agentDetailHeading");
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="HR-рекрутер");
  assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"HR-рекрутер");
  assert.match(await page.locator(".detail-flow-track").textContent(),/HR-команда/);
  assert.match(await page.locator(".detail-status").textContent(),/Остановлен/);
  await page.goto(base+"#/agent/consultant/overview");
- await page.waitForSelector("#agentDetailHeading");
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Консультант");
  assert.match(await page.locator(".detail-flow-track").textContent(),/Человек/);
  await page.goto(base+"#/agent/support/overview");
- await page.waitForSelector("#agentDetailHeading");
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Поддержка");
  assert.match(await page.locator(".detail-flow-track").textContent(),/Оператор/);
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
@@ -62,6 +63,7 @@ try {
  await page.locator("[data-detail-unavailable]").first().click();
  assert.match(await page.locator("#detailToast").textContent(),/в разработке/);
  await page.locator(".agent-back").click();
+ await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),true);
  assert.equal(await page.locator(".global-nav").isVisible(),true);
  assert.equal(await page.locator(".agent-nav").isVisible(),false);
