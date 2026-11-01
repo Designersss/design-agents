@@ -23,7 +23,7 @@ test("every profession has a corresponding design fixture and agent route",()=>{
    assert.ok(core.includes(key+":")||core.includes(key+':"'),key);
  }
  assert.match(detail,/В реальном сервисе действие не выполнялось/);
- assert.match(detail,/Раздел/);
+ assert.match(detail,/Открыть раздел/);
  assert.match(detail,/data-detail-toggle/);
 });
 test("modular layout adapts without duplicate navigation",()=>{
