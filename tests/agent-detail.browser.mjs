@@ -16,13 +16,29 @@ try {
  page.on("pageerror",error=>exceptions.push(error.message));
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
- assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Менеджер заявок");
+ assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Входящие заявки");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
  assert.equal(await page.locator("#agentDetailView").isVisible(),true);
  assert.equal(await page.locator(".global-nav").isVisible(),false);
  assert.equal(await page.locator(".agent-nav").isVisible(),true);
  assert.equal(await page.locator(".detail-top-grid > .detail-card").count(),3);
- assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3);
+ assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3); 
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки");
+ assert.equal((await page.locator(".detail-profession").textContent()).trim(),"Менеджер заявок");
+ assert.equal(await page.locator(".detail-heading-tags span").count(),3);
+ assert.equal(await page.locator(".detail-identity .detail-bubble").count(),0);
+ assert.equal(await page.locator(".detail-identity .detail-tags").count(),0);
+ assert.equal(await page.locator(".detail-state-row").count(),3);
+ assert.equal(await page.locator(".detail-responsibility").count(),3);
+ assert.equal(await page.locator(".detail-activity-item").count(),3);
+ assert.equal(await page.locator("#detailControlsLabel").count(),0);
+ assert.doesNotMatch(await page.locator("#agentDetailView").innerText(),/Режим работы|Автоматический|Редактирование|После остановки/);
+ const metricSpacing=await page.locator(".detail-stat").first().evaluate((el)=>{
+   const d=el.querySelector(".detail-stat-description").getBoundingClientRect();
+   const l=el.querySelector(".detail-stat-link").getBoundingClientRect();
+   return l.top-d.bottom;
+ });
+ assert.ok(metricSpacing>=20,"Metric description needs a visible gap before its link");
  const statusIcon=await page.locator(".detail-state-row .detail-bubble").first().boundingBox();
  assert.ok(Math.abs(statusIcon.width-statusIcon.height)<=1,"State icon must remain circular");
  const shellBounds=await page.evaluate(()=>{
@@ -57,7 +73,7 @@ try {
  await page.locator('[data-agent-section="settings"]').click();
  await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),true);
- assert.match(await page.locator("#placeholderDescription").textContent(),/Агент остановлен/);
+ assert.match(await page.locator("#placeholderDescription").textContent(),/Агент остановлен/); assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
  await page.goto(base+"#/overview");
  await page.waitForSelector("#overviewView:not([hidden])");
  const overviewShell=await page.evaluate(()=>({x:document.querySelector(".app-shell").getBoundingClientRect().x,
@@ -67,18 +83,20 @@ try {
  assert.equal(overviewShell.radius,"0px");
  assert.doesNotMatch(overviewShell.labels,/демо|прототип/i);
  await page.screenshot({path:resolve(artifactDir,"overview-fullscreen.png"),fullPage:true});
- assert.match(await page.locator(".agent-card").nth(1).locator(".state").textContent(),/Остановлен/);
+ assert.match(await page.locator(".agent-card").nth(1).locator(".state").textContent(),/Остановлен/); assert.equal((await page.locator(".agent-card").nth(1).locator(".agent-name").textContent()).trim(),"Входящие заявки");
+ assert.equal(await page.locator(".agent-card").last().locator(".agent-card-description").isVisible(),false);
  await page.goto(base+"#/agent/recruiter/overview");
- await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="HR-рекрутер");
- assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"HR-рекрутер");
- assert.match(await page.locator(".detail-flow-track").textContent(),/HR-команда/);
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Подбор в команду");
+ assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Подбор в команду");
+ assert.match(await page.locator(".detail-responsibilities").textContent(),/Передаёт на рассмотрение/);
  assert.match(await page.locator(".detail-status").textContent(),/Остановлен/);
  await page.goto(base+"#/agent/consultant/overview");
- await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Консультант");
- assert.match(await page.locator(".detail-flow-track").textContent(),/Человек/);
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Помощник магазина");
+ assert.match(await page.locator(".detail-responsibilities").textContent(),/Передаёт сложные случаи/);
  await page.goto(base+"#/agent/support/overview");
- await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Поддержка");
- assert.match(await page.locator(".detail-flow-track").textContent(),/Оператор/);
+ await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Служба помощи");
+ assert.match(await page.locator(".detail-responsibilities").textContent(),/Подключает оператора/); assert.equal(await page.locator(".detail-user-description").count(),0,"Optional description must not leave an empty paragraph");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Служба помощи");
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
    await page.waitForTimeout(100);
