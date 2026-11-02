@@ -33,7 +33,7 @@
  gap:14px;
 }
 .detail-top-grid > .detail-card { min-height:0; height:auto; align-self:stretch; }
-.detail-flow { }
+.detail-flow .detail-card-title { margin-bottom:0; }
 
 .detail-bubble { width:43px; height:43px; border:3px solid #fff; border-radius:50%; display:grid; place-items:center; margin-left:-3px; flex:none; }
 .detail-bubble .icon { width:19px; height:19px; stroke-width:2.15; }
@@ -44,7 +44,7 @@
 .detail-description { color:#8d9090; font-size:11.5px; line-height:1.55; margin-top:7px; max-width:275px; }
 /* Responsibilities: a vertical list, identical on desktop and mobile. */
 .detail-responsibilities { list-style:none; display:flex; flex-direction:column; padding:0; margin:0; gap:0; }
-.detail-responsibility { min-width:0; padding:12px 0; border-top:1px solid #ededeb; }
+.detail-responsibility { min-width:0; padding:8px 0; border-top:1px solid #ededeb; }
 .detail-responsibility strong { font-size:11.5px; font-weight:740; line-height:1.45; display:block; letter-spacing:-.1px; }
 .detail-responsibility p { font-size:10.5px; color:#939696; line-height:1.55; margin-top:7px; }
 .detail-state { display:flex; flex-direction:column; padding:14px 18px; }
