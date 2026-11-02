@@ -24,16 +24,17 @@ try {
  assert.equal(await page.locator(".detail-top-grid > .detail-card").count(),3);
  const topGeometry=await page.locator(".detail-top-grid > .detail-card").evaluateAll(cards=>
    cards.map(card=>{
-     const last=card.lastElementChild;
-     const c=card.getBoundingClientRect(), l=last.getBoundingClientRect();
-     return {height:c.height,emptyBottom:c.bottom-l.bottom,minHeight:getComputedStyle(card).minHeight};
+     const c=card.getBoundingClientRect();
+     return {height:c.height,top:c.top,bottom:c.bottom,left:c.left,minHeight:getComputedStyle(card).minHeight};
    }));
+ assert.equal(topGeometry.length,3);
  for(const card of topGeometry){
-   assert.ok(card.height<320,"Top section must not be an oversized card: "+JSON.stringify(card));
-   assert.ok(card.emptyBottom>=0 && card.emptyBottom<38,"Top card must size to content: "+JSON.stringify(card));
-   assert.equal(card.minHeight,"0px");
+   assert.equal(card.minHeight,"0px","No forced oversized minimum heights");
+   assert.ok(Math.abs(card.top-topGeometry[0].top)<=1,"All three top cards must share a row");
+   assert.ok(Math.abs(card.bottom-topGeometry[0].bottom)<=1,"All three top cards must have equal height");
+   assert.ok(card.height<380,"Row height should be content-driven, not a giant fixed-height box: "+JSON.stringify(card));
  }
- assert.ok(new Set(topGeometry.map(c=>Math.round(c.height))).size>1,"Top cards should not all stretch to equal heights");
+ assert.ok(topGeometry[0].left<topGeometry[1].left && topGeometry[1].left<topGeometry[2].left,"Three cards keep the original left-to-right layout");
  assert.equal(await page.locator(".detail-responsibility-index").count(),0);
  assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3); 
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки");
