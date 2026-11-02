@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f2f2f0">
-<meta name="description" content="AIMock — статический прототип нового светлого интерфейса управления AI-агентами.">
+<meta name="theme-color" content="#fcfcfb">
+<meta name="description" content="AIMock — рабочее пространство для управления агентами, диалогами и автоматизациями.">
 <title>AIMock — Обзор</title>
 <link rel="stylesheet" href="styles/redesign-v1.css">
+<link rel="stylesheet" href="styles/agent-detail-modular-v3.css">
+<script src="scripts/agent-detail-modular-v3.js" defer></script>
 <script src="scripts/redesign-v1.js" defer></script>
 </head>
 <body>
@@ -67,7 +69,7 @@
     <a class="agent-back" href="#/agents"><svg class="icon" style="width:16px;height:16px"><use href="#i-left"/></svg>Все агенты</a>
     <div class="agent-profile">
       <span class="mini-symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-file"/></svg></span></span>
-      <span><strong id="agentSidebarName">Консультант</strong><small id="agentSidebarStatus">Демо-агент</small></span>
+      <span><strong id="agentSidebarName">Помощник магазина</strong><small id="agentSidebarStatus">Работает</small></span>
     </div>
     <nav class="nav-group" aria-label="Разделы агента">
       <a class="nav-link active" href="#/agent/consultant/overview" data-agent-section="overview"><svg class="icon"><use href="#i-home"/></svg>Обзор</a>
@@ -86,7 +88,7 @@
     <a class="nav-link" href="#/settings" data-global-route="settings"><svg class="icon"><use href="#i-settings"/></svg>Настройки</a>
   </nav>
   <div class="sidebar-bottom">
-    <a class="workspace-link" href="#/workspace"><span class="ws-mark">A</span><span><strong>Acme Studio</strong><small>Демо-пространство</small></span><svg class="icon"><use href="#i-right"/></svg></a>
+    <a class="workspace-link" href="#/workspace"><span class="ws-mark">A</span><span><strong>Acme Studio</strong><small>Пространство компании</small></span><svg class="icon"><use href="#i-right"/></svg></a>
     <a class="profile-link" href="#/profile"><span class="avatar">АП</span><span><strong>Профиль</strong><small>Управление аккаунтом</small></span><svg class="icon"><use href="#i-right"/></svg></a>
   </div>
 </aside>
@@ -96,23 +98,22 @@
     <button class="mobile-menu" type="button" id="mobileToggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="appSidebar"><svg class="icon"><use href="#i-menu"/></svg></button>
     <div class="breadcrumb"><span id="breadcrumbRoot">AIMock</span><svg class="icon" style="width:13px;height:13px"><use href="#i-right"/></svg><strong id="breadcrumbCurrent">Обзор</strong></div>
     <div class="top-right">
-      <span class="preview-label">Дизайн-прототип</span>
       <button class="search-trigger" type="button" id="searchToggle" aria-label="Открыть поиск"><svg class="icon"><use href="#i-search"/></svg><span>Поиск по AIMock</span><kbd>⌘ K</kbd></button>
       <button class="icon-button" type="button" id="notificationsToggle" aria-label="Уведомления" aria-expanded="false" aria-controls="notificationsPopover"><svg class="icon"><use href="#i-bell"/></svg><span class="dot"></span></button>
       <a class="account-pill" href="#/profile" aria-label="Открыть профиль">АП</a>
     </div>
   </header>
-  <div class="popover" id="notificationsPopover" hidden role="region" aria-label="Последние уведомления"><h3>Уведомления</h3><p>В демо-пространстве есть несколько событий, требующих внимания.</p><a href="#/notifications">Открыть уведомления →</a></div>
+  <div class="popover" id="notificationsPopover" hidden role="region" aria-label="Последние уведомления"><h3>Уведомления</h3><p>Есть несколько событий, требующих внимания.</p><a href="#/notifications">Открыть уведомления →</a></div>
   <main id="mainContent">
   <section id="overviewView" class="content" aria-labelledby="overviewHeading">
     <div class="page-intro">
       <div><span class="eyebrow">Ваше рабочее пространство</span><h1 id="overviewHeading">Обзор</h1><p class="page-description">Агенты, обращения и важные события — без лишней информации.</p></div>
-      <div class="period-control" role="group" aria-label="Период демонстрационных показателей">
+      <div class="period-control" role="group" aria-label="Период показателей">
         <button type="button" class="period-button selected" data-period="7" aria-pressed="true">7 дней</button>
         <button type="button" class="period-button" data-period="30" aria-pressed="false">30 дней</button>
       </div>
     </div>
-    <div class="metrics" aria-label="Демонстрационные показатели">
+    <div class="metrics" aria-label="Показатели">
       <div class="metric" data-metric-index="0"><div class="metric-top"><span>Новых диалогов</span><span class="circle-icon blue"><svg class="icon"><use href="#i-message"/></svg></span></div><strong data-value>284</strong><div class="metric-bottom"><span data-detail>+12% к прошлой неделе</span><em>↗</em></div></div>
       <div class="metric" data-metric-index="1"><div class="metric-top"><span>Обработано заявок</span><span class="circle-icon green"><svg class="icon"><use href="#i-check"/></svg></span></div><strong data-value>96</strong><div class="metric-bottom"><span data-detail>+18% к прошлой неделе</span><em>↗</em></div></div>
       <div class="metric" data-metric-index="2"><div class="metric-top"><span>Передано людям</span><span class="circle-icon yellow"><svg class="icon"><use href="#i-users"/></svg></span></div><strong data-value>24</strong><div class="metric-bottom"><span data-detail>За последние 7 дней</span><span class="neutral">○</span></div></div>
@@ -120,38 +121,37 @@
     </div>
     <div class="dashboard-grid">
       <section aria-labelledby="agentsHeading">
-        <div class="section-head"><div><h2 id="agentsHeading">Ваши агенты</h2><p>Четыре профессии в демо-пространстве</p></div><a class="text-link" href="#/agents">Все агенты <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+        <div class="section-head"><div><h2 id="agentsHeading">Ваши агенты</h2><p>Агенты и их текущее состояние</p></div><a class="text-link" href="#/agents">Все агенты <svg class="icon"><use href="#i-arrow"/></svg></a></div>
         <div class="agent-grid">
           <article class="agent-card">
             <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">01 / 04</span></div>
             <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-chart"/></svg></span><span class="symbol purple"><svg class="icon"><use href="#i-spark"/></svg></span></div>
-            <h3>Консультант</h3><p>Отвечает на вопросы, помогает клиентам выбрать подходящее решение.</p>
+            <h3 class="agent-name">Помощник магазина</h3><p class="agent-card-description">Подскажет покупателям, что выбрать, и поможет разобраться с заказом.</p>
             <div class="chips"><span class="chip">Консультации</span><span class="chip">Продажи</span><span class="chip">FAQ</span></div>
-            <a class="card-action" href="#/agent/consultant/overview" aria-label="Открыть агента Консультант">Открыть агента</a>
+            <a class="card-action" href="#/agent/consultant/overview" aria-label="Открыть агента Помощник магазина">Открыть агента</a>
           </article>
           <article class="agent-card">
             <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">02 / 04</span></div>
             <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-check"/></svg></span><span class="symbol slate"><svg class="icon"><use href="#i-calendar"/></svg></span></div>
-            <h3>Менеджер заявок</h3><p>Принимает обращения, уточняет потребности и передаёт лиды в CRM.</p>
+            <h3 class="agent-name">Входящие заявки</h3><p class="agent-card-description">Собирает информацию по новым обращениям и передаёт запросы менеджерам.</p>
             <div class="chips"><span class="chip">Заявки</span><span class="chip">Квалификация</span><span class="chip">CRM</span></div>
-            <a class="card-action" href="#/agent/leads/overview" aria-label="Открыть агента Менеджер заявок">Открыть агента</a>
+            <a class="card-action" href="#/agent/leads/overview" aria-label="Открыть агента Входящие заявки">Открыть агента</a>
           </article>
           <article class="agent-card">
             <div class="agent-meta"><span class="state paused">Остановлен</span><span class="agent-id">03 / 04</span></div>
             <div class="symbols" aria-hidden="true"><span class="symbol purple"><svg class="icon"><use href="#i-users"/></svg></span><span class="symbol pink"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-search"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-spark"/></svg></span></div>
-            <h3>HR-рекрутер</h3><p>Помогает с первичным скринингом кандидатов и вакансиями.</p>
+            <h3 class="agent-name">Подбор в команду</h3><p class="agent-card-description">Первый контакт с кандидатами и уточнение информации по вакансиям.</p>
             <div class="chips"><span class="chip">Кандидаты</span><span class="chip">Скрининг</span><span class="chip">HR</span></div>
-            <a class="card-action" href="#/agent/recruiter/overview" aria-label="Открыть агента HR-рекрутер">Открыть агента</a>
+            <a class="card-action" href="#/agent/recruiter/overview" aria-label="Открыть агента Подбор в команду">Открыть агента</a>
           </article>
           <article class="agent-card">
             <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">04 / 04</span></div>
             <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-headset"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol pink"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol slate"><svg class="icon"><use href="#i-settings"/></svg></span></div>
-            <h3>Поддержка</h3><p>Решает типовые вопросы и передаёт сложные случаи человеку.</p>
+            <h3 class="agent-name">Служба помощи</h3><p class="agent-card-description" hidden></p>
             <div class="chips"><span class="chip">Поддержка</span><span class="chip">FAQ</span><span class="chip">Передачи</span></div>
-            <a class="card-action" href="#/agent/support/overview" aria-label="Открыть агента Поддержка">Открыть агента</a>
+            <a class="card-action" href="#/agent/support/overview" aria-label="Открыть агента Служба помощи">Открыть агента</a>
           </article>
         </div>
-        <p class="prototype-note">Все агенты, сообщения и метрики на этой странице — демонстрационные. Реальные операции не выполняются.</p>
       </section>
       <aside class="rail" aria-label="Текущая активность">
         <section class="panel" aria-labelledby="attentionHeading">
@@ -174,19 +174,18 @@
         <section class="panel" aria-labelledby="integrationHeading">
           <div class="panel-title"><h2 id="integrationHeading">Подключения</h2><a href="#/integrations" class="panel-link" aria-label="Все интеграции"><svg class="icon"><use href="#i-right"/></svg></a></div>
           <div class="system-row"><span class="system-pill"><span class="status-dot"></span>Telegram</span><span class="system-pill"><span class="status-dot"></span>База знаний</span><span class="system-pill"><span class="status-dot off"></span>CRM</span></div>
-          <p class="panel-hint">Примеры состояний для демонстрации интерфейса.</p>
         </section>
       </aside>
     </div>
   </section>
+  <section id="agentDetailView" class="agent-detail-view" hidden aria-labelledby="agentDetailHeading"></section>
   <section id="placeholderView" hidden class="placeholder-wrap" aria-live="polite">
     <div class="placeholder">
       <div class="placeholder-art"><svg class="icon"><use href="#i-layers"/></svg></div>
       <span class="eyebrow" id="placeholderContext">Библиотека агентов</span>
       <h1 id="placeholderName">В разработке</h1>
-      <p id="placeholderDescription">Этот раздел появится в следующих этапах редизайна AIMock.</p>
+      <p id="placeholderDescription">Этот раздел пока в разработке.</p>
       <div class="placeholder-actions"><a href="#/overview" class="black-button"><svg class="icon"><use href="#i-left"/></svg>На общий обзор</a><a href="#/library" class="outline-button">Библиотека агентов <svg class="icon"><use href="#i-arrow"/></svg></a></div>
-      <p class="prototype-note">Сейчас доступна только главная страница нового дизайна.</p>
     </div>
   </section>
   </main>

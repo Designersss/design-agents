@@ -8,7 +8,7 @@ const pageTitles = {
  workspace:"Пространства",profile:"Профиль",settings:"Настройки",
  notifications:"Уведомления",create:"Создание агента",attention:"Требует внимания"
 };
-const agents={consultant:"Консультант",leads:"Менеджер заявок",recruiter:"HR-рекрутер",support:"Поддержка"};
+const agents=window.AIMockAgentDetail.getAgentNames();
 const agentSections={overview:"Обзор",messages:"Диалоги",settings:"Настройки",integrations:"Интеграции",knowledge:"Знания",testing:"Тестирование",automation:"Автоматизации",analytics:"Статистика",logs:"Логи"};
 const items=[
  ["Обзор","overview","home"],["Агенты","agents","grid"],["Библиотека агентов","library","layers"],
@@ -48,13 +48,18 @@ function closeSearch(){
 }
 function renderRoute(){
  const route=currentRoute(),isAgent=route.key==="agent";
+ const isAgentOverview=isAgent&&route.section==="overview";
  document.body.classList.toggle("is-agent-route",isAgent);
  $("overviewView").hidden=route.key!=="overview";
- $("placeholderView").hidden=route.key==="overview";
+ $("agentDetailView").hidden=!isAgentOverview;
+ $("placeholderView").hidden=route.key==="overview"||isAgentOverview;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
- $("breadcrumbCurrent").textContent=isAgent?route.name+" / "+route.title:route.title;
+ $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
    $("agentSidebarName").textContent=route.name;
+   const isRunning=window.AIMockAgentDetail.getStatus(route.id);
+   $("agentSidebarStatus").textContent=isRunning?"Работает":"Остановлен";
+   $("agentSidebarStatus").classList.toggle("is-paused",!isRunning);
    document.querySelectorAll("[data-agent-section]").forEach(link=>{
      link.href="#/agent/"+route.id+"/"+link.dataset.agentSection;
      const active=link.dataset.agentSection===route.section;
@@ -63,20 +68,22 @@ function renderRoute(){
    });
    $("placeholderName").textContent="В разработке";
    $("placeholderContext").textContent=route.name+" / "+route.title;
-   $("placeholderDescription").textContent="В следующем этапе здесь появится отдельный раздел агента. Сейчас доступен обновлённый общий обзор и новое контекстное меню.";
+   $("placeholderDescription").textContent=route.section==="settings"?(isRunning?"Настройки работающего агента доступны только для просмотра. Чтобы изменить параметры, сначала остановите агента. Сам экран настроек пока в разработке.":"Агент остановлен. Редактирование станет доступно после реализации страницы настроек."):"Раздел пока в разработке. Вернитесь к обзору агента через левое меню.";
+   if(isAgentOverview)window.AIMockAgentDetail.render(route);
  }else{
    document.querySelectorAll("[data-global-route]").forEach(link=>{
      const active=link.dataset.globalRoute===route.key;
      link.classList.toggle("active",active);
      if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
    });
+   window.AIMockAgentDetail.refreshCards();
    if(route.key!=="overview"){
      $("placeholderName").textContent="В разработке";
      $("placeholderContext").textContent=route.title;
-     $("placeholderDescription").textContent="Страница «"+route.title+"» будет реализована следующим этапом в новой светлой дизайн-системе AIMock.";
+     $("placeholderDescription").textContent="Страница «"+route.title+"» пока в разработке.";
    }
  }
- document.title="AIMock — "+(isAgent?route.name+" / ":"")+route.title;
+ document.title="AIMock — "+(isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title);
  closeMobile();closeNotifications();closeSearch();
  document.querySelector(".workspace").scrollTop=0;
  window.scrollTo(0,0);

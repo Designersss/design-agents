@@ -1,23 +1,29 @@
-name: Light Dashboard Design Checks
+name: AIMock Light Design Checks
 
 on:
   pull_request:
     paths:
       - "index.html"
       - "styles/redesign-v1.css"
+      - "styles/agent-detail-modular-v3.css"
       - "scripts/redesign-v1.js"
+      - "scripts/agent-detail-modular-v3.js"
       - "tests/light-dashboard.test.mjs"
+      - "tests/agent-detail-modular.test.mjs"
+      - "tests/agent-detail.browser.mjs"
       - ".github/workflows/light-dashboard.yml"
   push:
     branches:
       - "design/light-dashboard-redesign-v1"
+      - "design/agent-detail-modular-v3"
 
 permissions:
   contents: read
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +32,22 @@ jobs:
         with:
           node-version: "22"
       - name: Check JavaScript
-        run: node --check scripts/redesign-v1.js
+        run: |
+          node --check scripts/redesign-v1.js
+          node --check scripts/agent-detail-modular-v3.js
       - name: Run static tests
-        run: node --test tests/light-dashboard.test.mjs
+        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs
+      - name: Install browser test runner
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser smoke and screenshots
+        run: node tests/agent-detail.browser.mjs
+      - name: Upload screenshot previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-detail-variant-03-previews
+          path: artifacts/agent-detail/*.png
+          if-no-files-found: ignore
+          retention-days: 14
