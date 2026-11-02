@@ -7,7 +7,7 @@ const professions = {
    title:"Консультант",
    name:"Помощник магазина",
    description:"Подскажет покупателям, что выбрать, и поможет разобраться с заказом.",
-   purpose:"Помогает клиенту с выбором, отвечает по базе знаний и передаёт сложные вопросы человеку.",
+   purpose:"Консультации клиентов и помощь с выбором.",
    tags:["Консультации","FAQ","Продажи"],
    icons:["message","book","check","spark"],
    responsibilities:[
@@ -27,7 +27,7 @@ const professions = {
    title:"Менеджер заявок",
    name:"Входящие заявки",
    description:"Собирает информацию по новым обращениям и передаёт запросы менеджерам.",
-   purpose:"Принимает заявки и ведёт клиента от первого сообщения до передачи заявки команде.",
+   purpose:"Приём и квалификация входящих обращений.",
    tags:["Заявки","CRM","Telegram"],
    icons:["file","message","check","workflow"],
    responsibilities:[
@@ -47,7 +47,7 @@ const professions = {
    title:"HR-рекрутер",
    name:"Подбор в команду",
    description:"Первый контакт с кандидатами и уточнение информации по вакансиям.",
-   purpose:"Собирает информацию о кандидатах и помогает рекрутеру организовать рассмотрение заявок.",
+   purpose:"Первичный отбор кандидатов и работа с откликами.",
    tags:["Подбор","Кандидаты","Скрининг"],
    icons:["users","file","search","book"],
    responsibilities:[
@@ -67,7 +67,7 @@ const professions = {
    title:"Поддержка",
    name:"Служба помощи",
    description:"",
-   purpose:"Обрабатывает типовые вопросы по инструкциям, помогает найти решение и подключает человека при необходимости.",
+   purpose:"Ответы на обращения и поддержка клиентов.",
    tags:["Поддержка","FAQ","Передачи"],
    icons:["headset","message","book","settings"],
    responsibilities:[
@@ -123,17 +123,16 @@ function build(route){
  const active=running[id],status=active?"Работает":"Остановлен";
  const topCards=[
   '<section class="detail-card detail-identity" aria-labelledby="detailProfessionLabel">',
-    '<div class="detail-card-title"><h2 id="detailProfessionLabel">Профессия</h2></div>',
-    '<h3 class="detail-profession">',data.title,'</h3>',
+    '<p class="detail-kicker" id="detailProfessionLabel">Профессия</p>',
+    '<h2 class="detail-profession">',data.title,'</h2>',
     '<p class="detail-description">',data.purpose,'</p>',
   '</section>',
   '<section class="detail-card detail-flow" aria-labelledby="detailFlowLabel">',
     '<div class="detail-card-title"><h2 id="detailFlowLabel">Как работает агент</h2></div>',
-    '<ol class="detail-responsibilities">',
-      data.responsibilities.map(([name,description],index)=>
-        '<li class="detail-responsibility"><span class="detail-responsibility-index" aria-hidden="true">'+String(index+1).padStart(2,"0")+'</span>'+
-        '<div><strong>'+name+'</strong><p>'+description+'</p></div></li>').join(""),
-    '</ol>',
+    '<ul class="detail-responsibilities">',
+      data.responsibilities.map(([name,description])=>
+        '<li class="detail-responsibility"><strong>'+name+'</strong><p>'+description+'</p></li>').join(""),
+    '</ul>',
   '</section>',
   '<section class="detail-card detail-state" aria-labelledby="detailStateLabel">',
     '<div class="detail-card-title"><h2 id="detailStateLabel">Состояние</h2></div>',
