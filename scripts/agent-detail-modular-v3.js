@@ -5,11 +5,16 @@
 const professions = {
  consultant: {
    title:"Консультант",
-   summary:"Отвечает на вопросы клиентов, помогает выбрать подходящие продукты и объясняет условия.",
+   name:"Помощник магазина",
+   description:"Подскажет покупателям, что выбрать, и поможет разобраться с заказом.",
    purpose:"Помогает клиенту с выбором, отвечает по базе знаний и передаёт сложные вопросы человеку.",
    tags:["Консультации","FAQ","Продажи"],
    icons:["message","book","check","spark"],
-   flow:[["Telegram","Входящие сообщения","message","blue"],["Консультант","Ответы и рекомендации","book","yellow"],["Человек","Сложные вопросы","users","purple"]],
+   responsibilities:[
+     ["Отвечает на вопросы","Использует знания о товарах, доставке и оплате, чтобы помочь клиенту."],
+     ["Помогает с выбором","Уточняет пожелания и предлагает подходящие варианты."],
+     ["Передаёт сложные случаи","Сохраняет контекст обращения и подключает сотрудника, когда нужен человек."]
+   ],
    integration:"1 подключена",materials:"8 документов",
    stats:[["Диалоги","176","Обращений за 7 дней","messages","message","blue"],
           ["Результаты","59","Помощь с выбором","analytics","check","green"],
@@ -20,11 +25,16 @@ const professions = {
  },
  leads: {
    title:"Менеджер заявок",
-   summary:"Обрабатывает входящие запросы, квалифицирует лиды и создаёт сделки в CRM.",
+   name:"Входящие заявки",
+   description:"Собирает информацию по новым обращениям и передаёт запросы менеджерам.",
    purpose:"Принимает заявки и ведёт клиента от первого сообщения до передачи заявки команде.",
    tags:["Заявки","CRM","Telegram"],
    icons:["file","message","check","workflow"],
-   flow:[["Telegram","Входящие обращения","message","blue"],["Менеджер заявок","Уточнение и квалификация","file","yellow"],["amoCRM","Создание сделки","workflow","purple"]],
+   responsibilities:[
+     ["Принимает обращения","Отвечает на сообщения из подключённых каналов и начинает диалог."],
+     ["Уточняет детали заявки","Собирает контакты, задачу клиента и необходимую информацию."],
+     ["Передаёт заявку","Формирует результат для CRM и направляет сложные вопросы менеджеру."]
+   ],
    integration:"2 подключены",materials:"12 документов",
    stats:[["Диалоги","128","Сообщения за 7 дней","messages","message","blue"],
           ["Заявки","42","Квалифицировано и передано в CRM","analytics","check","green"],
@@ -35,11 +45,16 @@ const professions = {
  },
  recruiter: {
    title:"HR-рекрутер",
-   summary:"Помогает с первичным отбором кандидатов, уточняет информацию и передаёт результаты HR.",
+   name:"Подбор в команду",
+   description:"Первый контакт с кандидатами и уточнение информации по вакансиям.",
    purpose:"Собирает информацию о кандидатах и помогает рекрутеру организовать рассмотрение заявок.",
    tags:["Подбор","Кандидаты","Скрининг"],
    icons:["users","file","search","book"],
-   flow:[["Telegram","Отклик кандидата","message","blue"],["HR-рекрутер","Первичный скрининг","users","yellow"],["HR-команда","Ручное рассмотрение","check","purple"]],
+   responsibilities:[
+     ["Принимает отклики","Начинает общение с кандидатами по выбранной вакансии."],
+     ["Уточняет опыт","Задаёт вопросы по требованиям и фиксирует ответы кандидата."],
+     ["Передаёт на рассмотрение","Готовит сводку для HR. Итоговые решения остаются за человеком."]
+   ],
    integration:"1 подключена",materials:"6 документов",
    stats:[["Диалоги","84","Обращений за 7 дней","messages","message","blue"],
           ["Кандидаты","21","Отправлено на рассмотрение","analytics","users","green"],
@@ -50,11 +65,16 @@ const professions = {
  },
  support: {
    title:"Поддержка",
-   summary:"Отвечает на типовые обращения и передаёт сложные вопросы оператору.",
+   name:"Служба помощи",
+   description:"",
    purpose:"Обрабатывает типовые вопросы по инструкциям, помогает найти решение и подключает человека при необходимости.",
    tags:["Поддержка","FAQ","Передачи"],
    icons:["headset","message","book","settings"],
-   flow:[["Telegram","Вопрос клиента","message","blue"],["Поддержка","Поиск ответа в знаниях","book","yellow"],["Оператор","Сложные обращения","headset","purple"]],
+   responsibilities:[
+     ["Разбирается в обращении","Определяет тему и выясняет недостающие детали вопроса."],
+     ["Ищет решение","Использует доступные инструкции и материалы базы знаний."],
+     ["Подключает оператора","Передаёт обращение человеку, если вопрос не удаётся решить автоматически."]
+   ],
    integration:"1 подключена",materials:"14 документов",
    stats:[["Диалоги","143","Обращений за 7 дней","messages","message","blue"],
           ["Решено","107","Ответов по базе знаний","analytics","check","green"],
@@ -65,6 +85,7 @@ const professions = {
  }
 };
 const running={consultant:true,leads:true,recruiter:false,support:true};
+const getAgentNames=()=>Object.fromEntries(Object.entries(professions).map(([id,data])=>[id,data.name]));
 const icon=(name, extra="")=>'<svg class="icon '+extra+'" aria-hidden="true"><use href="#i-'+name+'"></use></svg>';
 const bubble=(name,color)=>'<span class="detail-bubble '+color+'">'+icon(name)+'</span>';
 const routeFor=(id,section)=>'#/agent/'+id+'/'+section;
@@ -84,6 +105,13 @@ function syncSidebar(id){
  const status=$("agentSidebarStatus");
  if(status){
    status.textContent=running[id]?"Работает":"Остановлен";
+   const heading=card.querySelector(".agent-name");
+   if(heading)heading.textContent=professions[id].name;
+   const description=card.querySelector(".agent-card-description");
+   if(description){
+     description.textContent=professions[id].description;
+     description.hidden=!professions[id].description;
+   }
    status.classList.toggle("is-paused",!running[id]);
  }
  const icons=professions[id].icons;
@@ -95,29 +123,24 @@ function build(route){
  const active=running[id],status=active?"Работает":"Остановлен";
  const topCards=[
   '<section class="detail-card detail-identity" aria-labelledby="detailProfessionLabel">',
-    '<div class="detail-bubbles">',data.icons.map((name,i)=>bubble(name,["blue","yellow","green","purple"][i])).join(""),'</div>',
-    '<div class="detail-eyebrow">Профессия</div>',
-    '<h2 class="detail-profession" id="detailProfessionLabel">',data.title,'</h2>',
+    '<div class="detail-card-title"><h2 id="detailProfessionLabel">Профессия</h2></div>',
+    '<h3 class="detail-profession">',data.title,'</h3>',
     '<p class="detail-description">',data.purpose,'</p>',
-    '<div class="detail-tags">',data.tags.map(tag=>'<span>'+tag+'</span>').join(""),'</div>',
-    '<div class="detail-identity-foot"><span>Режим работы</span><strong>Автоматический ',active?'<i class="detail-small-dot" aria-hidden="true"></i>':' · на паузе','</strong></div>',
   '</section>',
   '<section class="detail-card detail-flow" aria-labelledby="detailFlowLabel">',
-    '<div class="detail-card-title"><h2 id="detailFlowLabel">Как работает агент</h2>',
-    '<a href="',routeFor(id,"automation"),'">Подробнее ',icon("right"),'</a></div>',
-    '<div class="detail-flow-track">',
-      data.flow.map(([name,caption,stepIcon,color],i)=> (i?'<span class="detail-flow-arrow" aria-hidden="true"></span>':"")+
-      '<div class="detail-flow-step">'+bubble(stepIcon,color)+'<strong>'+name+'</strong><small>'+caption+'</small></div>').join(""),
-    '</div>',
-    '<p class="detail-flow-note">Если агенту не хватает полномочий или данных, диалог передаётся человеку.</p>',
+    '<div class="detail-card-title"><h2 id="detailFlowLabel">Как работает агент</h2></div>',
+    '<ol class="detail-responsibilities">',
+      data.responsibilities.map(([name,description],index)=>
+        '<li class="detail-responsibility"><span class="detail-responsibility-index" aria-hidden="true">'+String(index+1).padStart(2,"0")+'</span>'+
+        '<div><strong>'+name+'</strong><p>'+description+'</p></div></li>').join(""),
+    '</ol>',
   '</section>',
   '<section class="detail-card detail-state" aria-labelledby="detailStateLabel">',
     '<div class="detail-card-title"><h2 id="detailStateLabel">Состояние</h2></div>',
     '<div class="detail-state-list">',
       [['Доступность',status,active?"check":"clock",active?"green":"slate"],
        ['Интеграции',data.integration,"plug","blue"],
-       ['Материалы',data.materials,"book","yellow"],
-       ['Редактирование',active?"После остановки":"Доступно","sliders","purple"]]
+       ['Материалы',data.materials,"book","yellow"]]
         .map(([name,value,ic,color])=>'<div class="detail-state-row">'+bubble(ic,color)+'<span>'+name+'</span><strong>'+value+'</strong></div>').join(""),
     '</div>',
   '</section>'
@@ -129,14 +152,21 @@ function build(route){
     '<p class="detail-stat-description">'+description+'</p>'+
     '<a class="detail-stat-link" href="'+routeFor(id,section)+'">Открыть раздел '+icon("arrow")+'</a>'+
   '</section>').join("");
- const lastEvents=data.events.map(([title,meta,ic,color])=>'<div class="detail-event">'+bubble(ic,color)+
-  '<div><strong>'+title+'</strong><small>'+meta+'</small></div></div>').join("");
+ const lastEvents=data.events.map(([title,meta,ic,color])=>{
+   const [time,...context]=meta.split(" · ");
+   return '<a class="detail-activity-item" href="'+routeFor(id,"logs")+'">'+
+     '<span class="detail-activity-time">'+time+'</span>'+
+     '<span class="detail-activity-marker '+color+'" aria-hidden="true"></span>'+
+     '<span class="detail-activity-copy"><strong>'+title+'</strong><small>'+context.join(" · ")+'</small></span>'+
+     icon("right")+'</a>';
+ }).join("");
  return [
   '<div class="detail-heading">',
    '<div class="detail-heading-copy">',
-    '<div class="detail-title-row"><h1 id="agentDetailHeading">',data.title,'</h1>',
+    '<div class="detail-title-row"><h1 id="agentDetailHeading">',data.name,'</h1>',
     '<span class="detail-status ',active?"":"is-paused",'" role="status">',status,'</span></div>',
-    '<p>',data.summary,'</p>',
+    data.description?'<p class="detail-user-description">'+data.description+'</p>':"",
+    '<div class="detail-heading-tags">',data.tags.map(tag=>'<span>'+tag+'</span>').join(""),'</div>',
    '</div>',
    '<div class="detail-actionbar">',
      '<button class="detail-button" type="button" data-detail-share>',icon("arrow"),' Поделиться</button>',
@@ -152,22 +182,11 @@ function build(route){
   '</div>',
   '<div class="detail-top-grid">',topCards,'</div>',
   '<div class="detail-stat-grid">',metricCards,'</div>',
-  '<div class="detail-bottom-grid">',
-   '<section class="detail-card" aria-labelledby="detailEventsLabel">',
-     '<div class="detail-card-title"><h2 id="detailEventsLabel">Последние действия</h2>',
-     '<a href="',routeFor(id,"logs"),'">История ',icon("arrow"),'</a></div>',
-     '<div class="detail-events">',lastEvents,'</div>',
-   '</section>',
-   '<section class="detail-card" aria-labelledby="detailControlsLabel">',
-     '<div class="detail-card-title"><h2 id="detailControlsLabel">Управление</h2></div>',
-     '<div class="detail-quick-actions">',
-       '<a href="',routeFor(id,"testing"),'">',icon("flask"),' Тестировать</a>',
-       '<a href="',routeFor(id,"logs"),'">',icon("list"),' Журнал</a>',
-       '<a href="',routeFor(id,"settings"),'">',icon("sliders"),' Настройки',active?" · 🔒":"",'</a>',
-     '</div>',
-     '<p class="detail-control-hint">',active?"Остановите агента, чтобы изменить его параметры.":"Агент остановлен. Настройки доступны для редактирования после реализации раздела.",'</p>',
-   '</section>',
-  '</div>',
+  '<section class="detail-card detail-activity-card" aria-labelledby="detailEventsLabel">',
+    '<div class="detail-card-title"><h2 id="detailEventsLabel">Последние действия</h2>',
+    '<a href="',routeFor(id,"logs"),'">Все действия ',icon("arrow"),'</a></div>',
+    '<div class="detail-activity-list">',lastEvents,'</div>',
+  '</section>',
  ].join("");
 }
 function render(route){
@@ -192,7 +211,7 @@ document.addEventListener("click",(event)=>{
  const id=Object.hasOwn(professions,route[2])?route[2]:"leads";
  if(event.target.closest("[data-detail-toggle]")){
    running[id]=!running[id];render({id});$("detailToggleStatus").focus();
-   notify("Статус «"+professions[id].title+"» обновлён на экране.");
+   notify("Статус «"+professions[id].name+"» обновлён на экране.");
  }else if(event.target.closest("[data-detail-share]")){
    notify("Функция «Поделиться» пока в разработке.");
  }else if(event.target.closest("[data-detail-more]")){
@@ -207,5 +226,5 @@ document.addEventListener("click",(event)=>{
  }
 });
 window.addEventListener("hashchange",()=>{const toast=$("detailToast");if(toast)toast.hidden=true;});
-window.AIMockAgentDetail={render,getStatus:(id)=>running[id]===true,refreshCards:agentCardStatusSync};
+window.AIMockAgentDetail={render,getStatus:(id)=>running[id]===true,refreshCards:agentCardStatusSync,getAgentNames};
 })();
