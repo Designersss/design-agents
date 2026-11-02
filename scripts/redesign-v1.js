@@ -58,7 +58,7 @@ function renderRoute(){
  if(isAgent){
    $("agentSidebarName").textContent=route.name;
    const isRunning=window.AIMockAgentDetail.getStatus(route.id);
-   $("agentSidebarStatus").textContent=isRunning?"Работает · демо":"Остановлен · демо";
+   $("agentSidebarStatus").textContent=isRunning?"Работает":"Остановлен";
    $("agentSidebarStatus").classList.toggle("is-paused",!isRunning);
    document.querySelectorAll("[data-agent-section]").forEach(link=>{
      link.href="#/agent/"+route.id+"/"+link.dataset.agentSection;
@@ -68,7 +68,7 @@ function renderRoute(){
    });
    $("placeholderName").textContent="В разработке";
    $("placeholderContext").textContent=route.name+" / "+route.title;
-   $("placeholderDescription").textContent=route.section==="settings"?(isRunning?"Настройки работающего агента доступны только для просмотра. Чтобы изменить параметры, сначала остановите агента. Сам экран настроек пока в разработке.":"Агент остановлен. Редактирование станет доступно после реализации страницы настроек."):"Раздел агента будет реализован в следующих этапах. Модульный обзор доступен в левом меню.";
+   $("placeholderDescription").textContent=route.section==="settings"?(isRunning?"Настройки работающего агента доступны только для просмотра. Чтобы изменить параметры, сначала остановите агента. Сам экран настроек пока в разработке.":"Агент остановлен. Редактирование станет доступно после реализации страницы настроек."):"Раздел пока в разработке. Вернитесь к обзору агента через левое меню.";
    if(isAgentOverview)window.AIMockAgentDetail.render(route);
  }else{
    document.querySelectorAll("[data-global-route]").forEach(link=>{
@@ -80,7 +80,7 @@ function renderRoute(){
    if(route.key!=="overview"){
      $("placeholderName").textContent="В разработке";
      $("placeholderContext").textContent=route.title;
-     $("placeholderDescription").textContent="Страница «"+route.title+"» будет реализована следующим этапом в новой светлой дизайн-системе AIMock.";
+     $("placeholderDescription").textContent="Страница «"+route.title+"» пока в разработке.";
    }
  }
  document.title="AIMock — "+(isAgent?route.name+" / ":"")+route.title;
