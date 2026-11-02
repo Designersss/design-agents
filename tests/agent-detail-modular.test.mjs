@@ -22,7 +22,9 @@ test("every profession has a corresponding design fixture and agent route",()=>{
    assert.ok(detail.includes(key+": {"),key);
    assert.ok(core.includes(key+":")||core.includes(key+':"'),key);
  }
- assert.match(detail,/В реальном сервисе действие не выполнялось/);
+ assert.doesNotMatch(detail,/AG-02\d{2}|Модульный обзор|Карточка агента ·|Демо:/);
+ assert.doesNotMatch(html,/Дизайн-прототип|Демо-пространство|демонстрационные/);
+ assert.match(detail,/Статус .*обновлён на экране/);
  assert.match(detail,/Открыть раздел/);
  assert.match(detail,/data-detail-toggle/);
 });
@@ -40,4 +42,15 @@ test("new overview navigation remains scoped to agent",()=>{
  }
  assert.match(html,/class="agent-back"/);
  assert.ok(core.includes("isAgentOverview"));
+});
+
+test("shell fills viewport with fixed header and inset floating sidebar",()=>{
+ const layout=readFileSync(resolve(root,"styles/redesign-v1.css"),"utf8");
+ assert.match(layout,/\.app-shell\s*\{[^}]*width:100%/);
+ assert.match(layout,/min-height:100dvh; margin:0;/);
+ assert.match(layout,/\.sidebar\s*\{[^}]*position:fixed;[^}]*left:16px; top:16px; bottom:16px;/s);
+ assert.match(layout,/\.topbar\s*\{[^}]*position:fixed; top:0;/);
+ assert.match(layout,/\.workspace\s*\{[^}]*margin-left:252px; padding-top:76px;/s);
+ assert.match(layout,/@media \(max-width:710px\)/);
+ assert.doesNotMatch(layout,/max-width:1680px/);
 });
