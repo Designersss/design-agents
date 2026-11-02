@@ -33,7 +33,9 @@ test("modular layout adapts without duplicate navigation",()=>{
  assert.match(css,/\.detail-top-grid\s*\{[^}]*display:grid;[^}]*grid-template-columns:minmax\(0,\.86fr\)[^}]*align-items:stretch/);
  assert.match(css,/\.detail-top-grid\s*>\s*\.detail-card\s*\{[^}]*min-height:0;[^}]*align-self:stretch/);
  assert.doesNotMatch(css,/\.detail-top-grid\s*\{\s*display:flex/);
- assert.match(css,/@container \(max-width:540px\)/);
+ assert.match(css,/\.detail-responsibilities\s*\{[^}]*display:flex;[^}]*flex-direction:column/);
+ assert.match(css,/\.detail-responsibility\s*\{[^}]*border-top:1px solid/);
+ assert.doesNotMatch(css,/@container \(max-width:540px\)|detail-responsibilities \{ grid-template-columns/);
  assert.doesNotMatch(css,/min-height:305px|min-height:265px/);
  assert.match(css,/@media \(max-width:600px\)/);
  assert.match(css,/\.detail-top-grid/);
@@ -70,7 +72,8 @@ test("agent overview uses custom names and optional descriptions independent of 
  assert.match(detail,/detail-kicker/);
  assert.match(detail,/detail-profession/);
  assert.doesNotMatch(detail,/detail-responsibility-index|detail-flow-arrow/);
- assert.match(css,/\.detail-responsibilities[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+ assert.match(css,/\.detail-responsibilities[^}]*flex-direction:column/);
+ assert.doesNotMatch(css,/\.detail-responsibilities[^}]*grid-template-columns/);
  assert.doesNotMatch(detail,/data\.flow|detail-identity-foot|detailControlsLabel|detail-bubbles/);
  assert.doesNotMatch(detail,/Редактирование.*После остановки/);
  assert.match(core,/route.section==="overview"\?route.name:/);

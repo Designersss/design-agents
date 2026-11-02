@@ -44,6 +44,21 @@ try {
  assert.equal(await page.locator(".detail-identity .detail-tags").count(),0);
  assert.equal(await page.locator(".detail-state-row").count(),3);
  assert.equal(await page.locator(".detail-responsibility").count(),3);
+ const responsibilityRows=await page.locator(".detail-responsibility").evaluateAll(rows=>
+  rows.map(row=>({x:row.getBoundingClientRect().x,y:row.getBoundingClientRect().y,
+    width:row.getBoundingClientRect().width,height:row.getBoundingClientRect().height,
+    separator:getComputedStyle(row).borderTopWidth})));
+ assert.equal(responsibilityRows.length,3);
+ for(let i=1;i<responsibilityRows.length;i++){
+   assert.ok(Math.abs(responsibilityRows[i].x-responsibilityRows[0].x)<=1,
+     "Responsibilities should be vertically aligned in one column");
+   assert.ok(responsibilityRows[i].y>=responsibilityRows[i-1].y+responsibilityRows[i-1].height-1,
+     "Responsibilities must appear under one another, not side by side");
+   assert.ok(Math.abs(responsibilityRows[i].width-responsibilityRows[0].width)<=1,
+     "Responsibility rows must span the same available width");
+   assert.equal(responsibilityRows[i].separator,"1px","Each subsequent row has horizontal separator");
+ }
+
  assert.equal(await page.locator(".detail-activity-item").count(),3);
  assert.equal(await page.locator("#detailControlsLabel").count(),0);
  assert.doesNotMatch(await page.locator("#agentDetailView").innerText(),/Режим работы|Автоматический|Редактирование|После остановки/);
@@ -116,6 +131,9 @@ try {
    await page.waitForTimeout(100);
    const bounds=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
    assert.ok(bounds.page<=bounds.viewport+2,"Horizontal page overflow at "+size.width+"px: "+JSON.stringify(bounds));
+   const rowsAtWidth=await page.locator(".detail-responsibility").evaluateAll(rows=>rows.map(el=>({top:el.getBoundingClientRect().top,left:el.getBoundingClientRect().left})));
+   assert.ok(rowsAtWidth[0].top<rowsAtWidth[1].top && rowsAtWidth[1].top<rowsAtWidth[2].top,
+     "Responsibilities stay vertically stacked at "+size.width+"px");
    if(size.width===390){
      const pos=await page.evaluate(()=>({topbar:getComputedStyle(document.querySelector(".topbar")).position,headerLeft:document.querySelector(".topbar").getBoundingClientRect().left, sidebarVisible:getComputedStyle(document.querySelector(".sidebar")).display}));
      assert.equal(pos.topbar,"fixed");assert.equal(pos.headerLeft,0);assert.equal(pos.sidebarVisible,"none");
