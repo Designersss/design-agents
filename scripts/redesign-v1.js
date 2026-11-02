@@ -8,7 +8,7 @@ const pageTitles = {
  workspace:"Пространства",profile:"Профиль",settings:"Настройки",
  notifications:"Уведомления",create:"Создание агента",attention:"Требует внимания"
 };
-const agents={consultant:"Консультант",leads:"Менеджер заявок",recruiter:"HR-рекрутер",support:"Поддержка"};
+const agents=window.AIMockAgentDetail.getAgentNames();
 const agentSections={overview:"Обзор",messages:"Диалоги",settings:"Настройки",integrations:"Интеграции",knowledge:"Знания",testing:"Тестирование",automation:"Автоматизации",analytics:"Статистика",logs:"Логи"};
 const items=[
  ["Обзор","overview","home"],["Агенты","agents","grid"],["Библиотека агентов","library","layers"],
@@ -54,7 +54,7 @@ function renderRoute(){
  $("agentDetailView").hidden=!isAgentOverview;
  $("placeholderView").hidden=route.key==="overview"||isAgentOverview;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
- $("breadcrumbCurrent").textContent=isAgent?route.name+" / "+route.title:route.title;
+ $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
    $("agentSidebarName").textContent=route.name;
    const isRunning=window.AIMockAgentDetail.getStatus(route.id);
@@ -83,7 +83,7 @@ function renderRoute(){
      $("placeholderDescription").textContent="Страница «"+route.title+"» пока в разработке.";
    }
  }
- document.title="AIMock — "+(isAgent?route.name+" / ":"")+route.title;
+ document.title="AIMock — "+(isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title);
  closeMobile();closeNotifications();closeSearch();
  document.querySelector(".workspace").scrollTop=0;
  window.scrollTo(0,0);
