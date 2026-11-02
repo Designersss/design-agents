@@ -30,7 +30,12 @@ test("every profession has a corresponding design fixture and agent route",()=>{
 });
 test("modular layout adapts without duplicate navigation",()=>{
  assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
- assert.match(css,/grid-template-columns:minmax\(0,\.86fr\)/);
+ assert.match(css,/\.detail-top-grid\s*\{[^}]*display:flex;[^}]*align-items:flex-start/);
+ assert.match(css,/\.detail-top-grid\s*>\s*\.detail-card\s*\{[^}]*min-height:0/);
+ assert.match(css,/\.detail-identity\s*\{[^}]*flex:0 1 228px/);
+ assert.match(css,/\.detail-flow\s*\{[^}]*flex:1 1 430px/);
+ assert.match(css,/@container \(max-width:540px\)/);
+ assert.doesNotMatch(css,/min-height:305px|min-height:265px/);
  assert.match(css,/@media \(max-width:600px\)/);
  assert.match(css,/\.detail-top-grid/);
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
@@ -63,6 +68,10 @@ test("agent overview uses custom names and optional descriptions independent of 
  assert.match(detail,/data.description\?/);
  assert.match(detail,/detail-heading-tags/);
  assert.match(detail,/detail-responsibilities/);
+ assert.match(detail,/detail-kicker/);
+ assert.match(detail,/detail-profession/);
+ assert.doesNotMatch(detail,/detail-responsibility-index|detail-flow-arrow/);
+ assert.match(css,/\.detail-responsibilities[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.doesNotMatch(detail,/data\.flow|detail-identity-foot|detailControlsLabel|detail-bubbles/);
  assert.doesNotMatch(detail,/Редактирование.*После остановки/);
  assert.match(core,/route.section==="overview"\?route.name:/);
