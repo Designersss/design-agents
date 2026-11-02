@@ -99,12 +99,6 @@ function agentCardStatusSync(){
    if(!state)return;
    state.classList.toggle("paused",!running[id]);
    state.textContent=running[id]?"Работает":"Остановлен";
- });
-}
-function syncSidebar(id){
- const status=$("agentSidebarStatus");
- if(status){
-   status.textContent=running[id]?"Работает":"Остановлен";
    const heading=card.querySelector(".agent-name");
    if(heading)heading.textContent=professions[id].name;
    const description=card.querySelector(".agent-card-description");
@@ -112,6 +106,12 @@ function syncSidebar(id){
      description.textContent=professions[id].description;
      description.hidden=!professions[id].description;
    }
+ });
+}
+function syncSidebar(id){
+ const status=$("agentSidebarStatus");
+ if(status){
+   status.textContent=running[id]?"Работает":"Остановлен";
    status.classList.toggle("is-paused",!running[id]);
  }
  const icons=professions[id].icons;
