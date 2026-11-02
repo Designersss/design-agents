@@ -1,10 +1,10 @@
 (() => {
 "use strict";
-// UI-only implementation of approved modular agent overview (variant 03).
-// Demo data and local in-memory status changes. No external actions or persistence.
+// Modular agent overview visual implementation.
+// All agent metrics are sample data. Status changes are local-only; no API calls.
 const professions = {
  consultant: {
-   title:"Консультант",code:"AG-0201",
+   title:"Консультант",
    summary:"Отвечает на вопросы клиентов, помогает выбрать подходящие продукты и объясняет условия.",
    purpose:"Помогает клиенту с выбором, отвечает по базе знаний и передаёт сложные вопросы человеку.",
    tags:["Консультации","FAQ","Продажи"],
@@ -19,7 +19,7 @@ const professions = {
            ["Передано человеку","11:54 · Вопрос о договоре","users","yellow"]]
  },
  leads: {
-   title:"Менеджер заявок",code:"AG-0204",
+   title:"Менеджер заявок",
    summary:"Обрабатывает входящие запросы, квалифицирует лиды и создаёт сделки в CRM.",
    purpose:"Принимает заявки и ведёт клиента от первого сообщения до передачи заявки команде.",
    tags:["Заявки","CRM","Telegram"],
@@ -34,7 +34,7 @@ const professions = {
            ["Передано оператору","11:54 · Индивидуальный вопрос","users","yellow"]]
  },
  recruiter: {
-   title:"HR-рекрутер",code:"AG-0207",
+   title:"HR-рекрутер",
    summary:"Помогает с первичным отбором кандидатов, уточняет информацию и передаёт результаты HR.",
    purpose:"Собирает информацию о кандидатах и помогает рекрутеру организовать рассмотрение заявок.",
    tags:["Подбор","Кандидаты","Скрининг"],
@@ -49,7 +49,7 @@ const professions = {
            ["На рассмотрении","11:22 · Передано HR","file","yellow"]]
  },
  support: {
-   title:"Поддержка",code:"AG-0208",
+   title:"Поддержка",
    summary:"Отвечает на типовые обращения и передаёт сложные вопросы оператору.",
    purpose:"Обрабатывает типовые вопросы по инструкциям, помогает найти решение и подключает человека при необходимости.",
    tags:["Поддержка","FAQ","Передачи"],
@@ -83,7 +83,7 @@ function agentCardStatusSync(){
 function syncSidebar(id){
  const status=$("agentSidebarStatus");
  if(status){
-   status.textContent=running[id]?"Работает · демо":"Остановлен · демо";
+   status.textContent=running[id]?"Работает":"Остановлен";
    status.classList.toggle("is-paused",!running[id]);
  }
  const icons=professions[id].icons;
@@ -132,10 +132,8 @@ function build(route){
  const lastEvents=data.events.map(([title,meta,ic,color])=>'<div class="detail-event">'+bubble(ic,color)+
   '<div><strong>'+title+'</strong><small>'+meta+'</small></div></div>').join("");
  return [
-  '<div class="detail-context">Модульный обзор / ',data.code,'</div>',
   '<div class="detail-heading">',
    '<div class="detail-heading-copy">',
-    '<span class="detail-caption">Карточка агента · ',data.code,'</span>',
     '<div class="detail-title-row"><h1 id="agentDetailHeading">',data.title,'</h1>',
     '<span class="detail-status ',active?"":"is-paused",'" role="status">',status,'</span></div>',
     '<p>',data.summary,'</p>',
@@ -167,10 +165,9 @@ function build(route){
        '<a href="',routeFor(id,"logs"),'">',icon("list"),' Журнал</a>',
        '<a href="',routeFor(id,"settings"),'">',icon("sliders"),' Настройки',active?" · 🔒":"",'</a>',
      '</div>',
-     '<p class="detail-control-hint">',active?"Остановите агента, чтобы изменить его параметры.":"Агент остановлен. Теперь его настройки можно редактировать (экран настроек пока в разработке).",'</p>',
+     '<p class="detail-control-hint">',active?"Остановите агента, чтобы изменить его параметры.":"Агент остановлен. Настройки доступны для редактирования после реализации раздела.",'</p>',
    '</section>',
   '</div>',
-  '<p class="detail-demo-note">Статусы, показатели и история показаны для демонстрации дизайна. Запуск и остановка изменяют только локальное состояние интерфейса — реальные агенты не запускаются.</p>'
  ].join("");
 }
 function render(route){
@@ -195,9 +192,9 @@ document.addEventListener("click",(event)=>{
  const id=Object.hasOwn(professions,route[2])?route[2]:"leads";
  if(event.target.closest("[data-detail-toggle]")){
    running[id]=!running[id];render({id});$("detailToggleStatus").focus();
-   notify("Демо: агент «"+professions[id].title+"» "+(running[id]?"отмечен работающим.":"отмечен остановленным.")+" В реальном сервисе действие не выполнялось.");
+   notify("Статус «"+professions[id].title+"» обновлён на экране.");
  }else if(event.target.closest("[data-detail-share]")){
-   notify("Публикация и передача агентов появятся позднее. Это только демонстрационный интерфейс.");
+   notify("Функция «Поделиться» пока в разработке.");
  }else if(event.target.closest("[data-detail-more]")){
    const menu=root.querySelector("[data-detail-menu]");
    menu.hidden=!menu.hidden;
