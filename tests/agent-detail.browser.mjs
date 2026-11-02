@@ -23,6 +23,8 @@ try {
  assert.equal(await page.locator(".agent-nav").isVisible(),true);
  assert.equal(await page.locator(".detail-top-grid > .detail-card").count(),3);
  assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3);
+ const statusIcon=await page.locator(".detail-state-row .detail-bubble").first().boundingBox();
+ assert.ok(Math.abs(statusIcon.width-statusIcon.height)<=1,"State icon must remain circular");
  const shellBounds=await page.evaluate(()=>{
    const shell=document.querySelector(".app-shell");
    const sidebar=document.querySelector(".sidebar");
