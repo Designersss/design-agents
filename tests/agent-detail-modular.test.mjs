@@ -30,10 +30,9 @@ test("every profession has a corresponding design fixture and agent route",()=>{
 });
 test("modular layout adapts without duplicate navigation",()=>{
  assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
- assert.match(css,/\.detail-top-grid\s*\{[^}]*display:flex;[^}]*align-items:flex-start/);
- assert.match(css,/\.detail-top-grid\s*>\s*\.detail-card\s*\{[^}]*min-height:0/);
- assert.match(css,/\.detail-identity\s*\{[^}]*flex:0 1 228px/);
- assert.match(css,/\.detail-flow\s*\{[^}]*flex:1 1 430px/);
+ assert.match(css,/\.detail-top-grid\s*\{[^}]*display:grid;[^}]*grid-template-columns:minmax\(0,\.86fr\)[^}]*align-items:stretch/);
+ assert.match(css,/\.detail-top-grid\s*>\s*\.detail-card\s*\{[^}]*min-height:0;[^}]*align-self:stretch/);
+ assert.doesNotMatch(css,/\.detail-top-grid\s*\{\s*display:flex/);
  assert.match(css,/@container \(max-width:540px\)/);
  assert.doesNotMatch(css,/min-height:305px|min-height:265px/);
  assert.match(css,/@media \(max-width:600px\)/);
