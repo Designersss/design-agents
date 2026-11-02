@@ -22,6 +22,19 @@ try {
  assert.equal(await page.locator(".global-nav").isVisible(),false);
  assert.equal(await page.locator(".agent-nav").isVisible(),true);
  assert.equal(await page.locator(".detail-top-grid > .detail-card").count(),3);
+ const topGeometry=await page.locator(".detail-top-grid > .detail-card").evaluateAll(cards=>
+   cards.map(card=>{
+     const last=card.lastElementChild;
+     const c=card.getBoundingClientRect(), l=last.getBoundingClientRect();
+     return {height:c.height,emptyBottom:c.bottom-l.bottom,minHeight:getComputedStyle(card).minHeight};
+   }));
+ for(const card of topGeometry){
+   assert.ok(card.height<320,"Top section must not be an oversized card: "+JSON.stringify(card));
+   assert.ok(card.emptyBottom>=0 && card.emptyBottom<38,"Top card must size to content: "+JSON.stringify(card));
+   assert.equal(card.minHeight,"0px");
+ }
+ assert.ok(new Set(topGeometry.map(c=>Math.round(c.height))).size>1,"Top cards should not all stretch to equal heights");
+ assert.equal(await page.locator(".detail-responsibility-index").count(),0);
  assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3); 
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки");
  assert.equal((await page.locator(".detail-profession").textContent()).trim(),"Менеджер заявок");
