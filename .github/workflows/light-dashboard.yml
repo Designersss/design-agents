@@ -1,0 +1,31 @@
+name: Light Dashboard Design Checks
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "styles/redesign-v1.css"
+      - "scripts/redesign-v1.js"
+      - "tests/light-dashboard.test.mjs"
+      - ".github/workflows/light-dashboard.yml"
+  push:
+    branches:
+      - "design/light-dashboard-redesign-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript
+        run: node --check scripts/redesign-v1.js
+      - name: Run static tests
+        run: node --test tests/light-dashboard.test.mjs

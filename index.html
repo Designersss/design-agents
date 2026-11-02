@@ -1,41 +1,203 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0f1012"><title>AIMock — Обзор</title><link rel="stylesheet" href="styles/overview-dark.css"><link rel="stylesheet" href="styles/layout.css"></head><body><div class="shell">
-<aside class="sidebar"><div class="brand"><span class="brandmark"><svg viewBox="0 0 32 32" width="31" height="31" fill="none"><path d="m5 24 8.2-15.5c1.4-2.7 4.1-2.7 5.6 0L27 24" stroke="#38C69A" stroke-width="4.1" stroke-linecap="round"/><path d="m10 22 6-9.5 6 9.5" stroke="#38C69A" stroke-width="3.7" stroke-linecap="round"/></svg></span><span>AIMock</span><button type="button" class="collapse" id="sidebarToggle" aria-label="Свернуть боковое меню" aria-expanded="true" title="Свернуть меню"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="nav"><a class="navrow selected" href="./index.html" title="Обзор"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 13 4-4 4 4M12 9v9"/></svg><span>Обзор</span></a><a class="navrow " href="./pages/workspace.html" title="Workspace"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3M3 12h18"/></svg><span>Workspace</span></a><a class="navrow " href="./pages/team.html" title="Команда"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M2 20a6 6 0 0 1 12 0M17 9v8m-4-4h8"/></svg><span>Команда</span></a><a class="navrow " href="./pages/dialogs.html" title="Диалоги"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9.6 9.6 0 0 1-4-.9L3 21l1.9-5.5a9.6 9.6 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3h0a8.5 8.5 0 0 1 8.5 8.5Z"/><path d="M8 12h8"/></svg><span>Диалоги</span><span class="counter">12</span></a><a class="navrow " href="./pages/agents.html" title="Агенты"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span>Агенты</span></a><a class="navrow " href="./pages/integrations.html" title="Интеграции"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><rect x="8" y="2" width="8" height="8" rx="2"/><rect x="2" y="14" width="8" height="8" rx="2"/><rect x="14" y="14" width="8" height="8" rx="2"/><path d="M12 10v3m0 0H6v1m6-1h6v1"/></svg><span>Интеграции</span></a><a class="navrow " href="./pages/analytics.html" title="Аналитика"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 20V9m5 11V4m5 16v-8m5 8V6"/></svg><span>Аналитика</span></a><a class="navrow " href="./pages/finance.html" title="Финансы"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"/><path d="M3 9h18m-5 6h2"/></svg><span>Финансы</span></a><a class="navrow " href="./pages/settings.html" title="Настройки"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M12 3.5 14 5l2.4-.3.8 2.5 2.2 1.3-.8 2.4 1.1 2.1-1.8 1.8.2 2.4-2.4.8L14 20l-2 1-2-1-2.1.2-.8-2.4-2.4-.8.2-2.4-1.8-1.8 1.1-2.1-.8-2.4 2.2-1.3.8-2.5L10 5Z"/><circle cx="12" cy="12" r="3"/></svg><span>Настройки</span></a></div>
-<div class="sidebar-foot"><button type="button" class="workspace-switch" id="workspaceToggle" aria-haspopup="true" aria-controls="workspaceMenu" aria-expanded="false" title="Выбрать пространство"><span class="work-icon">A</span><div><strong>Acme Corp</strong><span>Пространство компании</span></div><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><button type="button" class="userbox" id="accountToggle" aria-haspopup="true" aria-controls="accountMenu" aria-expanded="false" title="Меню аккаунта"><span class="avatar initials" style="--av:#3b4956">Д</span><div><strong>Денис</strong><span>Владелец</span></div><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button></div></aside>
-<main class="main"><header class="topbar"><span class="crumb">Acme Corp <span>/</span> Обзор</span><div class="topactions"><button type="button" class="search" id="searchToggle" title="Поиск (⌘K)"><svg class="icon" width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>Поиск</span><kbd>⌘ K</kbd></button><button type="button" class="icon-btn" id="notificationsToggle" aria-label="Уведомления" aria-controls="notificationsMenu" aria-expanded="false"><svg class="icon" width="19" height="19" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/></svg><b></b></button></div></header>
-<div class="bodylayout"><div class="center"><div class="sectiontitle"><div><h1>Обзор</h1><p>Работа агентов и важные события</p></div><button type="button" class="period" id="periodToggle" aria-controls="periodMenu" aria-expanded="false"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/></svg> <span id="periodLabel">За 7 дней</span> <svg class="icon" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>
-<div class="metrics"><div class="metric"><span class="metric-icon green"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9.6 9.6 0 0 1-4-.9L3 21l1.9-5.5a9.6 9.6 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3h0a8.5 8.5 0 0 1 8.5 8.5Z"/><path d="M8 12h8"/></svg></span><span class="metatext">Новых диалогов</span><strong>284</strong><small class="up">+12% к прошлой неделе</small></div><div class="metric"><span class="metric-icon blue"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg></span><span class="metatext">Заявок обработано</span><strong>96</strong><small class="up">+18% к прошлой неделе</small></div><div class="metric"><span class="metric-icon green"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="metatext">Передано людям</span><strong>24</strong><small class="neutral">За последние 7 дней</small></div><div class="metric"><span class="metric-icon grey"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="metatext">Время ответа</span><strong>28 сек</strong><small class="up">−22% к прошлой неделе</small></div></div>
-<div class="agent-heading"><div><h2>Агенты</h2><p>Ваши агенты и их текущее состояние</p></div><a class="add-btn" href="./pages/create-agent.html"><svg class="icon" width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Создать агента</a></div>
-<section class="agentslist" aria-label="Список агентов"><div class="agentlist-head"><span>АГЕНТ</span><span>КАНАЛ</span><span>СТАТУС</span><span>АКТИВНОСТЬ</span></div><div class="agent-line" role="button" tabindex="0" data-preview="agent"><span class="agent-person"><span class="avatar initials" style="--av:#4a454d">А</span></span><div class="agent-main"><span class="agent-name">HR-рекрутер</span><span class="agent-description">Проводит первичный отбор кандидатов</span></div><div class="agent-channel"><span class="tg-small">➤</span>Telegram</div><span class="agent-status "><b></b>Работает</span><span class="agent-last">12:42</span><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="agent-line" role="button" tabindex="0" data-preview="agent"><span class="agent-person"><span class="avatar initials" style="--av:#345258">Д</span></span><div class="agent-main"><span class="agent-name">Менеджер заявок</span><span class="agent-description">Принимает обращения и отвечает клиентам</span></div><div class="agent-channel"><span class="tg-small">➤</span>Telegram</div><span class="agent-status "><b></b>Работает</span><span class="agent-last">12:18</span><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="agent-line" role="button" tabindex="0" data-preview="agent"><span class="agent-person"><span class="avatar initials" style="--av:#584442">С</span></span><div class="agent-main"><span class="agent-name">Поддержка</span><span class="agent-description">Отвечает на вопросы пользователей</span></div><div class="agent-channel"><span class="tg-small">➤</span>Telegram</div><span class="agent-status "><b></b>Работает</span><span class="agent-last">11:32</span><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="agent-line" role="button" tabindex="0" data-preview="agent"><span class="agent-person"><span class="avatar initials" style="--av:#3f4c68">М</span></span><div class="agent-main"><span class="agent-name">Рекрутер · Дизайн</span><span class="agent-description">Помогает HR с поиском специалистов</span></div><div class="agent-channel"><span class="tg-small">➤</span>Telegram</div><span class="agent-status paused"><b></b>Пауза</span><span class="agent-last">Вчера</span><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><a class="agents-footer" href="./pages/agents.html">Все агенты <span><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span></a></section>
-<div class="bottomcols"><section class="surface chatpanel"><div class="panel-title"><h2>Последние диалоги</h2></div><div class="chatline" role="button" tabindex="0" data-preview="chat"><span class="avatar initials" style="--av:#4c3f48">АС</span><div class="chatinfo"><div class="chatname">Анна Смирнова</div><div class="chatpreview">Здравствуйте! Подскажите, подходит ли мой опыт?</div></div><span class="chat-time">12:42</span><span class="chat-unread">2</span></div><div class="chatline" role="button" tabindex="0" data-preview="chat"><span class="avatar initials" style="--av:#3f5269">ИП</span><div class="chatinfo"><div class="chatname">Иван Петров</div><div class="chatpreview">Спасибо! Когда можно связаться с вами?</div></div><span class="chat-time">12:18</span><span class="chat-unread">1</span></div><div class="chatline" role="button" tabindex="0" data-preview="chat"><span class="avatar initials" style="--av:#6c5243">МО</span><div class="chatinfo"><div class="chatname">Мария Орлова</div><div class="chatpreview">Всё получилось, благодарю за помощь!</div></div><span class="chat-time">11:56</span></div><div class="chatline" role="button" tabindex="0" data-preview="chat"><span class="avatar initials" style="--av:#485851">ЕВ</span><div class="chatinfo"><div class="chatname">Егор Волков</div><div class="chatpreview">Могу пройти собеседование в пятницу.</div></div><span class="chat-time">Вчера</span></div><a class="agents-footer panel-footer" href="./pages/dialogs.html">Все диалоги <svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></section><section class="surface attention"><div class="panel-title"><h2>Требуют внимания <em>4</em></h2></div><div class="alertline" role="button" tabindex="0" data-preview="attention"><span class="alert-dot orange"></span><div class="alert-info"><div>Новое обращение</div><small>HR-рекрутер · 2 сообщения без ответа</small></div><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="alertline" role="button" tabindex="0" data-preview="attention"><span class="alert-dot green"></span><div class="alert-info"><div>Требует согласования</div><small>Рекрутер передал кандидата на рассмотрение</small></div><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="alertline" role="button" tabindex="0" data-preview="attention"><span class="alert-dot red"></span><div class="alert-info"><div>Интеграция требует проверки</div><small>Битрикс24 · временная ошибка соединения</small></div><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><div class="alertline" role="button" tabindex="0" data-preview="attention"><span class="alert-dot grey"></span><div class="alert-info"><div>Кошелёк</div><small>Рекомендуется пополнить баланс</small></div><svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></div><a class="agents-footer panel-footer" href="./pages/attention.html">Все события <svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></section></div></div>
-<aside class="right"><section class="surface wallet"><div class="panel-title"><h2>Кошелёк</h2><a class="action-small" href="./pages/wallet-top-up.html">Пополнить</a></div><div class="money">1 420 ₽</div><p>Баланс организации</p><div class="progress"><span></span></div><div class="subrow"><span>Расходы за период</span><b>580 ₽</b></div></section><section class="surface plan"><div class="panel-title"><h2>Тариф</h2><a class="action-small" href="./pages/tariff.html">Управление</a></div><div class="plan-body"><div class="planname">Plus</div><p>10 агентов · 20 сотрудников</p></div><div class="planfooter">Действует до 20 нояб. 2026</div></section><section class="surface integrations"><div class="panel-title"><h2>Интеграции</h2><a class="section-link" href="./pages/integrations.html" aria-label="Интеграции: открыть все">Все <svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></div><div class="integration" role="button" tabindex="0" data-preview="integration"><span class="inticon tg">➤</span><div><strong>Telegram</strong><small>Подключено</small></div><i></i></div><div class="integration" role="button" tabindex="0" data-preview="integration"><span class="inticon amo">amo</span><div><strong>amoCRM</strong><small>Подключено</small></div><i></i></div><div class="integration" role="button" tabindex="0" data-preview="integration"><span class="inticon bitrix">24</span><div><strong>Битрикс24</strong><small>Требует проверки</small></div><i class="warn"></i></div></section><section class="surface recent"><div class="panel-title"><h2>Недавняя активность</h2><a class="section-link" href="./pages/journal.html" aria-label="Недавняя активность: открыть все">Все <svg class="icon" width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></div><div class="recentitem" role="button" tabindex="0" data-preview="activity"><span class="eventico"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9.6 9.6 0 0 1-4-.9L3 21l1.9-5.5a9.6 9.6 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3h0a8.5 8.5 0 0 1 8.5 8.5Z"/><path d="M8 12h8"/></svg></span><div><strong>Новый диалог</strong><small>HR-рекрутер · Анна Смирнова</small></div><time>12:42</time></div><div class="recentitem" role="button" tabindex="0" data-preview="activity"><span class="eventico"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 7v8m-4-4h8"/></svg></span><div><strong>Заявка обработана</strong><small>Менеджер заявок</small></div><time>12:18</time></div><div class="recentitem" role="button" tabindex="0" data-preview="activity"><span class="eventico"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span><div><strong>Передано сотруднику</strong><small>Рекрутер · Дизайн</small></div><time>11:56</time></div></section></aside></div></main></div>
-<div id="workspaceMenu" class="demo-popover" role="menu" aria-label="Выбор пространства" hidden>
-  <div class="menu-caption">Пространства</div>
-  <button type="button" class="menu-option is-selected" data-space="company" role="menuitemradio" aria-checked="true"><span class="menu-glyph">A</span><span><strong>Acme Corp</strong><small>Пространство компании</small></span><span class="menu-check">✓</span></button>
-  <button type="button" class="menu-option" data-space="personal" role="menuitemradio" aria-checked="false"><span class="menu-glyph personal-glyph">Д</span><span><strong>Личное</strong><small>Личное пространство</small></span><span class="menu-check">✓</span></button>
-  <div class="menu-separator"></div>
-  <a class="menu-option menu-link" href="./pages/spaces.html">Управление пространствами <span>›</span></a>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f2f2f0">
+<meta name="description" content="AIMock — статический прототип нового светлого интерфейса управления AI-агентами.">
+<title>AIMock — Обзор</title>
+<link rel="stylesheet" href="styles/redesign-v1.css">
+<script src="scripts/redesign-v1.js" defer></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+ <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+ <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 18l9 5 9-5"/></symbol>
+ <symbol id="i-message" viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.7-5a8.5 8.5 0 1 1 15.8-4.5Z"/><path d="M8 11h8M8 15h5"/></symbol>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5c-3-2-6-2-9-1v15c4-1 7-.4 9 1 2-1.4 5-2 9-1V4c-3-1-6-1-9 1ZM12 5v15"/></symbol>
+ <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5m6-5v5M7 8h10v4a5 5 0 0 1-5 5v4m-5-9h10"/></symbol>
+ <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m3-15a3 3 0 0 1 0 6m0 3a5 5 0 0 1 3 5"/></symbol>
+ <symbol id="i-workflow" viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="6" rx="2"/><rect x="15" y="3" width="7" height="6" rx="2"/><rect x="8.5" y="15" width="7" height="6" rx="2"/><path d="M5.5 9v3h13V9M12 12v3"/></symbol>
+ <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18m-6 5h3M5 5V3h12"/></symbol>
+ <symbol id="i-settings" viewBox="0 0 24 24"><path d="m12 2 2 2 3-.2 1.1 2.8 2.7 1.3-.5 3 1.7 2.1-1.7 2.1.5 3-2.7 1.3L17 22l-3-.2-2 2-2-2-3 .2-1.1-2.8-2.7-1.3.5-3L2 13l1.7-2.1-.5-3 2.7-1.3L7 3.8l3 .2z" transform="translate(0 -1) scale(.96)"/><circle cx="12" cy="12" r="3"/></symbol>
+ <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+ <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+ <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+ <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+ <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+ <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+ <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
+ <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 13h4l3-8 4 14 3-7h4"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></symbol>
+ <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="4"/><path d="M12 3v4m-5 6h.01M17 13h.01M8 17h8"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 0v6h5M8 13h8M8 17h6"/></symbol>
+ <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2Z"/></symbol>
+ <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20v-6m5 6V9m5 11V4m5 16v-9"/></symbol>
+ <symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 13h4v7H5a2 2 0 0 1-2-2zm14 0h4v5a2 2 0 0 1-2 2h-2zm2 7c0 2-4 2-7 2"/></symbol>
+ <symbol id="i-suitcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M9 7V4h6v3M3 13h18"/></symbol>
+ <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v7L4 20h16l-6-10V3M8 15h8"/></symbol>
+ <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1"/></symbol>
+ <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5"/><circle cx="16" cy="17" r="2.5"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+</svg>
+<div class="app-shell">
+<aside class="sidebar" id="appSidebar" aria-label="Навигация AIMock">
+  <a class="brand" href="#/overview" aria-label="AIMock — перейти на обзор">
+    <svg aria-hidden="true" viewBox="0 0 32 32"><circle cx="16" cy="8" r="6" fill="#111"/><circle cx="9" cy="22" r="6" fill="#111"/><circle cx="23" cy="22" r="6" fill="#111"/></svg><span>AIMock</span>
+  </a>
+  <div class="global-nav">
+    <nav class="nav-group" aria-label="Основные разделы">
+      <a class="nav-link active" href="#/overview" data-global-route="overview"><svg class="icon"><use href="#i-home"/></svg>Обзор</a>
+      <a class="nav-link" href="#/messages" data-global-route="messages"><svg class="icon"><use href="#i-message"/></svg>Сообщения<span class="nav-count">3</span></a>
+      <a class="nav-link" href="#/agents" data-global-route="agents"><svg class="icon"><use href="#i-grid"/></svg>Агенты</a>
+      <a class="nav-link" href="#/library" data-global-route="library"><svg class="icon"><use href="#i-layers"/></svg>Библиотека агентов</a>
+      <a class="nav-link" href="#/knowledge" data-global-route="knowledge"><svg class="icon"><use href="#i-book"/></svg>Знания</a>
+      <a class="nav-link" href="#/integrations" data-global-route="integrations"><svg class="icon"><use href="#i-plug"/></svg>Интеграции</a>
+      <a class="nav-link" href="#/contacts" data-global-route="contacts"><svg class="icon"><use href="#i-users"/></svg>Контакты</a>
+      <a class="nav-link" href="#/automation" data-global-route="automation"><svg class="icon"><use href="#i-workflow"/></svg>Автоматизации</a>
+      <a class="nav-link" href="#/finance" data-global-route="finance"><svg class="icon"><use href="#i-wallet"/></svg>Финансы</a>
+    </nav>
+  </div>
+  <div class="agent-nav">
+    <a class="agent-back" href="#/agents"><svg class="icon" style="width:16px;height:16px"><use href="#i-left"/></svg>Все агенты</a>
+    <div class="agent-profile">
+      <span class="mini-symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-file"/></svg></span></span>
+      <span><strong id="agentSidebarName">Консультант</strong><small id="agentSidebarStatus">Демо-агент</small></span>
+    </div>
+    <nav class="nav-group" aria-label="Разделы агента">
+      <a class="nav-link active" href="#/agent/consultant/overview" data-agent-section="overview"><svg class="icon"><use href="#i-home"/></svg>Обзор</a>
+      <a class="nav-link" href="#/agent/consultant/messages" data-agent-section="messages"><svg class="icon"><use href="#i-message"/></svg>Диалоги</a>
+      <a class="nav-link" href="#/agent/consultant/settings" data-agent-section="settings"><svg class="icon"><use href="#i-sliders"/></svg>Настройки</a>
+      <a class="nav-link" href="#/agent/consultant/integrations" data-agent-section="integrations"><svg class="icon"><use href="#i-plug"/></svg>Интеграции</a>
+      <a class="nav-link" href="#/agent/consultant/knowledge" data-agent-section="knowledge"><svg class="icon"><use href="#i-book"/></svg>Знания</a>
+      <a class="nav-link" href="#/agent/consultant/testing" data-agent-section="testing"><svg class="icon"><use href="#i-flask"/></svg>Тестирование</a>
+      <a class="nav-link" href="#/agent/consultant/automation" data-agent-section="automation"><svg class="icon"><use href="#i-workflow"/></svg>Автоматизации</a>
+      <a class="nav-link" href="#/agent/consultant/analytics" data-agent-section="analytics"><svg class="icon"><use href="#i-chart"/></svg>Статистика</a>
+      <a class="nav-link" href="#/agent/consultant/logs" data-agent-section="logs"><svg class="icon"><use href="#i-list"/></svg>Логи</a>
+    </nav>
+  </div>
+  <div class="sidebar-spacer"></div>
+  <nav class="nav-group" aria-label="Дополнительно">
+    <a class="nav-link" href="#/settings" data-global-route="settings"><svg class="icon"><use href="#i-settings"/></svg>Настройки</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a class="workspace-link" href="#/workspace"><span class="ws-mark">A</span><span><strong>Acme Studio</strong><small>Демо-пространство</small></span><svg class="icon"><use href="#i-right"/></svg></a>
+    <a class="profile-link" href="#/profile"><span class="avatar">АП</span><span><strong>Профиль</strong><small>Управление аккаунтом</small></span><svg class="icon"><use href="#i-right"/></svg></a>
+  </div>
+</aside>
+<div class="mobile-scrim" id="mobileScrim" hidden></div>
+<div class="workspace">
+  <header class="topbar">
+    <button class="mobile-menu" type="button" id="mobileToggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="appSidebar"><svg class="icon"><use href="#i-menu"/></svg></button>
+    <div class="breadcrumb"><span id="breadcrumbRoot">AIMock</span><svg class="icon" style="width:13px;height:13px"><use href="#i-right"/></svg><strong id="breadcrumbCurrent">Обзор</strong></div>
+    <div class="top-right">
+      <span class="preview-label">Дизайн-прототип</span>
+      <button class="search-trigger" type="button" id="searchToggle" aria-label="Открыть поиск"><svg class="icon"><use href="#i-search"/></svg><span>Поиск по AIMock</span><kbd>⌘ K</kbd></button>
+      <button class="icon-button" type="button" id="notificationsToggle" aria-label="Уведомления" aria-expanded="false" aria-controls="notificationsPopover"><svg class="icon"><use href="#i-bell"/></svg><span class="dot"></span></button>
+      <a class="account-pill" href="#/profile" aria-label="Открыть профиль">АП</a>
+    </div>
+  </header>
+  <div class="popover" id="notificationsPopover" hidden role="region" aria-label="Последние уведомления"><h3>Уведомления</h3><p>В демо-пространстве есть несколько событий, требующих внимания.</p><a href="#/notifications">Открыть уведомления →</a></div>
+  <main id="mainContent">
+  <section id="overviewView" class="content" aria-labelledby="overviewHeading">
+    <div class="page-intro">
+      <div><span class="eyebrow">Ваше рабочее пространство</span><h1 id="overviewHeading">Обзор</h1><p class="page-description">Агенты, обращения и важные события — без лишней информации.</p></div>
+      <div class="period-control" role="group" aria-label="Период демонстрационных показателей">
+        <button type="button" class="period-button selected" data-period="7" aria-pressed="true">7 дней</button>
+        <button type="button" class="period-button" data-period="30" aria-pressed="false">30 дней</button>
+      </div>
+    </div>
+    <div class="metrics" aria-label="Демонстрационные показатели">
+      <div class="metric" data-metric-index="0"><div class="metric-top"><span>Новых диалогов</span><span class="circle-icon blue"><svg class="icon"><use href="#i-message"/></svg></span></div><strong data-value>284</strong><div class="metric-bottom"><span data-detail>+12% к прошлой неделе</span><em>↗</em></div></div>
+      <div class="metric" data-metric-index="1"><div class="metric-top"><span>Обработано заявок</span><span class="circle-icon green"><svg class="icon"><use href="#i-check"/></svg></span></div><strong data-value>96</strong><div class="metric-bottom"><span data-detail>+18% к прошлой неделе</span><em>↗</em></div></div>
+      <div class="metric" data-metric-index="2"><div class="metric-top"><span>Передано людям</span><span class="circle-icon yellow"><svg class="icon"><use href="#i-users"/></svg></span></div><strong data-value>24</strong><div class="metric-bottom"><span data-detail>За последние 7 дней</span><span class="neutral">○</span></div></div>
+      <div class="metric" data-metric-index="3"><div class="metric-top"><span>Время ответа</span><span class="circle-icon purple"><svg class="icon"><use href="#i-clock"/></svg></span></div><strong data-value>28 сек</strong><div class="metric-bottom"><span data-detail>−22% к прошлой неделе</span><em>↘</em></div></div>
+    </div>
+    <div class="dashboard-grid">
+      <section aria-labelledby="agentsHeading">
+        <div class="section-head"><div><h2 id="agentsHeading">Ваши агенты</h2><p>Четыре профессии в демо-пространстве</p></div><a class="text-link" href="#/agents">Все агенты <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+        <div class="agent-grid">
+          <article class="agent-card">
+            <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">01 / 04</span></div>
+            <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-chart"/></svg></span><span class="symbol purple"><svg class="icon"><use href="#i-spark"/></svg></span></div>
+            <h3>Консультант</h3><p>Отвечает на вопросы, помогает клиентам выбрать подходящее решение.</p>
+            <div class="chips"><span class="chip">Консультации</span><span class="chip">Продажи</span><span class="chip">FAQ</span></div>
+            <a class="card-action" href="#/agent/consultant/overview" aria-label="Открыть агента Консультант">Открыть агента</a>
+          </article>
+          <article class="agent-card">
+            <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">02 / 04</span></div>
+            <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-check"/></svg></span><span class="symbol slate"><svg class="icon"><use href="#i-calendar"/></svg></span></div>
+            <h3>Менеджер заявок</h3><p>Принимает обращения, уточняет потребности и передаёт лиды в CRM.</p>
+            <div class="chips"><span class="chip">Заявки</span><span class="chip">Квалификация</span><span class="chip">CRM</span></div>
+            <a class="card-action" href="#/agent/leads/overview" aria-label="Открыть агента Менеджер заявок">Открыть агента</a>
+          </article>
+          <article class="agent-card">
+            <div class="agent-meta"><span class="state paused">Остановлен</span><span class="agent-id">03 / 04</span></div>
+            <div class="symbols" aria-hidden="true"><span class="symbol purple"><svg class="icon"><use href="#i-users"/></svg></span><span class="symbol pink"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol yellow"><svg class="icon"><use href="#i-search"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-spark"/></svg></span></div>
+            <h3>HR-рекрутер</h3><p>Помогает с первичным скринингом кандидатов и вакансиями.</p>
+            <div class="chips"><span class="chip">Кандидаты</span><span class="chip">Скрининг</span><span class="chip">HR</span></div>
+            <a class="card-action" href="#/agent/recruiter/overview" aria-label="Открыть агента HR-рекрутер">Открыть агента</a>
+          </article>
+          <article class="agent-card">
+            <div class="agent-meta"><span class="state">Работает</span><span class="agent-id">04 / 04</span></div>
+            <div class="symbols" aria-hidden="true"><span class="symbol blue"><svg class="icon"><use href="#i-headset"/></svg></span><span class="symbol green"><svg class="icon"><use href="#i-message"/></svg></span><span class="symbol pink"><svg class="icon"><use href="#i-file"/></svg></span><span class="symbol slate"><svg class="icon"><use href="#i-settings"/></svg></span></div>
+            <h3>Поддержка</h3><p>Решает типовые вопросы и передаёт сложные случаи человеку.</p>
+            <div class="chips"><span class="chip">Поддержка</span><span class="chip">FAQ</span><span class="chip">Передачи</span></div>
+            <a class="card-action" href="#/agent/support/overview" aria-label="Открыть агента Поддержка">Открыть агента</a>
+          </article>
+        </div>
+        <p class="prototype-note">Все агенты, сообщения и метрики на этой странице — демонстрационные. Реальные операции не выполняются.</p>
+      </section>
+      <aside class="rail" aria-label="Текущая активность">
+        <section class="panel" aria-labelledby="attentionHeading">
+          <div class="panel-title"><h2 id="attentionHeading">Требует внимания <span class="count">3</span></h2><a href="#/attention" class="panel-link" aria-label="Все задачи, требующие внимания"><svg class="icon"><use href="#i-right"/></svg></a></div>
+          <div class="activity-list">
+            <a class="activity-item" href="#/messages"><span class="circle-icon yellow"><svg class="icon"><use href="#i-users"/></svg></span><div class="item-copy"><strong>Клиент ждёт ответа</strong><p>Диалог передан человеку · Поддержка</p></div><span class="item-time">5 мин</span></a>
+            <a class="activity-item" href="#/integrations"><span class="circle-icon pink"><svg class="icon"><use href="#i-alert"/></svg></span><div class="item-copy"><strong>Нужно проверить подключение</strong><p>CRM не отвечает · Менеджер заявок</p></div><span class="item-time">18 мин</span></a>
+            <a class="activity-item" href="#/agent/recruiter/settings"><span class="circle-icon purple"><svg class="icon"><use href="#i-sliders"/></svg></span><div class="item-copy"><strong>Агент остановлен</strong><p>HR-рекрутер · ожидает настройки</p></div><span class="item-time">1 ч</span></a>
+          </div>
+          <div class="rail-foot"><a href="#/attention">Посмотреть все <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+        </section>
+        <section class="panel" aria-labelledby="eventsHeading">
+          <div class="panel-title"><h2 id="eventsHeading">Последние события</h2><a href="#/notifications" class="panel-link" aria-label="Все события"><svg class="icon"><use href="#i-right"/></svg></a></div>
+          <div class="event-list">
+            <a class="event-item" href="#/messages"><span class="circle-icon green"><svg class="icon"><use href="#i-check"/></svg></span><div class="item-copy"><strong>Вопрос решён без оператора</strong><p>Консультант · Сегодня, 12:24</p></div></a>
+            <a class="event-item" href="#/messages"><span class="circle-icon blue"><svg class="icon"><use href="#i-message"/></svg></span><div class="item-copy"><strong>Новое обращение</strong><p>Менеджер заявок · Сегодня, 12:10</p></div></a>
+            <a class="event-item" href="#/knowledge"><span class="circle-icon purple"><svg class="icon"><use href="#i-book"/></svg></span><div class="item-copy"><strong>Обновлена база знаний</strong><p>Поддержка · Сегодня, 11:32</p></div></a>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="integrationHeading">
+          <div class="panel-title"><h2 id="integrationHeading">Подключения</h2><a href="#/integrations" class="panel-link" aria-label="Все интеграции"><svg class="icon"><use href="#i-right"/></svg></a></div>
+          <div class="system-row"><span class="system-pill"><span class="status-dot"></span>Telegram</span><span class="system-pill"><span class="status-dot"></span>База знаний</span><span class="system-pill"><span class="status-dot off"></span>CRM</span></div>
+          <p class="panel-hint">Примеры состояний для демонстрации интерфейса.</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+  <section id="placeholderView" hidden class="placeholder-wrap" aria-live="polite">
+    <div class="placeholder">
+      <div class="placeholder-art"><svg class="icon"><use href="#i-layers"/></svg></div>
+      <span class="eyebrow" id="placeholderContext">Библиотека агентов</span>
+      <h1 id="placeholderName">В разработке</h1>
+      <p id="placeholderDescription">Этот раздел появится в следующих этапах редизайна AIMock.</p>
+      <div class="placeholder-actions"><a href="#/overview" class="black-button"><svg class="icon"><use href="#i-left"/></svg>На общий обзор</a><a href="#/library" class="outline-button">Библиотека агентов <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      <p class="prototype-note">Сейчас доступна только главная страница нового дизайна.</p>
+    </div>
+  </section>
+  </main>
 </div>
-<div id="accountMenu" class="demo-popover" role="menu" aria-label="Меню пользователя" hidden>
-  <div class="menu-profile"><span class="avatar initials" style="--av:#3b4956">Д</span><span><strong>Денис</strong><small>Мой аккаунт</small></span></div>
-  <div class="menu-separator"></div>
-  <a class="menu-option menu-link" href="./pages/profile.html">Мой профиль <span>›</span></a>
-  <a class="menu-option menu-link" href="./pages/account-settings.html">Настройки аккаунта <span>›</span></a>
-  <div class="menu-separator"></div>
-  <a class="menu-option menu-link" href="./pages/sign-out.html">Выйти <span>›</span></a>
 </div>
-<div id="notificationsMenu" class="demo-popover" role="menu" aria-label="Уведомления" hidden>
-  <div class="menu-caption">Уведомления</div>
-  <div class="menu-notification"><span class="notice-point"></span><div><strong>Есть обращения, требующие внимания</strong><small>4 события · сегодня</small></div></div>
-  <div class="menu-notification"><span class="notice-point soft"></span><div><strong>Битрикс24 требует проверки</strong><small>Интеграции</small></div></div>
-  <a class="menu-option menu-link" href="./pages/notifications.html">Все уведомления <span>›</span></a>
+<div class="search-overlay" id="searchOverlay" hidden>
+  <div class="search-dialog" role="dialog" aria-modal="true" aria-label="Поиск по AIMock">
+    <div class="search-field"><svg class="icon"><use href="#i-search"/></svg><input id="globalSearchInput" type="search" placeholder="Поиск разделов и агентов..." autocomplete="off" aria-label="Поиск разделов и агентов"><button id="closeSearch" type="button" class="icon-button" aria-label="Закрыть поиск"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="search-results" id="globalSearchResults"></div>
+    <div class="search-help">Esc — закрыть · Выберите раздел для перехода</div>
+  </div>
 </div>
-<div id="periodMenu" class="demo-popover demo-popover-small" role="menu" aria-label="Период статистики" hidden>
-  <div class="menu-caption">Период</div>
-  <button type="button" class="menu-option menu-link is-selected" data-period="7">За 7 дней <span>✓</span></button>
-  <button type="button" class="menu-option menu-link" data-period="30">За 30 дней <span></span></button>
-</div>
-
-<dialog id="searchDialog" class="demo-dialog search-dialog" aria-labelledby="searchTitle"><div class="dialog-header"><h2 id="searchTitle">Поиск</h2><button type="button" class="dialog-close" data-close-dialog aria-label="Закрыть">×</button></div><label class="search-label"><span aria-hidden="true">⌕</span><input id="demoSearchInput" type="search" placeholder="Найти агента, диалог или обращение…" autocomplete="off"></label><div id="searchResults" class="dialog-body"></div><div class="dialog-foot">Поиск по агентам и диалогам.<button type="button" class="dialog-action" data-close-dialog>Закрыть</button></div></dialog>
-
-<script src="./scripts/overview.js" defer></script>
-</body></html>
+</body>
+</html>
