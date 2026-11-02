@@ -20,7 +20,7 @@ test("both scripts parse and agent detail is loaded ahead of router",()=>{
 test("every profession has a corresponding design fixture and agent route",()=>{
  for(const key of ["consultant","leads","recruiter","support"]){
    assert.ok(detail.includes(key+": {"),key);
-   assert.ok(core.includes(key+":")||core.includes(key+':"'),key);
+   assert.ok(core.includes("window.AIMockAgentDetail.getAgentNames()"));
  }
  assert.doesNotMatch(detail,/AG-02\d{2}|Модульный обзор|Карточка агента ·|Демо:/);
  assert.doesNotMatch(html,/Дизайн-прототип|Демо-пространство|демонстрационные/);
@@ -30,7 +30,7 @@ test("every profession has a corresponding design fixture and agent route",()=>{
 });
 test("modular layout adapts without duplicate navigation",()=>{
  assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
- assert.match(css,/grid-template-columns:minmax\(0,\.92fr\)/);
+ assert.match(css,/grid-template-columns:minmax\(0,\.86fr\)/);
  assert.match(css,/@media \(max-width:600px\)/);
  assert.match(css,/\.detail-top-grid/);
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
@@ -53,4 +53,19 @@ test("shell fills viewport with fixed header and inset floating sidebar",()=>{
  assert.match(layout,/\.workspace\s*\{[^}]*margin-left:252px; padding-top:76px;/s);
  assert.match(layout,/@media \(max-width:710px\)/);
  assert.doesNotMatch(layout,/max-width:1680px/);
+});
+
+test("agent overview uses custom names and optional descriptions independent of profession",()=>{
+ assert.match(detail,/getAgentNames/);
+ assert.match(detail,/name:"Входящие заявки"/);
+ assert.match(detail,/title:"Менеджер заявок"/);
+ assert.match(detail,/description:""/);
+ assert.match(detail,/data.description\?/);
+ assert.match(detail,/detail-heading-tags/);
+ assert.match(detail,/detail-responsibilities/);
+ assert.doesNotMatch(detail,/data\.flow|detail-identity-foot|detailControlsLabel|detail-bubbles/);
+ assert.doesNotMatch(detail,/Редактирование.*После остановки/);
+ assert.match(core,/route.section==="overview"\?route.name:/);
+ assert.match(css,/\.detail-stat-description[^}]*margin:7px 0 23px/);
+ assert.match(css,/\.detail-activity-item/);
 });
