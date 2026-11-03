@@ -169,6 +169,16 @@ try {
  assert.match(await page.locator(".ls-field-list").innerText(),/Материал фасада/);
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
  assert.ok(saved.types[0].fields.some(f=>f.title==="Материал фасада"),"Fields autosave to local browser storage");
+ await page.locator('[data-ls-field="comment"]').click();
+ await page.locator('[data-ls-fieldprop="condition"]').selectOption("match");
+ await page.locator('[data-ls-fieldprop="conditionField"]').selectOption("furniture");
+ await page.locator('[data-ls-fieldprop="conditionValue"]').selectOption("Кухня");
+ assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="furniture"]').selectOption("Кухня");
+ assert.match(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="furniture"]').selectOption("Шкаф");
+ assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  await page.locator('[data-ls-tab="result"]').click();
