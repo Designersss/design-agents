@@ -124,11 +124,12 @@ function previewReview(t){
  if(!t.fields.length||!filled&&!required.length){kind="empty";title="Нет данных";hint="Добавьте поля и укажите примерные значения."}
  else if(invalid.length){kind="invalid";title="Есть ошибки в полях";hint="Исправьте формат значений перед дальнейшей обработкой."}
  else if(missing.length){
-   kind=t.criteria==="incomplete"?"partial":"missing";
+   kind=t.criteria==="incomplete"&&filled>0?"partial":"missing";
    title=kind==="partial"?"Неполная заявка допустима":"Требуются сведения";
-   hint=(t.incompleteAction||"wait")==="handoff"?
-     "Недостающие сведения можно направить ответственному на рассмотрение.":
-     "Заявка ожидает уточнений от клиента.";
+   hint=filled===0?"Сначала заполните хотя бы часть сведений. Пустую заявку нельзя направить на рассмотрение.":
+     (t.incompleteAction||"wait")==="handoff"?
+       "Недостающие сведения можно направить ответственному на рассмотрение.":
+       "Заявка ожидает уточнений от клиента.";
  }
  return {visible,hidden,required,missing,invalid,filled,requiredFilled,kind,title,hint};
 }
