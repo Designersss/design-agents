@@ -203,7 +203,7 @@ try {
  assert.match(await page.locator(".ls-preview-feedback").textContent(),/Заполните обязательные поля: Тема вопроса/);
  await page.locator('[data-ls-config="incompleteAction"]').selectOption("wait");
  assert.match(await page.locator(".ls-preview-assessment").textContent(),/ожидает уточнений от клиента/);
- await page.locator('[data-ls-tab="result"]').click();
+ await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator(".ls-result-rules").innerText(),/Заявка ожидает дополнительных сведений/);
  await page.locator('[data-ls-tab="types"]').click();
  await page.locator('[data-ls-type="kitchen"]').click();
@@ -211,7 +211,7 @@ try {
 
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
- await page.locator('[data-ls-tab="result"]').click();
+ await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
  await page.locator('[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
