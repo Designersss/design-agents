@@ -39,6 +39,34 @@ try {
  assert.equal(await page.locator(".detail-stat-grid > .detail-card").count(),3); 
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки");
  assert.equal((await page.locator(".detail-profession").textContent()).trim(),"Менеджер заявок");
+ const professionVisual=await page.locator(".detail-description").evaluate(el=>{
+   const styles=getComputedStyle(el);
+   return {fontSize:parseFloat(styles.fontSize),lineHeight:parseFloat(styles.lineHeight),text:el.textContent.trim()};
+ });
+ assert.ok(professionVisual.text.startsWith("Менеджер заявок — специалист"));
+ assert.ok(professionVisual.text.length>=150);
+ assert.ok(professionVisual.fontSize>=13,"Profession text must be readable");
+ assert.ok(professionVisual.lineHeight>=21,"Profession copy needs generous leading");
+ assert.doesNotMatch(professionVisual.text,/агент|чат-бот/i);
+ const statusRowSpacing=await page.locator(".detail-state-row").evaluateAll(rows=>rows.map(row=>({
+   top:parseFloat(getComputedStyle(row).paddingTop),
+   bottom:parseFloat(getComputedStyle(row).paddingBottom)
+ })));
+ assert.equal(statusRowSpacing.length,3);
+ for(const spacing of statusRowSpacing){
+   assert.ok(spacing.top>=10 && spacing.bottom>=10,
+     "State row needs balanced vertical padding: "+JSON.stringify(spacing));
+ }
+ const stateBottomGap=await page.locator(".detail-state").evaluate(card=>{
+   const last=card.querySelector(".detail-state-row:last-child");
+   const cardBottom=card.getBoundingClientRect().bottom;
+   const lastBottom=last.getBoundingClientRect().bottom;
+   return cardBottom-lastBottom-parseFloat(getComputedStyle(card).paddingBottom);
+ });
+ assert.ok(Math.abs(stateBottomGap)<=2,
+   "Status rows should use card height without a large empty bottom area");
+
+
  assert.equal(await page.locator(".detail-heading-tags span").count(),3);
  assert.equal(await page.locator(".detail-identity .detail-bubble").count(),0);
  assert.equal(await page.locator(".detail-identity .detail-tags").count(),0);
@@ -116,14 +144,17 @@ try {
  assert.equal(await page.locator(".agent-card").last().locator(".agent-card-description").isVisible(),false);
  await page.goto(base+"#/agent/recruiter/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Подбор в команду");
+ assert.match(await page.locator(".detail-description").textContent(),/^HR-рекрутер — специалист/);
  assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Подбор в команду");
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Передаёт на рассмотрение/);
  assert.match(await page.locator(".detail-status").textContent(),/Остановлен/);
  await page.goto(base+"#/agent/consultant/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Помощник магазина");
+ assert.match(await page.locator(".detail-description").textContent(),/^Консультант — специалист/);
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Передаёт сложные случаи/);
  await page.goto(base+"#/agent/support/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Служба помощи");
+ assert.match(await page.locator(".detail-description").textContent(),/^Специалист поддержки — представитель/);
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Подключает оператора/); assert.equal(await page.locator(".detail-user-description").count(),0,"Optional description must not leave an empty paragraph");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Служба помощи");
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){

@@ -84,3 +84,21 @@ test("agent overview uses custom names and optional descriptions independent of 
  assert.match(css,/\.detail-stat-description[^}]*margin:7px 0 23px/);
  assert.match(css,/\.detail-activity-item/);
 });
+
+test("profession descriptions explain the role, not the agent workflow",()=>{
+ const purposes=[...detail.matchAll(/purpose:"([^"]+)"/g)].map(match=>match[1]);
+ assert.equal(purposes.length,4);
+ const expected=["Консультант — специалист","Менеджер заявок — специалист","HR-рекрутер — специалист","Специалист поддержки — представитель"];
+ for(let index=0;index<purposes.length;index++){
+   assert.ok(purposes[index].startsWith(expected[index]),"Profession identity "+index);
+   assert.ok(purposes[index].length>=150,"Profession summary should be meaningful and readable");
+   assert.doesNotMatch(purposes[index],/агент|чат-бот|автоматизац|telegram|crm/i);
+ }
+ assert.match(css,/\.detail-description\s*\{[^}]*font-size:13px;[^}]*line-height:1\.65/);
+ assert.match(css,/\.detail-description\s*\{[^}]*color:#62676a/);
+ assert.match(css,/\.detail-state-row\s*\{[^}]*padding:11px 0/);
+ assert.match(css,/\.detail-state-list\s*\{[^}]*flex:1/);
+ assert.match(css,/\.detail-state-row\s*\{[^}]*flex:1/);
+ assert.match(css,/\.detail-state\s*\{[^}]*padding:18px 18px/);
+ assert.match(css,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
+});
