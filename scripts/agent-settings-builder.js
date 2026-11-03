@@ -5,7 +5,7 @@ const storeKey = "aimock:lead-settings-builder:v1";
 const icon = (id) => '<svg class="icon" aria-hidden="true"><use href="#i-'+id+'"></use></svg>';
 const escape = v => String(v??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fieldKinds={text:"Текст",select:"Список",phone:"Телефон",email:"Email",money:"Сумма",date:"Дата",number:"Число",address:"Адрес"};
-const mk=(id,title,type,required,hint="",options=[])=>({id,title,type,required,hint,options,condition:""});
+const mk=(id,title,type,required,hint="",options=[])=>({id,title,type,required,hint,options,condition:"always",conditionField:"",conditionValue:""});
 const initial=()=>({
  project:"Изготавливаем кухни, шкафы и гардеробные на заказ по индивидуальным размерам.",
  requirements:"",
@@ -80,7 +80,11 @@ function fieldEditor(t,f){
    row("Тип данных","Значения проверяются по выбранному типу",select(f.type,Object.entries(fieldKinds),'data-ls-fieldprop="type"'))+
    row("Подсказка","Необязательно",input(f.hint,'data-ls-fieldprop="hint"'))+
    (f.type==="select"?row("Варианты выбора","Указывайте каждый вариант через запятую",input((f.options||[]).join(", "),'data-ls-fieldprop="options"')):"")+
-   row("Условие появления","Если поле нужно не всегда, укажите условие простыми словами",input(f.condition||"",'data-ls-fieldprop="condition"'))+
+   row("Условие появления","Можно показывать поле только при выбранном значении другого поля.",select(f.condition||"always",[["always","Всегда"],["match","Когда выбрано значение"]],'data-ls-fieldprop="condition"'))+
+   (f.condition==="match"?
+      row("Зависит от поля","Доступны другие поля со списком",select(f.conditionField||"",[["","Выберите поле"],...t.fields.filter(other=>other.id!==f.id&&other.type==="select").map(other=>[other.id,other.title])],'data-ls-fieldprop="conditionField"'))+
+      row("Значение","При каком ответе показывать это поле",select(f.conditionValue||"",[["","Выберите значение"],...(t.fields.find(other=>other.id===f.conditionField)?.options||[]).map(value=>[value,value])],'data-ls-fieldprop="conditionValue"'))
+     :"")+
   '</div>'+
   '<label class="ls-check"><input type="checkbox" data-ls-fieldprop="required"'+(f.required?" checked":"")+disabled()+'> Обязательное поле</label>'+
   '<div class="ls-editor-actions">'+
@@ -100,8 +104,9 @@ function builder(){
     '<p>Готовность определяется по настроенным полям. Неполную заявку можно сохранить и передать человеку.</p></div></section>'+
     '<aside class="ls-right">'+preview(t)+resultSummary()+'</aside></div>';
 }
+function fieldVisible(f){return f.condition!=="match"||(!!f.conditionField&&!!f.conditionValue&&previewValues[f.conditionField]===f.conditionValue)}
 function preview(t){
- const displayFields=t.fields.slice(0,5);
+ const displayFields=t.fields.filter(fieldVisible).slice(0,5);
  return '<section class="ls-panel ls-preview" aria-label="Предпросмотр заявки"><div class="ls-panel-head"><div><span class="ls-section-eyebrow">Предпросмотр</span><h2>Новая заявка</h2><p>'+escape(t.name)+'</p></div>'+icon("file")+'</div>'+
   '<form id="ls-preview-form" novalidate>'+displayFields.map(f=>{
     const value=previewValues[f.id]||"";
@@ -180,7 +185,7 @@ function mutField(prop,value){
 function mutate(event,phase){
  if(document.getElementById("agentSettingsView").hidden)return;
  const el=event.target;
- if(el.matches("[data-ls-preview]")){previewValues[el.dataset.lsPreview]=el.value;return}
+ if(el.matches("[data-ls-preview]")){previewValues[el.dataset.lsPreview]=el.value;if(phase==="change"&&el.tagName==="SELECT")render();return}
  if(isRunning())return;
  const fieldProp=el.dataset.lsFieldprop;
  if(fieldProp){mutField(fieldProp,el.type==="checkbox"?el.checked:el.value);if(phase==="change")render();return}
@@ -220,7 +225,7 @@ function setup(){
  document.addEventListener("submit",event=>{
   if(event.target.id!=="ls-preview-form")return;
   event.preventDefault();
-  const missing=type().fields.filter(f=>f.required&&!String(previewValues[f.id]||"").trim());
+  const missing=type().fields.filter(f=>f.required&&fieldVisible(f)&&!String(previewValues[f.id]||"").trim());
   previewMessage=missing.length?"Заполните обязательные поля: "+missing.map(f=>f.title).join(", "):"Все обязательные поля заполнены.";
   const message=document.querySelector(".ls-preview-feedback");if(message)message.textContent=previewMessage;
  });
