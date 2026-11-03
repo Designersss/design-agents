@@ -67,7 +67,8 @@ test("all configured fields display, including conditional fields, without previ
  assert.match(css,/\.ls-preview-missing\{/);
 });
 test("completion policy does not mislabel incomplete applications as ready",()=>{
- assert.match(script,/criteria==="incomplete"\?"partial":"missing"/);
+ assert.match(script,/criteria==="incomplete"&&filled>0\?"partial":"missing"/);
+ assert.match(script,/Пустую заявку нельзя направить на рассмотрение/);
  assert.match(script,/Неполная заявка допустима/);
  assert.match(script,/Заявка ожидает уточнений от клиента/);
  assert.match(script,/Направить ответственному на рассмотрение/);
