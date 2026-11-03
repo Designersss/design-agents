@@ -154,9 +154,11 @@ try {
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
  assert.equal(await page.locator(".ls-type").count(),3);
  assert.equal(await page.locator(".ls-field").count(),5);
- assert.equal(await page.locator(".ls-preview-field").count(),5);
- assert.match(await page.locator(".ls-preview-assessment").innerText(),/Требуются сведения/);
- assert.match(await page.locator(".ls-preview-missing").innerText(),/Размеры помещения/);
+ assert.equal(await page.locator(".ls-main-column").count(),1);
+ assert.equal(await page.locator(".ls-result").count(),1);
+ assert.equal(await page.locator(".ls-preview").count(),0);
+ assert.equal(await page.locator("#ls-preview-form").count(),0);
+ assert.doesNotMatch(await page.locator("#agentSettingsView").innerText(),/Предпросмотр заявки|Проверить заполнение/);
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
  await page.screenshot({path:resolve(artifactDir,"settings-lead-desktop.png"),fullPage:true});
  await page.locator('[data-ls-type="measure"]').click();
@@ -169,49 +171,24 @@ try {
  await page.locator('[data-ls-fieldprop="title"]').fill("Материал фасада");
  await page.locator('[data-ls-fieldprop="title"]').press("Tab");
  assert.match(await page.locator(".ls-field-list").innerText(),/Материал фасада/);
- assert.equal(await page.locator(".ls-preview-field").count(),6,"Preview must show all configured fields");
- assert.match(await page.locator(".ls-preview-progress").innerText(),/6 из 6/);
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
- assert.ok(saved.types[0].fields.some(f=>f.title==="Материал фасада"),"Fields autosave to local browser storage");
+ assert.ok(saved.types[0].fields.some(f=>f.title==="Материал фасада"),"Field changes still autosave");
  await page.locator('.ls-field-main[data-ls-field="comment"]').click();
  await page.locator('[data-ls-fieldprop="condition"]').selectOption("match");
  await page.locator('[data-ls-fieldprop="conditionField"]').selectOption("furniture");
  await page.locator('[data-ls-fieldprop="conditionValue"]').selectOption("Кухня");
- assert.equal(await page.locator('.ls-preview-field:has([data-ls-preview="comment"])').count(),0);
- assert.match(await page.locator(".ls-preview-hidden").innerText(),/1 поле скрыто/);
- await page.locator('[data-ls-preview="furniture"]').selectOption("Кухня");
- assert.equal(await page.locator('.ls-preview-field:has([data-ls-preview="comment"])').count(),1);
- assert.match(await page.locator(".ls-preview-condition").innerText(),/По условию: Тип мебели = Кухня/);
- await page.locator('[data-ls-preview="furniture"]').selectOption("Шкаф");
- assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
- await page.locator('[data-ls-preview="size"]').fill("200 × 300");
- await page.locator('[data-ls-preview="phone"]').fill("abc");
- await page.locator("#ls-preview-form button[type=submit]").click();
- assert.match(await page.locator(".ls-preview-feedback").textContent(),/Проверьте формат полей: Контакт для связи/);
- await page.locator('[data-ls-preview="phone"]').fill("+7 (900) 123-45-67");
- await page.locator("#ls-preview-form button[type=submit]").click();
- assert.match(await page.locator(".ls-preview-feedback").textContent(),/формат значений корректен/);
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/Поля заполнены/);
- await page.locator('[data-ls-type="consult"]').click();
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/Требуются сведения/);
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/Пустую заявку нельзя направить/);
- await page.locator('[data-ls-preview="contact"]').fill("+7 900 111-22-33");
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/Неполная заявка допустима/);
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/ответственному на рассмотрение/);
- await page.locator("#ls-preview-form button[type=submit]").click();
- assert.match(await page.locator(".ls-preview-feedback").textContent(),/Неполная заявка допускается/);
- await page.locator('[data-ls-config="criteria"]').selectOption("required");
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/Требуются сведения/);
- await page.locator("#ls-preview-form button[type=submit]").click();
- assert.match(await page.locator(".ls-preview-feedback").textContent(),/Заполните обязательные поля: Тема вопроса/);
- await page.locator('[data-ls-config="incompleteAction"]').selectOption("wait");
- assert.match(await page.locator(".ls-preview-assessment").textContent(),/ожидает уточнений от клиента/);
+ const configured=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ const dependent=configured.types.find(t=>t.id==="kitchen").fields.find(f=>f.id==="comment");
+ assert.equal(dependent.condition,"match");
+ assert.equal(dependent.conditionField,"furniture");
+ assert.equal(dependent.conditionValue,"Кухня");
+ await page.locator('[data-ls-config="criteria"]').selectOption("incomplete");
+ await page.locator('[data-ls-config="incompleteAction"]').selectOption("handoff");
+ const savedRules=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.equal(savedRules.types.find(t=>t.id==="kitchen").criteria,"incomplete");
+ assert.equal(savedRules.types.find(t=>t.id==="kitchen").incompleteAction,"handoff");
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
- assert.match(await page.locator(".ls-result-rules").innerText(),/Заявка ожидает дополнительных сведений/);
- await page.locator('.ls-tab[data-ls-tab="types"]').click();
- await page.locator('[data-ls-type="kitchen"]').click();
-
-
+ assert.match(await page.locator(".ls-result-rules").innerText(),/Неполная заявка направляется ответственному/);
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
@@ -322,12 +299,12 @@ try {
    const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
    assert.ok(widths.width<=widths.viewport+2,"Lead settings horizontal overflow at "+size.width+": "+JSON.stringify(widths));
    const cardBounds=await page.evaluate(()=>{
-     const main=document.querySelector(".ls-builder").getBoundingClientRect();
-     const preview=document.querySelector(".ls-preview").getBoundingClientRect();
-     return {main:main.width,preview:preview.width};
+     const editor=document.querySelector(".ls-builder").getBoundingClientRect();
+     const summary=document.querySelector(".ls-result").getBoundingClientRect();
+     return {editor:editor.width,summary:summary.width};
    });
-   if(size.width<=880)assert.ok(cardBounds.preview>=cardBounds.main-3,
-      "Preview should fill same available width as the editor on narrow screens: "+JSON.stringify(cardBounds));
+   assert.ok(Math.abs(cardBounds.summary-cardBounds.editor)<=3,
+      "Result summary should align with the editor: "+JSON.stringify(cardBounds));
    if(size.width===390)await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
