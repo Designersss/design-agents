@@ -205,7 +205,7 @@ try {
  assert.match(await page.locator(".ls-preview-assessment").textContent(),/ожидает уточнений от клиента/);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator(".ls-result-rules").innerText(),/Заявка ожидает дополнительных сведений/);
- await page.locator('[data-ls-tab="types"]').click();
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
  await page.locator('[data-ls-type="kitchen"]').click();
 
 
@@ -217,7 +217,7 @@ try {
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
- await page.locator('[data-ls-tab="types"]').click();
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
  await page.screenshot({path:resolve(artifactDir,"settings-lead-after-edit.png"),fullPage:true});
  // Return to the approved overview; the builder must not replace its layout.
  await page.goto(base+"#/overview");
