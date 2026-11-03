@@ -173,8 +173,8 @@ function build(route){
      '<span class="detail-actions-wrap">',
        '<button class="detail-button square" type="button" data-detail-more aria-label="Дополнительные действия" aria-expanded="false">···</button>',
        '<span class="detail-share-menu" data-detail-menu hidden>',
-         '<button type="button" data-detail-unavailable="Дублирование агента">Дублировать агента — в разработке</button>',
-         '<button type="button" data-detail-unavailable="Перенос агента">Перенести агента — в разработке</button>',
+         '<button type="button" data-detail-unavailable="Дублирование агента">Дублировать агента</button>',
+         '<button type="button" data-detail-unavailable="Перенос агента">Перенести агента</button>',
        '</span>',
      '</span>',
    '</div>',
@@ -212,14 +212,14 @@ document.addEventListener("click",(event)=>{
    running[id]=!running[id];render({id});$("detailToggleStatus").focus();
    notify("Статус «"+professions[id].name+"» обновлён на экране.");
  }else if(event.target.closest("[data-detail-share]")){
-   notify("Функция «Поделиться» пока в разработке.");
+   notify("Общий доступ недоступен.");
  }else if(event.target.closest("[data-detail-more]")){
    const menu=root.querySelector("[data-detail-menu]");
    menu.hidden=!menu.hidden;
    root.querySelector("[data-detail-more]").setAttribute("aria-expanded",String(!menu.hidden));
  }else{
    const unavailable=event.target.closest("[data-detail-unavailable]");
-   if(unavailable)notify(unavailable.dataset.detailUnavailable+" пока в разработке.");
+   if(unavailable)notify(unavailable.dataset.detailUnavailable+": действие недоступно.");
    const menu=root.querySelector("[data-detail-menu]");if(menu)menu.hidden=true;
    const more=root.querySelector("[data-detail-more]");if(more)more.setAttribute("aria-expanded","false");
  }
