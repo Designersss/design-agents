@@ -10,20 +10,20 @@ const initial=()=>({
  project:"Изготавливаем кухни, шкафы и гардеробные на заказ по индивидуальным размерам.",
  requirements:"",
  types:[
-  {id:"kitchen",name:"Расчёт кухни",criteria:"required",fields:[
+  {id:"kitchen",name:"Расчёт кухни",criteria:"required",incompleteAction:"wait",fields:[
     mk("furniture","Тип мебели","select",true,"Кухня / шкаф / гардеробная",["Кухня","Шкаф","Гардеробная"]),
     mk("size","Размеры помещения","text",true,"Можно приблизительно"),
     mk("phone","Контакт для связи","phone",true,"Для уточнения деталей"),
     mk("budget","Ориентировочный бюджет","money",false,"В рублях"),
     mk("comment","Комментарий","text",false,"Дополнительные пожелания")
   ]},
-  {id:"measure",name:"Замер",criteria:"required",fields:[
+  {id:"measure",name:"Замер",criteria:"required",incompleteAction:"handoff",fields:[
     mk("service","Что нужно измерить","select",true,"Помещение или мебель",["Кухня","Шкаф","Другое"]),
     mk("address","Адрес замера","address",true),
     mk("date","Удобная дата","date",false),
     mk("phone","Контакт для связи","phone",true)
   ]},
-  {id:"consult",name:"Консультация",criteria:"incomplete",fields:[
+  {id:"consult",name:"Консультация",criteria:"incomplete",incompleteAction:"handoff",fields:[
     mk("subject","Тема вопроса","text",true),
     mk("contact","Контакт для связи","phone",false),
     mk("comment","Дополнительная информация","text",false)
@@ -101,20 +101,68 @@ function builder(){
    fieldList(t)+
    '<div class="ls-criteria"><div><strong>Критерий готовности</strong><small>Для этого типа заявки</small></div>'+
     select(t.criteria,[["required","Все обязательные поля"],["incomplete","Допускается неполная заявка"]],'data-ls-config="criteria"')+
-    '<p>Готовность определяется по настроенным полям. Неполную заявку можно сохранить и передать человеку.</p></div></section>'+
-    '<aside class="ls-right">'+preview(t)+resultSummary()+'</aside></div>';
+    '<p>Полностью готовая заявка содержит все обязательные сведения. Неполная всегда отмечается отдельно.</p>'+
+    '<div class="ls-criteria-divider"></div>'+
+    '<div><strong>Если данных не хватает</strong><small>Сценарий для неполной заявки</small></div>'+
+    select(t.incompleteAction||"wait",[["wait","Ожидать уточнения от клиента"],["handoff","Направить ответственному на рассмотрение"]],'data-ls-config="incompleteAction"')+
+    '<p>Передача человеку не делает неполную заявку полностью готовой. В этом макете реальные уведомления не отправляются.</p>'+
+   '</div></section>'+
+   '<aside class="ls-right">'+preview(t)+resultSummary()+'</aside></div>';
 }
-function fieldVisible(f){return f.condition!=="match"||(!!f.conditionField&&!!f.conditionValue&&previewValues[f.conditionField]===f.conditionValue)}
+function fieldVisible(f){return f.condition!=="match"||(
+  !!f.conditionField&&!!f.conditionValue&&previewValues[f.conditionField]===f.conditionValue
+)}
+function previewReview(t){
+ const visible=t.fields.filter(fieldVisible);
+ const hidden=t.fields.length-visible.length;
+ const required=visible.filter(f=>f.required);
+ const missing=required.filter(f=>!String(previewValues[f.id]??"").trim());
+ const invalid=visible.filter(f=>!validValue(f,previewValues[f.id]));
+ const filled=visible.filter(f=>String(previewValues[f.id]??"").trim()).length;
+ const requiredFilled=required.length-missing.length;
+ let kind="ready",title="Поля заполнены",hint="Все необходимые сведения есть. Это только проверка структуры заявки.";
+ if(!t.fields.length||!filled&&!required.length){kind="empty";title="Нет данных";hint="Добавьте поля и укажите примерные значения."}
+ else if(invalid.length){kind="invalid";title="Есть ошибки в полях";hint="Исправьте формат значений перед дальнейшей обработкой."}
+ else if(missing.length){
+   kind=t.criteria==="incomplete"?"partial":"missing";
+   title=kind==="partial"?"Неполная заявка допустима":"Требуются сведения";
+   hint=(t.incompleteAction||"wait")==="handoff"?
+     "Недостающие сведения можно направить ответственному на рассмотрение.":
+     "Заявка ожидает уточнений от клиента.";
+ }
+ return {visible,hidden,required,missing,invalid,filled,requiredFilled,kind,title,hint};
+}
+function previewIndicators(t){
+ const review=previewReview(t);
+ const names=review.invalid.length?review.invalid.map(f=>f.title):review.missing.map(f=>f.title);
+ const caption=review.invalid.length?"Проверьте формат":"Не заполнено";
+ return '<div class="ls-preview-progress"><span>Обязательные поля: <strong>'+review.requiredFilled+' из '+review.required.length+'</strong></span>'+
+        '<span>Показано: <strong>'+review.visible.length+' из '+t.fields.length+'</strong></span></div>'+
+   '<div class="ls-preview-assessment is-'+review.kind+'"><strong>'+escape(review.title)+'</strong>'+
+   '<p>'+escape(review.hint)+'</p>'+
+   (names.length?'<div class="ls-preview-missing"><small>'+caption+':</small>'+
+     names.map(name=>'<span>'+escape(name)+'</span>').join("")+'</div>':"")+
+   (review.hidden?'<small class="ls-preview-hidden">'+review.hidden+' '+(review.hidden===1?"поле скрыто":"полей скрыто")+' по условиям</small>':"")+
+   '</div>';
+}
 function preview(t){
- const displayFields=t.fields.filter(fieldVisible).slice(0,5);
- return '<section class="ls-panel ls-preview" aria-label="Предпросмотр заявки"><div class="ls-panel-head"><div><span class="ls-section-eyebrow">Предпросмотр</span><h2>Новая заявка</h2><p>'+escape(t.name)+'</p></div>'+icon("file")+'</div>'+
+ const displayFields=t.fields.filter(fieldVisible);
+ return '<section class="ls-panel ls-preview" aria-label="Предпросмотр заявки"><div class="ls-panel-head"><div>'+
+  '<span class="ls-section-eyebrow">Предпросмотр заявки</span><h2>'+escape(t.name)+'</h2>'+
+  '<p>Проверьте структуру и условия полей. Это не переписка с агентом.</p></div>'+icon("file")+'</div>'+
   '<form id="ls-preview-form" novalidate>'+displayFields.map(f=>{
-    const value=previewValues[f.id]||"";
+    const value=previewValues[f.id]??"";
     let control;
     if(f.type==="select")control='<select class="ls-input" data-ls-preview="'+escape(f.id)+'">'+option("","Выберите значение",value)+(f.options||[]).map(x=>option(x,x,value)).join("")+'</select>';
-    else control='<input class="ls-input" data-ls-preview="'+escape(f.id)+'" type="'+(f.type==="email"?"email":f.type==="phone"?"tel":f.type==="date"?"date":f.type==="money"||f.type==="number"?"number":"text")+'" placeholder="'+escape(f.hint||"Укажите значение")+'" value="'+escape(value)+'">';
-    return '<label class="ls-preview-field"><strong>'+escape(f.title)+(f.required?'<i> *</i>':"")+'</strong>'+control+'</label>';
-  }).join("")+'<button type="submit" class="ls-dark-btn">Проверить поля</button>'+
+    else control='<input class="ls-input" data-ls-preview="'+escape(f.id)+'" type="'+(f.type==="email"?"email":f.type==="phone"?"tel":f.type==="date"?"date":f.type==="money"||f.type==="number"?"number":"text")+
+      '" placeholder="'+escape(f.hint||"Укажите значение")+'" value="'+escape(value)+'">';
+    const source=t.fields.find(x=>x.id===f.conditionField);
+    return '<label class="ls-preview-field"><strong>'+escape(f.title)+(f.required?'<i> *</i>':"")+'</strong>'+
+      (f.condition==="match"?'<small class="ls-preview-condition">По условию: '+escape(source?.title||"другое поле")+' = '+escape(f.conditionValue)+'</small>':"")+
+      control+'</label>';
+  }).join("")+
+  '<div class="ls-preview-eval" aria-live="polite">'+previewIndicators(t)+'</div>'+
+  '<button type="submit" class="ls-dark-btn">Проверить заполнение</button>'+
   '<p class="ls-preview-feedback" role="status">'+escape(previewMessage)+'</p></form></section>';
 }
 function resultSummary(){
@@ -129,14 +177,22 @@ function workTab(){
    panel("Типы обращений","Допустимые сценарии обработки.",'<div class="ls-type-chips">'+state.types.map(t=>'<span>'+escape(t.name)+'</span>').join("")+'</div><button type="button" data-ls-tab="types" class="ls-outline-btn">Настроить типы и поля '+icon("right")+'</button>')+'</div>';
 }
 function resultTab(){
- const v=state.result;
+ const v=state.result,t=type();
  return '<div class="ls-simple-grid">'+panel("Результат заявки","Куда записывать подтверждённые данные.",
    row("Внутренняя заявка","Создаётся в AIMock независимо от внешней CRM.",'<div class="ls-static-setting">'+icon("check")+' Внутренняя заявка в AIMock</div>')+
    row("Получатель результата","В личном пространстве доступен владелец; в компании — уполномоченные сотрудники.",select(v.recipient,[["owner","Владелец пространства"],["team","Ответственный сотрудник команды"]],'data-ls-result="recipient"'))+
    row("Кому направлять уведомление","При готовности заявки.",'<label class="ls-check"><input type="checkbox" data-ls-result="notify"'+(v.notify?" checked":"")+disabled()+'> Уведомлять ответственного</label>'))+
    panel("Работа с CRM","Внешние действия доступны только при реальном подключении и разрешениях.",
      row("Действие в CRM","Отдельное разрешение требуется для создания и обновления.",select(v.crmAction,[["none","Не выполнять"],["create","Создавать запись"],["update","Обновлять запись"]],'data-ls-result="crmAction"'))+
-     '<p class="ls-hint">Подключения и сопоставление полей задаются в разделе «Интеграции».</p><a class="ls-outline-btn" href="#/agent/leads/integrations">Интеграции '+icon("right")+'</a>')+'</div>';
+     '<p class="ls-hint">Подключения и сопоставление полей задаются в разделе «Интеграции».</p><a class="ls-outline-btn" href="#/agent/leads/integrations">Интеграции '+icon("right")+'</a>')+
+   panel("Сценарии обработки · "+escape(t.name),"Действия по выбранным правилам, без фактической отправки.",
+      '<div class="ls-result-rules"><div><strong>Все обязательные поля заполнены</strong><p>Формируется полная внутренняя заявка для выбранного получателя.</p></div>'+
+      '<div><strong>Сведений не хватает</strong><p>'+
+       ((t.incompleteAction||"wait")==="handoff"?
+       "Неполная заявка направляется ответственному для рассмотрения.":
+       "Заявка ожидает дополнительных сведений от клиента.")+'</p></div></div>'+
+      '<button type="button" class="ls-outline-btn" data-ls-tab="types">Изменить правила заявки '+icon("right")+'</button>')+
+   '</div>';
 }
 function modelTab(){
  return '<div class="ls-simple-grid">'+panel("AI-модель","Настройка публичной модели агента.",
@@ -185,13 +241,22 @@ function mutField(prop,value){
 function mutate(event,phase){
  if(document.getElementById("agentSettingsView").hidden)return;
  const el=event.target;
- if(el.matches("[data-ls-preview]")){previewValues[el.dataset.lsPreview]=el.value;if(phase==="change"&&el.tagName==="SELECT")render();return}
+ if(el.matches("[data-ls-preview]")){
+   previewValues[el.dataset.lsPreview]=el.value;
+   previewMessage="";
+   if(phase==="change"&&el.tagName==="SELECT"){render();return}
+   const assessment=document.querySelector(".ls-preview-eval");
+   if(assessment)assessment.innerHTML=previewIndicators(type());
+   const feedback=document.querySelector(".ls-preview-feedback");
+   if(feedback)feedback.textContent="";
+   return;
+ }
  if(isRunning())return;
  const fieldProp=el.dataset.lsFieldprop;
  if(fieldProp){mutField(fieldProp,el.type==="checkbox"?el.checked:el.value);if(phase==="change")render();return}
  const k=el.dataset.lsConfig;
  if(k==="project"||k==="requirements"){state[k]=el.value;save();return}
- if(k==="criteria"){type().criteria=el.value;save();render();return}
+ if(k==="criteria"||k==="incompleteAction"){type()[k]=el.value;save();previewMessage="";render();return}
  if(el.dataset.lsResult){state.result[el.dataset.lsResult]=el.type==="checkbox"?el.checked:el.value;save();render();return}
  if(el.dataset.lsModel){state.model[el.dataset.lsModel]=el.value;save();if(phase==="change")render()}
 }
@@ -199,7 +264,7 @@ function handleAction(name){
  if(name==="close-field"){editField=null;render();return}
  if(isRunning())return;
  const t=type();
- if(name==="add-type"){const id="type"+Date.now();state.types.push({id,name:"Новый тип заявки",criteria:"required",fields:[]});selected=id;editField=null;previewValues={};previewMessage="";save();render();return}
+ if(name==="add-type"){const id="type"+Date.now();state.types.push({id,name:"Новый тип заявки",criteria:"required",incompleteAction:"wait",fields:[]});selected=id;editField=null;previewValues={};previewMessage="";save();render();return}
  if(name==="rename-type"){const next=prompt("Название типа заявки",t.name);if(next&&next.trim()){t.name=next.trim().slice(0,80);save();render()}return}
  if(name==="add-field"){const id="field"+Date.now();t.fields.push(mk(id,"Новое поле","text",false));editField=id;save();render();return}
  if(name==="delete-field"){if(!editField)return;if(!confirm("Удалить выбранное поле?"))return;t.fields=t.fields.filter(f=>f.id!==editField);editField=null;save();render();return}
@@ -234,12 +299,12 @@ function setup(){
  document.addEventListener("submit",event=>{
   if(event.target.id!=="ls-preview-form")return;
   event.preventDefault();
-  const visible=type().fields.filter(fieldVisible);
-  const missing=visible.filter(f=>f.required&&!String(previewValues[f.id]||"").trim());
-  const invalid=visible.filter(f=>!validValue(f,previewValues[f.id]));
-  previewMessage=missing.length?"Заполните обязательные поля: "+missing.map(f=>f.title).join(", "):
-    invalid.length?"Проверьте формат полей: "+invalid.map(f=>f.title).join(", "):
-    "Все обязательные поля заполнены, формат значений корректен.";
+  const review=previewReview(type());
+  previewMessage=review.invalid.length?"Проверьте формат полей: "+review.invalid.map(f=>f.title).join(", "):
+    review.missing.length?
+      (review.kind==="partial"?"Неполная заявка допускается для рассмотрения. Не заполнены: ":"Заполните обязательные поля: ")+review.missing.map(f=>f.title).join(", "):
+    review.kind==="empty"?"Добавьте поля и заполните примерные данные.":
+    "Все обязательные поля заполнены, формат значений корректен. Структура заявки готова.";
   const message=document.querySelector(".ls-preview-feedback");if(message)message.textContent=previewMessage;
  });
 }
