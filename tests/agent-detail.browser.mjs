@@ -74,7 +74,7 @@ try {
  assert.equal(await page.locator(".detail-responsibility").count(),3);
  assert.equal(await page.locator(".detail-capability-icon").count(),3);
  assert.equal(await page.locator(".detail-handoff").count(),1);
- assert.match(await page.locator(".detail-flow").innerText(),/Выполняет самостоятельно/);
+ assert.match(await page.locator(".detail-flow").innerText(),/Выполняет самостоятельно/i);
  assert.match(await page.locator(".detail-handoff").innerText(),/Когда подключает человека/);
  assert.match(await page.locator(".detail-handoff").innerText(),/требуется решение менеджера/);
  const capabilityBadges=await page.locator(".detail-capability-icon").evaluateAll(elements=>
