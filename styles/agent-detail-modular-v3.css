@@ -33,7 +33,7 @@
  gap:14px;
 }
 .detail-top-grid > .detail-card { min-height:0; height:auto; align-self:stretch; }
-.detail-flow .detail-card-title { margin-bottom:0; }
+.detail-flow .detail-card-title { margin-bottom:12px; }
 
 .detail-bubble { width:43px; height:43px; border:3px solid #fff; border-radius:50%; display:grid; place-items:center; margin-left:-3px; flex:none; }
 .detail-bubble .icon { width:19px; height:19px; stroke-width:2.15; }
@@ -42,11 +42,22 @@
 .detail-kicker { color:#929595; font-size:11px; font-weight:630; }
 .detail-profession { margin-top:11px; font-size:19px; letter-spacing:-.45px; font-weight:760; line-height:1.25; }
 .detail-description { color:#62676a; font-size:13px; line-height:1.65; margin-top:12px; max-width:none; }
-/* Responsibilities: a vertical list, identical on desktop and mobile. */
+/* Agent abilities and handoff: compact, legible and consistent with the agent library. */
+.detail-flow-eyebrow { margin-bottom:9px; font-size:10px; line-height:1.35; letter-spacing:.045em; font-weight:720; text-transform:uppercase; color:#989c9b; }
 .detail-responsibilities { list-style:none; display:flex; flex-direction:column; padding:0; margin:0; gap:0; }
-.detail-responsibility { min-width:0; padding:8px 0; border-top:1px solid #ededeb; }
-.detail-responsibility strong { font-size:11.5px; font-weight:740; line-height:1.45; display:block; letter-spacing:-.1px; }
-.detail-responsibility p { font-size:10.5px; color:#939696; line-height:1.55; margin-top:7px; }
+.detail-responsibility { display:flex; align-items:flex-start; gap:10px; min-width:0; padding:8px 0; border-top:1px solid #ededeb; }
+.detail-responsibility:first-child { border-top:0; padding-top:0; }
+.detail-responsibility:last-child { padding-bottom:0; }
+.detail-capability-icon { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border-radius:10px; }
+.detail-capability-icon .icon { width:15px; height:15px; stroke-width:2; }
+.detail-capability-copy { min-width:0; flex:1; }
+.detail-capability-copy strong { display:block; font-size:11.5px; line-height:1.4; font-weight:740; letter-spacing:-.1px; }
+.detail-capability-copy p { margin-top:3px; font-size:10.5px; color:#8b8f90; line-height:1.48; }
+.detail-handoff { display:grid; grid-template-columns:30px minmax(0,1fr); gap:10px; align-items:start; margin-top:11px; padding:12px; background:#f6f6f5; border:1px solid #f0f0ef; border-radius:12px; }
+.detail-handoff-icon { display:grid; place-items:center; width:30px; height:30px; border-radius:10px; background:#ecece9; color:#686c6c; }
+.detail-handoff-icon .icon { width:15px; height:15px; stroke-width:1.9; }
+.detail-handoff strong { display:block; font-size:11.5px; font-weight:730; line-height:1.4; }
+.detail-handoff p { margin-top:4px; color:#818585; font-size:10.5px; line-height:1.48; }
 .detail-state { display:flex; flex-direction:column; padding:18px 18px; }
 .detail-state .detail-card-title { margin-bottom:12px; }
 .detail-state-list { display:flex; flex-direction:column; flex:1; }
