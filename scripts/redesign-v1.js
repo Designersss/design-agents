@@ -66,9 +66,13 @@ function renderRoute(){
      link.classList.toggle("active",active);
      if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
    });
-   $("placeholderName").textContent="В разработке";
-   $("placeholderContext").textContent=route.name+" / "+route.title;
-   $("placeholderDescription").textContent=route.section==="settings"?(isRunning?"Настройки работающего агента доступны только для просмотра. Чтобы изменить параметры, сначала остановите агента. Сам экран настроек пока в разработке.":"Агент остановлен. Редактирование станет доступно после реализации страницы настроек."):"Раздел пока в разработке. Вернитесь к обзору агента через левое меню.";
+   $("placeholderName").textContent=route.title;
+   $("placeholderContext").textContent=route.name;
+   $("placeholderDescription").textContent=route.section==="settings"&&isRunning
+     ?"Нет данных для отображения. Для изменения настроек сначала остановите агента."
+     :"Нет данных для отображения.";
+   $("placeholderReturn").href="#/agent/"+route.id+"/overview";
+   $("placeholderReturnLabel").textContent="К обзору агента";
    if(isAgentOverview)window.AIMockAgentDetail.render(route);
  }else{
    document.querySelectorAll("[data-global-route]").forEach(link=>{
@@ -78,9 +82,11 @@ function renderRoute(){
    });
    window.AIMockAgentDetail.refreshCards();
    if(route.key!=="overview"){
-     $("placeholderName").textContent="В разработке";
-     $("placeholderContext").textContent=route.title;
-     $("placeholderDescription").textContent="Страница «"+route.title+"» пока в разработке.";
+     $("placeholderName").textContent=route.title;
+     $("placeholderContext").textContent="AIMock";
+     $("placeholderDescription").textContent="Нет данных для отображения.";
+     $("placeholderReturn").href="#/overview";
+     $("placeholderReturnLabel").textContent="На обзор";
    }
  }
  document.title="AIMock — "+(isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title);

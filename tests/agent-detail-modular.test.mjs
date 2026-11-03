@@ -25,6 +25,10 @@ test("every profession has a corresponding design fixture and agent route",()=>{
  assert.doesNotMatch(detail,/AG-02\d{2}|Модульный обзор|Карточка агента ·|Демо:/);
  assert.doesNotMatch(html,/Дизайн-прототип|Демо-пространство|демонстрационные/);
  assert.match(detail,/Статус .*обновлён на экране/);
+ assert.match(detail,/Общий доступ недоступен/);
+ assert.match(detail,/действие недоступно/);
+ assert.doesNotMatch(detail,/в разработке|демо|демонстрац|прототип/i);
+ assert.doesNotMatch(html,/в разработке|демо|демонстрац|прототип/i);
  assert.match(detail,/Открыть раздел/);
  assert.match(detail,/data-detail-toggle/);
 });
