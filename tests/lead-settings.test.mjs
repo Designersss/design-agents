@@ -26,6 +26,9 @@ test("lead builder has professional field contracts and an independent preview",
  ])assert.ok(script.includes(text),text);
  assert.match(script,/fieldKinds=\{[^}]*phone:[^}]*email:[^}]*money:[^}]*date:/);
  assert.match(script,/localStorage\.setItem/);
+ assert.match(script,/function validValue/);
+ assert.match(script,/Проверьте формат полей/);
+ assert.match(script,/digits\.length>=7/);
  assert.match(script,/if\(isRunning\(\)\)return/);
  assert.match(script,/data-ls-fieldprop/);
  assert.match(script,/data-ls-action="add-field"/);
