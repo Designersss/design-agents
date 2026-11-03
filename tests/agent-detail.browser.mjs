@@ -278,6 +278,13 @@ try {
    await page.setViewportSize(size);
    const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
    assert.ok(widths.width<=widths.viewport+2,"Lead settings horizontal overflow at "+size.width+": "+JSON.stringify(widths));
+   const cardBounds=await page.evaluate(()=>{
+     const main=document.querySelector(".ls-builder").getBoundingClientRect();
+     const preview=document.querySelector(".ls-preview").getBoundingClientRect();
+     return {main:main.width,preview:preview.width};
+   });
+   if(size.width<=880)assert.ok(cardBounds.preview>=cardBounds.main-3,
+      "Preview should fill same available width as the editor on narrow screens: "+JSON.stringify(cardBounds));
    if(size.width===390)await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
