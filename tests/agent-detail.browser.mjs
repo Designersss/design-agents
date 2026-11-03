@@ -175,7 +175,7 @@ try {
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
  await page.locator('[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
- await page.locator('[data-ls-tab="ready"]').click();
+ await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
  await page.locator('[data-ls-tab="types"]').click();
  await page.screenshot({path:resolve(artifactDir,"settings-lead-after-edit.png"),fullPage:true});
