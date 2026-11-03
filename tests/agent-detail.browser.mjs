@@ -155,6 +155,8 @@ try {
  assert.equal(await page.locator(".ls-type").count(),3);
  assert.equal(await page.locator(".ls-field").count(),5);
  assert.equal(await page.locator(".ls-preview-field").count(),5);
+ assert.match(await page.locator(".ls-preview-assessment").innerText(),/Требуются сведения/);
+ assert.match(await page.locator(".ls-preview-missing").innerText(),/Размеры помещения/);
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
  await page.screenshot({path:resolve(artifactDir,"settings-lead-desktop.png"),fullPage:true});
  await page.locator('[data-ls-type="measure"]').click();
@@ -167,15 +169,19 @@ try {
  await page.locator('[data-ls-fieldprop="title"]').fill("Материал фасада");
  await page.locator('[data-ls-fieldprop="title"]').press("Tab");
  assert.match(await page.locator(".ls-field-list").innerText(),/Материал фасада/);
+ assert.equal(await page.locator(".ls-preview-field").count(),6,"Preview must show all configured fields");
+ assert.match(await page.locator(".ls-preview-progress").innerText(),/6 из 6/);
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
  assert.ok(saved.types[0].fields.some(f=>f.title==="Материал фасада"),"Fields autosave to local browser storage");
  await page.locator('.ls-field-main[data-ls-field="comment"]').click();
  await page.locator('[data-ls-fieldprop="condition"]').selectOption("match");
  await page.locator('[data-ls-fieldprop="conditionField"]').selectOption("furniture");
  await page.locator('[data-ls-fieldprop="conditionValue"]').selectOption("Кухня");
- assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ assert.equal(await page.locator('.ls-preview-field:has([data-ls-preview="comment"])').count(),0);
+ assert.match(await page.locator(".ls-preview-hidden").innerText(),/1 поле скрыто/);
  await page.locator('[data-ls-preview="furniture"]').selectOption("Кухня");
- assert.match(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ assert.equal(await page.locator('.ls-preview-field:has([data-ls-preview="comment"])').count(),1);
+ assert.match(await page.locator(".ls-preview-condition").innerText(),/По условию: Тип мебели = Кухня/);
  await page.locator('[data-ls-preview="furniture"]').selectOption("Шкаф");
  assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
  await page.locator('[data-ls-preview="size"]').fill("200 × 300");
@@ -185,6 +191,22 @@ try {
  await page.locator('[data-ls-preview="phone"]').fill("+7 (900) 123-45-67");
  await page.locator("#ls-preview-form button[type=submit]").click();
  assert.match(await page.locator(".ls-preview-feedback").textContent(),/формат значений корректен/);
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/Поля заполнены/);
+ await page.locator('[data-ls-type="consult"]').click();
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/Неполная заявка допустима/);
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/ответственному на рассмотрение/);
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/Неполная заявка допускается/);
+ await page.locator('[data-ls-config="criteria"]').selectOption("required");
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/Требуются сведения/);
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/Заполните обязательные поля: Тема вопроса/);
+ await page.locator('[data-ls-config="incompleteAction"]').selectOption("wait");
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/ожидает уточнений от клиента/);
+ await page.locator('[data-ls-tab="result"]').click();
+ assert.match(await page.locator(".ls-result-rules").innerText(),/Заявка ожидает дополнительных сведений/);
+ await page.locator('[data-ls-tab="types"]').click();
+ await page.locator('[data-ls-type="kitchen"]').click();
 
 
  await page.locator('[data-ls-tab="work"]').click();
