@@ -22,7 +22,7 @@ test("lead builder has professional field contracts and an independent preview",
  for(const text of [
   "Расчёт кухни","Замер","Консультация","Тип мебели","Размеры помещения","Контакт для связи",
   "Ориентировочный бюджет","Комментарий","Критерий готовности","Результат и передача",
-  "AI-модель и доступы","Перед запуском","Проверить поля","Обязательно"
+  "AI-модель и доступы","Перед запуском","Проверить заполнение","Обязательно"
  ])assert.ok(script.includes(text),text);
  assert.match(script,/fieldKinds=\{[^}]*phone:[^}]*email:[^}]*money:[^}]*date:/);
  assert.match(script,/localStorage\.setItem/);
@@ -52,4 +52,27 @@ test("builder preserves light full-screen shell and adapts to mobile",()=>{
  assert.match(css,/\.agent-settings-view \[hidden\]\{display:none!important\}/);
  const existing=readFileSync(resolve(root,"styles/agent-detail-modular-v3.css"),"utf8");
  assert.match(existing,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
+});
+
+test("all configured fields display, including conditional fields, without preview truncation",()=>{
+ assert.match(script,/const displayFields=t\.fields\.filter\(fieldVisible\);/);
+ assert.doesNotMatch(script,/t\.fields\.filter\(fieldVisible\)\.slice\(0,5\)/);
+ assert.match(script,/ls-preview-condition/);
+ assert.match(script,/ls-preview-eval/);
+ assert.match(script,/function previewIndicators\(t\)/);
+ assert.match(script,/function previewReview\(t\)/);
+ assert.match(script,/review\.missing/);
+ assert.match(script,/review\.invalid/);
+ assert.match(css,/\.ls-preview-eval\{/);
+ assert.match(css,/\.ls-preview-missing\{/);
+});
+test("completion policy does not mislabel incomplete applications as ready",()=>{
+ assert.match(script,/criteria==="incomplete"\?"partial":"missing"/);
+ assert.match(script,/Неполная заявка допустима/);
+ assert.match(script,/Заявка ожидает уточнений от клиента/);
+ assert.match(script,/Направить ответственному на рассмотрение/);
+ assert.match(script,/data-ls-config="incompleteAction"/);
+ assert.match(script,/Сценарии обработки/);
+ assert.match(script,/Структура заявки готова/);
+ assert.doesNotMatch(script,/fetch\(|XMLHttpRequest|\.post\(/);
 });
