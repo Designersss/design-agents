@@ -73,10 +73,13 @@ try {
  assert.equal(await page.locator(".detail-state-row").count(),3);
  assert.equal(await page.locator(".detail-responsibility").count(),3);
  assert.equal(await page.locator(".detail-capability-icon").count(),3);
- assert.equal(await page.locator(".detail-handoff").count(),1);
- assert.match(await page.locator(".detail-flow").innerText(),/Выполняет самостоятельно/i);
- assert.match(await page.locator(".detail-handoff").innerText(),/Когда подключает человека/);
- assert.match(await page.locator(".detail-handoff").innerText(),/требуется решение менеджера/);
+ assert.equal(await page.locator(".detail-flow-eyebrow").count(),0);
+ assert.equal(await page.locator(".detail-responsibilities .detail-responsibility").count(),3);
+
+ assert.equal(await page.locator(".detail-handoff").count(),0);
+ assert.doesNotMatch(await page.locator(".detail-flow").innerText(),/Выполняет самостоятельно|Когда подключает человека/i);
+
+
  const capabilityBadges=await page.locator(".detail-capability-icon").evaluateAll(elements=>
   elements.map(el=>({
     width:el.getBoundingClientRect().width,
@@ -164,18 +167,18 @@ try {
  assert.match(await page.locator(".detail-description").textContent(),/^HR-рекрутер — специалист/);
  assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Подбор в команду");
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Готовит сводку/);
- assert.match(await page.locator(".detail-handoff").textContent(),/Итоговые решения по кандидатам остаются за HR-специалистом/);
+
  assert.match(await page.locator(".detail-status").textContent(),/Остановлен/);
  await page.goto(base+"#/agent/consultant/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Помощник магазина");
  assert.match(await page.locator(".detail-description").textContent(),/^Консультант — специалист/);
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Подготавливает итог/);
- assert.match(await page.locator(".detail-handoff").textContent(),/передаёт диалог сотруднику/);
+
  await page.goto(base+"#/agent/support/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Служба помощи");
  assert.match(await page.locator(".detail-description").textContent(),/^Специалист поддержки — представитель/);
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Помогает решить вопрос/);
- assert.match(await page.locator(".detail-handoff").textContent(),/передаёт диалог оператору/); assert.equal(await page.locator(".detail-user-description").count(),0,"Optional description must not leave an empty paragraph");
+ assert.equal(await page.locator(".detail-user-description").count(),0,"Optional description must not leave an empty paragraph");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Служба помощи");
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
@@ -183,7 +186,7 @@ try {
    const bounds=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
    assert.ok(bounds.page<=bounds.viewport+2,"Horizontal page overflow at "+size.width+"px: "+JSON.stringify(bounds));
    assert.equal(await page.locator(".detail-capability-icon").count(),3);
-   assert.equal(await page.locator(".detail-handoff").count(),1);
+   assert.equal(await page.locator(".detail-handoff").count(),0);
    const rowsAtWidth=await page.locator(".detail-responsibility").evaluateAll(rows=>rows.map(el=>({top:el.getBoundingClientRect().top,left:el.getBoundingClientRect().left})));
    assert.ok(rowsAtWidth[0].top<rowsAtWidth[1].top && rowsAtWidth[1].top<rowsAtWidth[2].top,
      "Responsibilities stay vertically stacked at "+size.width+"px");
