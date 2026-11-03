@@ -49,10 +49,12 @@ function closeSearch(){
 function renderRoute(){
  const route=currentRoute(),isAgent=route.key==="agent";
  const isAgentOverview=isAgent&&route.section==="overview";
+ const isLeadSettings=isAgent&&route.id==="leads"&&route.section==="settings";
  document.body.classList.toggle("is-agent-route",isAgent);
  $("overviewView").hidden=route.key!=="overview";
  $("agentDetailView").hidden=!isAgentOverview;
- $("placeholderView").hidden=route.key==="overview"||isAgentOverview;
+ $("agentSettingsView").hidden=!isLeadSettings;
+ $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
  $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
@@ -74,6 +76,7 @@ function renderRoute(){
    $("placeholderReturn").href="#/agent/"+route.id+"/overview";
    $("placeholderReturnLabel").textContent="К обзору агента";
    if(isAgentOverview)window.AIMockAgentDetail.render(route);
+   if(isLeadSettings)window.AIMockLeadSettings.render(route);
  }else{
    document.querySelectorAll("[data-global-route]").forEach(link=>{
      const active=link.dataset.globalRoute===route.key;
