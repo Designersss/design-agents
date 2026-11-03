@@ -63,5 +63,8 @@ test("placeholder navigation and agent-context sidebar are present", () => {
   assert.match(html, /data-agent-section="testing"/);
   assert.match(html, /data-global-route="library"/);
   assert.match(js, /is-agent-route/);
-  assert.match(js, /В разработке/);
+  assert.match(js, /Нет данных для отображения/);
+  assert.match(html, /id="placeholderReturn"/);
+  assert.match(html, /id="placeholderReturnLabel"/);
+  assert.doesNotMatch(html + js, /в разработке|демо|демонстрац|дизайн-прототип/i);
 });
