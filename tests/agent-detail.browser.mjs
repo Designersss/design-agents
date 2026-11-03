@@ -57,6 +57,15 @@ try {
    assert.ok(spacing.top>=10 && spacing.bottom>=10,
      "State row needs balanced vertical padding: "+JSON.stringify(spacing));
  }
+ const stateBottomGap=await page.locator(".detail-state").evaluate(card=>{
+   const last=card.querySelector(".detail-state-row:last-child");
+   const cardBottom=card.getBoundingClientRect().bottom;
+   const lastBottom=last.getBoundingClientRect().bottom;
+   return cardBottom-lastBottom-parseFloat(getComputedStyle(card).paddingBottom);
+ });
+ assert.ok(Math.abs(stateBottomGap)<=2,
+   "Status rows should use card height without a large empty bottom area");
+
 
  assert.equal(await page.locator(".detail-heading-tags span").count(),3);
  assert.equal(await page.locator(".detail-identity .detail-bubble").count(),0);
@@ -145,7 +154,7 @@ try {
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Передаёт сложные случаи/);
  await page.goto(base+"#/agent/support/overview");
  await page.waitForFunction(()=>document.querySelector("#agentDetailHeading")?.textContent?.trim()==="Служба помощи");
- assert.match(await page.locator(".detail-description").textContent(),/^Специалист поддержки — профессия/);
+ assert.match(await page.locator(".detail-description").textContent(),/^Специалист поддержки — представитель/);
  assert.match(await page.locator(".detail-responsibilities").textContent(),/Подключает оператора/); assert.equal(await page.locator(".detail-user-description").count(),0,"Optional description must not leave an empty paragraph");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Служба помощи");
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
