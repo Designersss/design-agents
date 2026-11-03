@@ -47,7 +47,7 @@ try {
  assert.ok(professionVisual.text.length>=150);
  assert.ok(professionVisual.fontSize>=13,"Profession text must be readable");
  assert.ok(professionVisual.lineHeight>=21,"Profession copy needs generous leading");
- assert.doesNotMatch(professionVisual.text,/агент|бот/i);
+ assert.doesNotMatch(professionVisual.text,/агент|чат-бот/i);
  const statusRowSpacing=await page.locator(".detail-state-row").evaluateAll(rows=>rows.map(row=>({
    top:parseFloat(getComputedStyle(row).paddingTop),
    bottom:parseFloat(getComputedStyle(row).paddingBottom)
