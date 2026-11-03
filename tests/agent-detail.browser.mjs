@@ -178,6 +178,14 @@ try {
  assert.match(await page.locator(".ls-preview").innerText(),/Комментарий/);
  await page.locator('[data-ls-preview="furniture"]').selectOption("Шкаф");
  assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="size"]').fill("200 × 300");
+ await page.locator('[data-ls-preview="phone"]').fill("abc");
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/Проверьте формат полей: Контакт для связи/);
+ await page.locator('[data-ls-preview="phone"]').fill("+7 (900) 123-45-67");
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/формат значений корректен/);
+
 
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
