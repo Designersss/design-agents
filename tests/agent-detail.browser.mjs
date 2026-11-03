@@ -193,6 +193,9 @@ try {
  assert.match(await page.locator(".ls-preview-feedback").textContent(),/формат значений корректен/);
  assert.match(await page.locator(".ls-preview-assessment").textContent(),/Поля заполнены/);
  await page.locator('[data-ls-type="consult"]').click();
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/Требуются сведения/);
+ assert.match(await page.locator(".ls-preview-assessment").textContent(),/Пустую заявку нельзя направить/);
+ await page.locator('[data-ls-preview="contact"]').fill("+7 900 111-22-33");
  assert.match(await page.locator(".ls-preview-assessment").textContent(),/Неполная заявка допустима/);
  assert.match(await page.locator(".ls-preview-assessment").textContent(),/ответственному на рассмотрение/);
  await page.locator("#ls-preview-form button[type=submit]").click();
