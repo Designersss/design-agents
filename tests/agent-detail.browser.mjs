@@ -148,9 +148,56 @@ try {
  assert.match(await page.locator("#agentSidebarStatus").textContent(),/Остановлен/);
  assert.match(await page.locator("#detailToggleStatus").textContent(),/Запустить/);
  await page.locator('[data-agent-section="settings"]').click();
- await page.waitForSelector("#placeholderView:not([hidden])");
- assert.equal(await page.locator("#placeholderView").isVisible(),true);
- assert.match(await page.locator("#placeholderDescription").textContent(),/Нет данных для отображения/); assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
+ await page.waitForSelector("#agentSettingsView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal((await page.locator("#agentSettingsHeading").textContent()).trim(),"Настройки");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
+ assert.equal(await page.locator(".ls-type").count(),3);
+ assert.equal(await page.locator(".ls-field").count(),5);
+ assert.equal(await page.locator(".ls-preview-field").count(),5);
+ assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
+ await page.screenshot({path:resolve(artifactDir,"settings-lead-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-type="measure"]').click();
+ assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Замер/);
+ assert.equal(await page.locator(".ls-field").count(),4);
+ await page.locator('[data-ls-type="kitchen"]').click();
+ await page.locator('[data-ls-action="add-field"]').click();
+ assert.equal(await page.locator(".ls-field").count(),6);
+ assert.equal(await page.locator(".ls-field-editor").count(),1);
+ await page.locator('[data-ls-fieldprop="title"]').fill("Материал фасада");
+ await page.locator('[data-ls-fieldprop="title"]').press("Tab");
+ assert.match(await page.locator(".ls-field-list").innerText(),/Материал фасада/);
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.ok(saved.types[0].fields.some(f=>f.title==="Материал фасада"),"Fields autosave to local browser storage");
+ await page.locator('.ls-field-main[data-ls-field="comment"]').click();
+ await page.locator('[data-ls-fieldprop="condition"]').selectOption("match");
+ await page.locator('[data-ls-fieldprop="conditionField"]').selectOption("furniture");
+ await page.locator('[data-ls-fieldprop="conditionValue"]').selectOption("Кухня");
+ assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="furniture"]').selectOption("Кухня");
+ assert.match(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="furniture"]').selectOption("Шкаф");
+ assert.doesNotMatch(await page.locator(".ls-preview").innerText(),/Комментарий/);
+ await page.locator('[data-ls-preview="size"]').fill("200 × 300");
+ await page.locator('[data-ls-preview="phone"]').fill("abc");
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/Проверьте формат полей: Контакт для связи/);
+ await page.locator('[data-ls-preview="phone"]').fill("+7 (900) 123-45-67");
+ await page.locator("#ls-preview-form button[type=submit]").click();
+ assert.match(await page.locator(".ls-preview-feedback").textContent(),/формат значений корректен/);
+
+
+ await page.locator('[data-ls-tab="work"]').click();
+ assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
+ await page.locator('[data-ls-tab="result"]').click();
+ assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
+ await page.locator('[data-ls-tab="model"]').click();
+ assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
+ await page.locator('.ls-tab[data-ls-tab="ready"]').click();
+ assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
+ await page.locator('[data-ls-tab="types"]').click();
+ await page.screenshot({path:resolve(artifactDir,"settings-lead-after-edit.png"),fullPage:true});
+ // Return to the approved overview; the builder must not replace its layout.
  await page.goto(base+"#/overview");
  await page.waitForSelector("#overviewView:not([hidden])");
  const overviewShell=await page.evaluate(()=>({x:document.querySelector(".app-shell").getBoundingClientRect().x,
@@ -232,7 +279,7 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
  }
- for(const section of ["messages","settings","integrations","knowledge","testing","automation","analytics","logs"]){
+ for(const section of ["messages","integrations","knowledge","testing","automation","analytics","logs"]){
    await page.goto(base+"#/agent/leads/"+section);
    await page.waitForSelector("#placeholderView:not([hidden])");
    assert.equal((await page.locator("#placeholderName").textContent()).trim(),
@@ -240,6 +287,25 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/agent/leads/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in agent "+section);
  }
+ await page.goto(base+"#/agent/consultant/settings");
+ await page.waitForSelector("#placeholderView:not([hidden])");
+ assert.equal(await page.locator("#agentSettingsView").isVisible(),false);
+ await page.goto(base+"#/agent/leads/settings");
+ await page.waitForSelector("#agentSettingsView:not([hidden])");
+ for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+   assert.ok(widths.width<=widths.viewport+2,"Lead settings horizontal overflow at "+size.width+": "+JSON.stringify(widths));
+   const cardBounds=await page.evaluate(()=>{
+     const main=document.querySelector(".ls-builder").getBoundingClientRect();
+     const preview=document.querySelector(".ls-preview").getBoundingClientRect();
+     return {main:main.width,preview:preview.width};
+   });
+   if(size.width<=880)assert.ok(cardBounds.preview>=cardBounds.main-3,
+      "Preview should fill same available width as the editor on narrow screens: "+JSON.stringify(cardBounds));
+   if(size.width===390)await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
+ }
+ await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
  await page.locator("[data-detail-more]").click();
