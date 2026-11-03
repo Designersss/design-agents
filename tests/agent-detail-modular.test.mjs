@@ -92,7 +92,7 @@ test("profession descriptions explain the role, not the agent workflow",()=>{
  for(let index=0;index<purposes.length;index++){
    assert.ok(purposes[index].startsWith(expected[index]),"Profession identity "+index);
    assert.ok(purposes[index].length>=150,"Profession summary should be meaningful and readable");
-   assert.doesNotMatch(purposes[index],/агент|бот|автоматизац|telegram|crm/i);
+   assert.doesNotMatch(purposes[index],/агент|чат-бот|автоматизац|telegram|crm/i);
  }
  assert.match(css,/\.detail-description\s*\{[^}]*font-size:13px;[^}]*line-height:1\.65/);
  assert.match(css,/\.detail-description\s*\{[^}]*color:#62676a/);
