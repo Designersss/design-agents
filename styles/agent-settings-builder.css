@@ -138,7 +138,7 @@
  .ls-types{display:block}
  .ls-type-list{display:flex;flex-wrap:wrap;gap:6px}
  .ls-type{width:auto}
- .ls-right{grid-column:auto;grid-template-columns:1fr}
+ .ls-right{grid-column:auto;grid-template-columns:1fr;align-items:stretch}
  .ls-header{align-items:flex-start}
  .ls-header-actions{justify-content:flex-start}
  .ls-simple-grid{grid-template-columns:1fr}
@@ -159,7 +159,8 @@
  .ls-required{font-size:9px;padding:5px}
  .ls-field-main strong{font-size:11px}
  .ls-preview form{display:block}
- .ls-right{display:flex}
+ .ls-right{display:flex;align-items:stretch;width:100%}
+ .ls-right>.ls-panel{width:100%}
  .ls-criteria>div{align-items:flex-start;flex-direction:column}
  .ls-simple-grid>.ls-panel{padding:18px}
  .ls-readonly{align-items:flex-start}
