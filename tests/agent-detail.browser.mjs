@@ -102,7 +102,7 @@ try {
  await page.locator('[data-agent-section="settings"]').click();
  await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),true);
- assert.match(await page.locator("#placeholderDescription").textContent(),/Агент остановлен/); assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
+ assert.match(await page.locator("#placeholderDescription").textContent(),/Нет данных для отображения/); assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Настройки");
  await page.goto(base+"#/overview");
  await page.waitForSelector("#overviewView:not([hidden])");
  const overviewShell=await page.evaluate(()=>({x:document.querySelector(".app-shell").getBoundingClientRect().x,
@@ -150,16 +150,44 @@ try {
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
  await page.locator("[data-detail-share]").click();
- assert.match(await page.locator("#detailToast").textContent(),/пока в разработке/);
+ assert.match(await page.locator("#detailToast").textContent(),/Общий доступ недоступен/);
  await page.locator("[data-detail-more]").click();
  assert.equal(await page.locator("[data-detail-menu]").isVisible(),true);
  await page.locator("[data-detail-unavailable]").first().click();
- assert.match(await page.locator("#detailToast").textContent(),/в разработке/);
+ assert.match(await page.locator("#detailToast").textContent(),/действие недоступно/);
  await page.locator(".agent-back").click();
  await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),true);
  assert.equal(await page.locator(".global-nav").isVisible(),true);
  assert.equal(await page.locator(".agent-nav").isVisible(),false);
+ const emptyStateRoutes=[
+   "agents","library","messages","knowledge","integrations","contacts",
+   "automation","finance","workspace","profile","settings","notifications",
+   "attention","create"
+ ];
+ const banned=/в разработке|демо|демонстрац|прототип|в следующем этапе|заглушка/i;
+ for(const key of emptyStateRoutes){
+   await page.goto(base+"#/"+key);
+   await page.waitForSelector("#placeholderView:not([hidden])");
+   assert.equal((await page.locator("#placeholderName").textContent()).trim(),
+     (await page.locator("#breadcrumbCurrent").textContent()).trim(),
+     "Empty-state heading should be the section title: "+key);
+   assert.match(await page.locator("#placeholderDescription").textContent(),/Нет данных для отображения/);
+   assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
+   assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
+ }
+ for(const section of ["messages","settings","integrations","knowledge","testing","automation","analytics","logs"]){
+   await page.goto(base+"#/agent/leads/"+section);
+   await page.waitForSelector("#placeholderView:not([hidden])");
+   assert.equal((await page.locator("#placeholderName").textContent()).trim(),
+      (await page.locator("#breadcrumbCurrent").textContent()).trim().split(" / ").at(-1));
+   assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/agent/leads/overview");
+   assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in agent "+section);
+ }
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("[data-detail-more]").click();
+ assert.doesNotMatch(await page.locator("[data-detail-menu]").innerText(),banned);
  assert.deepEqual(exceptions,[]);
  console.log("Agent detail browser smoke passed: routing, 4 professions, status, layout, placeholders, menus.");
 } catch(error) {
