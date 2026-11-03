@@ -112,7 +112,7 @@ function preview(t){
     const value=previewValues[f.id]||"";
     let control;
     if(f.type==="select")control='<select class="ls-input" data-ls-preview="'+escape(f.id)+'">'+option("","Выберите значение",value)+(f.options||[]).map(x=>option(x,x,value)).join("")+'</select>';
-    else control='<input class="ls-input" data-ls-preview="'+escape(f.id)+'" type="'+(f.type==="email"?"email":f.type==="date"?"date":f.type==="money"||f.type==="number"?"number":"text")+'" placeholder="'+escape(f.hint||"Укажите значение")+'" value="'+escape(value)+'">';
+    else control='<input class="ls-input" data-ls-preview="'+escape(f.id)+'" type="'+(f.type==="email"?"email":f.type==="phone"?"tel":f.type==="date"?"date":f.type==="money"||f.type==="number"?"number":"text")+'" placeholder="'+escape(f.hint||"Укажите значение")+'" value="'+escape(value)+'">';
     return '<label class="ls-preview-field"><strong>'+escape(f.title)+(f.required?'<i> *</i>':"")+'</strong>'+control+'</label>';
   }).join("")+'<button type="submit" class="ls-dark-btn">Проверить поля</button>'+
   '<p class="ls-preview-feedback" role="status">'+escape(previewMessage)+'</p></form></section>';
@@ -207,6 +207,15 @@ function handleAction(name){
  const n=name==="move-up"?i-1:name==="move-down"?i+1:i;
  if(n>=0&&n<t.fields.length&&n!==i){[t.fields[i],t.fields[n]]=[t.fields[n],t.fields[i]];save();render()}
 }
+function validValue(f,value){
+ const text=String(value??"").trim();
+ if(!text)return true;
+ if(f.type==="email")return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(text);
+ if(f.type==="phone"){const digits=text.replace(/\\D/g,"");return digits.length>=7&&digits.length<=15}
+ if(f.type==="money"||f.type==="number")return Number.isFinite(Number(text));
+ if(f.type==="select")return (f.options||[]).includes(text);
+ return true;
+}
 function setup(){
  document.addEventListener("click",event=>{
   const root=document.getElementById("agentSettingsView");
@@ -225,8 +234,12 @@ function setup(){
  document.addEventListener("submit",event=>{
   if(event.target.id!=="ls-preview-form")return;
   event.preventDefault();
-  const missing=type().fields.filter(f=>f.required&&fieldVisible(f)&&!String(previewValues[f.id]||"").trim());
-  previewMessage=missing.length?"Заполните обязательные поля: "+missing.map(f=>f.title).join(", "):"Все обязательные поля заполнены.";
+  const visible=type().fields.filter(fieldVisible);
+  const missing=visible.filter(f=>f.required&&!String(previewValues[f.id]||"").trim());
+  const invalid=visible.filter(f=>!validValue(f,previewValues[f.id]));
+  previewMessage=missing.length?"Заполните обязательные поля: "+missing.map(f=>f.title).join(", "):
+    invalid.length?"Проверьте формат полей: "+invalid.map(f=>f.title).join(", "):
+    "Все обязательные поля заполнены, формат значений корректен.";
   const message=document.querySelector(".ls-preview-feedback");if(message)message.textContent=previewMessage;
  });
 }
