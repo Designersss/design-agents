@@ -15,7 +15,6 @@ const professions = {
      ["Помогает с выбором","Уточняет пожелания и предлагает подходящие варианты.","search","yellow"],
      ["Подготавливает итог","Собирает рекомендации и детали запроса.","check","green"]
    ],
-   handoff:"Если вопрос требует индивидуального решения или согласования условий, передаёт диалог сотруднику с контекстом.",
    integration:"1 подключена",materials:"8 документов",
    stats:[["Диалоги","176","Обращений за 7 дней","messages","message","blue"],
           ["Результаты","59","Помощь с выбором","analytics","check","green"],
@@ -36,7 +35,6 @@ const professions = {
      ["Уточняет детали заявки","Собирает контакты, потребности и важные сведения.","file","yellow"],
      ["Формирует результат","Создаёт заявку в CRM с собранными данными.","check","green"]
    ],
-   handoff:"Если запрос нестандартный, информации недостаточно или требуется решение менеджера.",
    integration:"2 подключены",materials:"12 документов",
    stats:[["Диалоги","128","Сообщения за 7 дней","messages","message","blue"],
           ["Заявки","42","Квалифицировано и передано в CRM","analytics","check","green"],
@@ -57,7 +55,6 @@ const professions = {
      ["Уточняет опыт","Собирает сведения об опыте и требованиях вакансии.","file","yellow"],
      ["Готовит сводку","Систематизирует ответы для HR-команды.","check","green"]
    ],
-   handoff:"Итоговые решения по кандидатам остаются за HR-специалистом. Сложные случаи и потенциальные отказы направляются на ручное рассмотрение.",
    integration:"1 подключена",materials:"6 документов",
    stats:[["Диалоги","84","Обращений за 7 дней","messages","message","blue"],
           ["Кандидаты","21","Отправлено на рассмотрение","analytics","users","green"],
@@ -78,7 +75,6 @@ const professions = {
      ["Находит ответ","Использует инструкции и материалы базы знаний.","book","yellow"],
      ["Помогает решить вопрос","Предлагает проверенные шаги и фиксирует результат.","check","green"]
    ],
-   handoff:"Если решения нет в материалах или требуется доступ сотрудника, передаёт диалог оператору с собранной информацией.",
    integration:"1 подключена",materials:"14 документов",
    stats:[["Диалоги","143","Обращений за 7 дней","messages","message","blue"],
           ["Решено","107","Ответов по базе знаний","analytics","check","green"],
@@ -133,7 +129,6 @@ function build(route){
   '</section>',
   '<section class="detail-card detail-flow" aria-labelledby="detailFlowLabel">',
     '<div class="detail-card-title"><h2 id="detailFlowLabel">Как работает агент</h2></div>',
-    '<p class="detail-flow-eyebrow">Выполняет самостоятельно</p>',
     '<ul class="detail-responsibilities">',
       data.responsibilities.map(([name,description,ic,color])=>
         '<li class="detail-responsibility">'+
@@ -141,10 +136,6 @@ function build(route){
           '<div class="detail-capability-copy"><strong>'+name+'</strong><p>'+description+'</p></div>'+
         '</li>').join(""),
     '</ul>',
-    data.handoff?'<div class="detail-handoff">'+
-      '<span class="detail-handoff-icon">'+icon("users")+'</span>'+
-      '<div><strong>Когда подключает человека</strong><p>'+data.handoff+'</p></div>'+
-    '</div>':"",
   '</section>',
   '<section class="detail-card detail-state" aria-labelledby="detailStateLabel">',
     '<div class="detail-card-title"><h2 id="detailStateLabel">Состояние</h2></div>',
