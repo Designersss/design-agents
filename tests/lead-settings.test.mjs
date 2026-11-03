@@ -33,6 +33,11 @@ test("lead builder has professional field contracts and an independent preview",
  assert.match(script,/data-ls-action="move-up"/);
  assert.match(script,/data-ls-tab="result"/);
  assert.match(script,/data-ls-preview/);
+ assert.match(script,/data-ls-fieldprop="conditionField"/);
+ assert.match(script,/data-ls-fieldprop="conditionValue"/);
+ assert.match(script,/function fieldVisible/);
+ assert.match(script,/previewValues\[f\.conditionField\]===f\.conditionValue/);
+ assert.doesNotMatch(script,/Если поле нужно не всегда, укажите условие простыми словами/);
  assert.doesNotMatch(script,/автоматически отказывать|системный промпт:|технические trace/i);
 });
 test("builder preserves light full-screen shell and adapts to mobile",()=>{
