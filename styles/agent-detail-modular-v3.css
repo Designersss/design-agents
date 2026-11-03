@@ -49,8 +49,8 @@
 .detail-responsibility p { font-size:10.5px; color:#939696; line-height:1.55; margin-top:7px; }
 .detail-state { display:flex; flex-direction:column; padding:18px 18px; }
 .detail-state .detail-card-title { margin-bottom:12px; }
-.detail-state-list { display:flex; flex-direction:column; }
-.detail-state-row { display:flex; align-items:center; gap:9px; min-height:49px; padding:11px 0; border-top:1px solid #f0f0ef; }
+.detail-state-list { display:flex; flex-direction:column; flex:1; }
+.detail-state-row { display:flex; flex:1; align-items:center; gap:9px; min-height:49px; padding:11px 0; border-top:1px solid #f0f0ef; }
 .detail-state-row:first-child { border-top:0; }
 .detail-state-row .detail-bubble { width:27px; height:27px; flex:0 0 27px; border:0; margin:0; }
 .detail-state-row .detail-bubble .icon { width:14px; height:14px; }
