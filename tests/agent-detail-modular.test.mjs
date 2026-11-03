@@ -103,19 +103,12 @@ test("profession descriptions explain the role, not the agent workflow",()=>{
  assert.match(css,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
 });
 
-test("agent how-it-works hybrid separates self-service skills and human handoff",()=>{
- const professions=["consultant","leads","recruiter","support"];
- assert.equal((detail.match(/handoff:"/g)||[]).length,professions.length);
- assert.match(detail,/detail-flow-eyebrow/);
- assert.match(detail,/Выполняет самостоятельно/);
+test("how-agent-works shows only three icon-led capabilities",()=>{
+ assert.doesNotMatch(detail,/Выполняет самостоятельно|Когда подключает человека|data\.handoff|handoff:"/i);
+ assert.doesNotMatch(css,/detail-flow-eyebrow|detail-handoff/);
  assert.match(detail,/detail-capability-icon/);
- assert.match(detail,/detail-handoff/);
- assert.match(detail,/Когда подключает человека/);
- assert.match(detail,/data\.handoff\?/);
- assert.match(detail,/Итоговые решения по кандидатам остаются за HR-специалистом/);
- assert.doesNotMatch(detail,/автоматический отказ|автоматически отказывает/i);
+ assert.match(detail,/detail-responsibilities/);
  assert.match(css,/\.detail-responsibilities\s*\{[^}]*display:flex;[^}]*flex-direction:column/);
  assert.match(css,/\.detail-capability-icon\s*\{[^}]*flex:0 0 30px/);
- assert.match(css,/\.detail-handoff\s*\{[^}]*background:#f6f6f5/);
  assert.match(css,/\.detail-top-grid\s*\{[^}]*grid-template-columns:minmax\(0,\.86fr\)[^}]*align-items:stretch/);
 });
