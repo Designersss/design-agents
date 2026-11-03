@@ -94,9 +94,9 @@ test("profession descriptions explain the role, not the agent workflow",()=>{
    assert.ok(purposes[index].length>=150,"Profession summary should be meaningful and readable");
    assert.doesNotMatch(purposes[index],/агент|бот|автоматизац|telegram|crm/i);
  }
- assert.match(css,/\\.detail-description\\s*\\{[^}]*font-size:13px;[^}]*line-height:1\\.65/);
- assert.match(css,/\\.detail-description\\s*\\{[^}]*color:#62676a/);
- assert.match(css,/\\.detail-state-row\\s*\\{[^}]*padding:11px 0/);
- assert.match(css,/\\.detail-state\\s*\\{[^}]*padding:18px 18px/);
- assert.match(css,/\\.detail-top-grid\\s*\\{[^}]*align-items:stretch/);
+ assert.match(css,/\.detail-description\s*\{[^}]*font-size:13px;[^}]*line-height:1\.65/);
+ assert.match(css,/\.detail-description\s*\{[^}]*color:#62676a/);
+ assert.match(css,/\.detail-state-row\s*\{[^}]*padding:11px 0/);
+ assert.match(css,/\.detail-state\s*\{[^}]*padding:18px 18px/);
+ assert.match(css,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
 });
