@@ -210,8 +210,8 @@ function handleAction(name){
 function validValue(f,value){
  const text=String(value??"").trim();
  if(!text)return true;
- if(f.type==="email")return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(text);
- if(f.type==="phone"){const digits=text.replace(/\\D/g,"");return digits.length>=7&&digits.length<=15}
+ if(f.type==="email")return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+ if(f.type==="phone"){const digits=text.replace(/\D/g,"");return digits.length>=7&&digits.length<=15}
  if(f.type==="money"||f.type==="number")return Number.isFinite(Number(text));
  if(f.type==="select")return (f.options||[]).includes(text);
  return true;
