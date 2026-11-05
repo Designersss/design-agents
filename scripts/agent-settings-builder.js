@@ -154,10 +154,6 @@ function builder(){
        '<div class="ls-completion-note">'+icon("alert")+
          '<span>Передача человеку не делает неполную заявку полностью готовой. Настройки не запускают реальные уведомления в этом макете.</span></div>'+
      '</section>'+
-     '<section class="ls-types-help"><div class="ls-types-help-icon">'+icon("book")+'</div>'+
-       '<div><h3>Как работают эти настройки?</h3><p>Тип заявки определяет сценарий обращения, поля — необходимые сведения, а критерий готовности — когда можно завершить сбор данных.</p>'+
-       '<details class="ls-types-example"><summary>Показать пример '+icon("right")+'</summary>'+
-       '<p>Для заявки «Расчёт кухни» агент может уточнить размеры и контакт, но не должен повторно спрашивать уже полученные ответы. Данные о материалах и сроках он берёт из назначенных знаний.</p></details></div></section>'+
      resultSummary()+
    '</div></div></div>';
 }
@@ -200,18 +196,6 @@ function workTab(){
          '<button type="button" class="ls-outline-btn" data-ls-tab="types">Настроить поля '+icon("right")+'</button></div>'+
          '<div class="ls-work-types">'+(typeNames||'<span class="ls-work-muted">Нет настроенных типов заявок</span>')+'</div></section>'+
      '</div>'+
-     '<aside class="ls-work-aside" aria-label="Подсказки по настройке">'+
-       '<section class="ls-work-guide"><span class="ls-section-eyebrow">ПОДСКАЗКА</span><h3>Что здесь указывать?</h3>'+
-         '<p>Достаточно объяснить, с каким бизнесом работает менеджер заявок. Не нужно описывать его алгоритм или писать промпт.</p>'+
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Рабочие данные</strong><small>Контекст компании и особенности общения.</small></div></div>'+
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Знания</strong><small>Каталоги, цены, сроки, документы и FAQ.</small></div></div>'+
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Типы заявок</strong><small>Какие поля агент должен собрать у клиента.</small></div></div>'+
-       '</section>'+
-       '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("book")+'</div><div>'+
-         '<strong>Нужны сведения о товарах и услугах?</strong>'+
-         '<p>Добавляйте справочные материалы в «Знания», чтобы не дублировать их в описании.</p>'+
-         '<a href="#/agent/leads/knowledge">Перейти к знаниям '+icon("right")+'</a></div></div>'+
-     '</aside>'+
    '</div></div>';
 }
 function resultTab(){
@@ -261,16 +245,6 @@ function modelTab(){
            '<p>Для ручного выбора необходим актуальный каталог моделей провайдера. Здесь нет загруженного каталога — название модели не подставляется автоматически.</p>'+
            '<span class="ls-model-manual-note">'+icon("alert")+' Для запуска с ручным выбором модель должна быть указана.</span></div>')+
      '</section></div>'+
-     '<aside class="ls-model-aside" aria-label="Объяснение настройки модели">'+
-       '<section class="ls-work-guide"><span class="ls-section-eyebrow">КАК ЭТО РАБОТАЕТ</span><h3>Выбор AI-модели</h3>'+
-         '<p>По умолчанию AIMock выбирает модель, которую администратор назначил для профессии «Менеджер заявок».</p>'+
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Автоматически</strong><small>Можно использовать без ручного выбора модели.</small></div></div>'+
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Вручную</strong><small>Требует модель из актуального каталога провайдера.</small></div></div>'+
-       '</section>'+
-       '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("sliders")+'</div><div>'+
-         '<strong>Кто может управлять агентом?</strong>'+
-         '<p>Области доступа и теги находятся в отдельном разделе настроек.</p>'+
-         '<button type="button" class="ls-model-nav-link" data-ls-tab="access">Доступы и теги '+icon("right")+'</button></div></div>'+
      '</aside></div></div>';
 }
 function accessTab(){
@@ -303,17 +277,6 @@ function accessTab(){
        '<button type="button" class="ls-outline-btn" data-ls-action="add-tag"'+disabled()+'>'+icon("plus")+' Добавить</button></div>'+
        '<p class="ls-model-tag-hint" role="status" id="lsTagHint">Добавьте тег, чтобы быстрее находить агента в общем списке.</p>'+
      '</section></div>'+
-   '<aside class="ls-model-aside" aria-label="Объяснение настроек доступа">'+
-     '<section class="ls-work-guide"><span class="ls-section-eyebrow">КАК ЭТО РАБОТАЕТ</span><h3>Доступы и теги — не одно и то же</h3>'+
-       '<p>Эти настройки решают разные задачи и не заменяют серверные проверки прав.</p>'+
-       (group?'<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Доступы</strong><small>Кто может видеть агента и работать с ним при наличии нужных прав.</small></div></div>':
-         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Личное пространство</strong><small>Агент принадлежит владельцу; групп сотрудников здесь нет.</small></div></div>')+
-       '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Теги</strong><small>Подписи для поиска и фильтрации. Не предоставляют разрешения.</small></div></div>'+
-     '</section>'+
-     '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("sliders")+'</div><div>'+
-       '<strong>Нужны права на действия агента?</strong>'+
-       '<p>Работа с Telegram, CRM и другими инструментами настраивается отдельно через разрешённые интеграции.</p>'+
-       '<a href="#/agent/leads/integrations">Перейти к интеграциям '+icon("right")+'</a></div></div>'+
    '</aside></div></div>';
 }
 function readyTab(){
