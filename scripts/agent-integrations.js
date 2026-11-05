@@ -20,7 +20,7 @@ const grants=[
 ];
 const baseline=()=>({assigned:["tg-leads","amo-sales"],permissions:{"amo-sales":["contacts_read","leads_create"]}});
 function load(){try{const value=JSON.parse(localStorage.getItem(storageKey));if(!value||!Array.isArray(value.assigned)||typeof value.permissions!=="object"||!value.permissions)return baseline();return {assigned:[...new Set(value.assigned)].filter(x=>catalog.some(c=>c.id===x&&c.state==="ready")),permissions:value.permissions}}catch{return baseline()}}
-let state=load(),pickerOpen=false,pickerKind="channel",infoMessage="";
+let state=load(),pickerOpen=false,pickerKind="channel";
 const connected=kind=>catalog.filter(c=>c.kind===kind&&state.assigned.includes(c.id));
 const isRunning=()=>window.AIMockAgentDetail.getStatus("leads");
 const locked=()=>isRunning()?" disabled":"";
@@ -40,7 +40,7 @@ function assignedRow(c){
     '<div class="ai-grants-grid">'+grants.map(grant=>'<label class="ai-grant"><input type="checkbox" data-ai-grant="'+grant.id+
       '" data-ai-connection="'+esc(c.id)+'"'+((state.permissions[c.id]||[]).includes(grant.id)?" checked":"")+locked()+'>'+
       '<span><strong>'+grant.title+'</strong><small>'+grant.desc+'</small></span></label>').join("")+'</div></div>':
-    '<div class="ai-connection-note">'+icon("message")+' Один Telegram-бот закрепляется за одним агентом. Для перевода сначала отвяжите его.</div>')+
+    '<div class="ai-connection-note">'+icon("message")+' У бота один основной обработчик. Перевод назначения требует явного действия.</div>')+
   '</article>';
 }
 function section(kind){
@@ -65,7 +65,7 @@ function summary(){
      '<p>Выбранные подключения принадлежат текущему рабочему пространству.</p></section>'+
    '<section class="ai-aside-guide"><span class="ai-section-kicker">КАК ЭТО РАБОТАЕТ</span><h2>Один хаб, разные агенты</h2>'+
      '<div class="ai-guide-item"><span class="ai-guide-number">01</span><div><strong>Создайте подключение</strong><p>Авторизация и управление подключениями происходят в общем хабе.</p></div></div>'+
-     '<div class="ai-guide-item"><span class="ai-guide-number">02</span><div><strong>Назначьте агенту</strong><p>Бот закрепляется за одним агентом, CRM можно использовать совместно.</p></div></div>'+
+     '<div class="ai-guide-item"><span class="ai-guide-number">02</span><div><strong>Назначьте агенту</strong><p>Бот имеет одного основного обработчика, CRM можно использовать совместно.</p></div></div>'+
      '<div class="ai-guide-item"><span class="ai-guide-number">03</span><div><strong>Разрешите действия</strong><p>Для CRM отдельно выбираются необходимые возможности.</p></div></div>'+
    '</section>'+
    '<section class="ai-hub-note"><span class="ai-hub-icon">'+icon("plug")+'</span><div><strong>Нужно новое подключение?</strong>'+
@@ -107,7 +107,7 @@ function render(){
   (running?'<div class="ai-readonly-note" role="note">'+icon("alert")+
   ' Агент работает. Чтобы изменить назначения или разрешения, <a href="#/agent/leads/overview">сначала остановите его на странице обзора</a>.</div>':"")+
   '<div class="ai-integrations-layout"><div class="ai-integrations-main">'+section("channel")+section("crm")+'</div>'+summary()+'</div>'+
-  (infoMessage?'<p class="ai-feedback" role="status">'+esc(infoMessage)+'</p>':"")+
+
   (pickerOpen?picker():"");
 }
 function assign(id){
@@ -116,7 +116,7 @@ function assign(id){
  if(!c||c.state!=="ready"||state.assigned.includes(id))return;
  state.assigned.push(id);
  if(c.kind==="crm"&&!state.permissions[id])state.permissions[id]=["contacts_read"];
- pickerOpen=false;infoMessage="";save();render();
+ pickerOpen=false;save();render();
 }
 function detach(id){
  if(isRunning()||!state.assigned.includes(id))return;
@@ -125,7 +125,7 @@ function detach(id){
  const ok=window.confirm('Отвязать «'+c.title+'» от агента? Подключение останется в общем хабе.');
  if(!ok)return;
  state.assigned=state.assigned.filter(x=>x!==id);
- infoMessage="";save();render();
+ save();render();
 }
 document.addEventListener("click",event=>{
  const root=$("agentIntegrationsView");
@@ -157,7 +157,7 @@ document.addEventListener("keydown",event=>{
  pickerOpen=false;render();
 });
 window.AIMockAgentIntegrations={
- render:()=>{pickerOpen=false;infoMessage="";render()},
+ render:()=>{pickerOpen=false;render()},
  getLocalState:()=>structuredClone(state)
 };
 })();
