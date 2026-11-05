@@ -246,6 +246,16 @@ try {
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  assert.equal(await page.locator(".ls-work-form").count(),1);
  assert.equal(await page.locator(".ls-work-guide").count(),0);
+ assert.equal(await page.locator(".ls-work-section-info").count(),1);
+ assert.match(await page.locator("#lsWorkAboutHeading").textContent(),/Кратко о разделе/);
+ assert.equal(await page.locator(".ls-work-about-item").count(),3);
+ assert.equal(await page.locator(".ls-work-section-more a").getAttribute("href"),"#/help");
+ const workLayout=await page.evaluate(()=>{
+   const form=document.querySelector(".ls-work-form").getBoundingClientRect();
+   const about=document.querySelector(".ls-work-section-info").getBoundingClientRect();
+   return {formX:form.x,formW:form.width,aboutX:about.x,aboutW:about.width};
+ });
+ assert.ok(workLayout.aboutX>workLayout.formX+workLayout.formW-2,"Section information must be in the right column on desktop: "+JSON.stringify(workLayout));
  assert.equal(await page.locator("#lsWorkProject").count(),1);
  assert.equal(await page.locator("#lsWorkRequirements").count(),1);
  assert.equal(await page.locator(".ls-work-type").count(),3);
@@ -377,10 +387,12 @@ try {
    await page.setViewportSize({width,height:900});
    const boxes=await page.evaluate(()=>{
      const main=document.querySelector(".ls-work-form").getBoundingClientRect();
-     return {main:{x:main.x,width:main.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
+     const aside=document.querySelector(".ls-work-section-info").getBoundingClientRect();
+     return {main:{x:main.x,y:main.y,width:main.width,height:main.height},aside:{x:aside.x,y:aside.y,width:aside.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
    });
    assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
    assert.ok(boxes.main.width<=boxes.viewport-boxes.main.x+2,"Work data form fits viewport");
+   assert.ok(boxes.aside.y>=boxes.main.y+boxes.main.height-2,"Section information must stack below the form on narrow viewports: "+JSON.stringify(boxes));
    if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
