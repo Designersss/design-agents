@@ -388,3 +388,33 @@
 /* Compact business forms after removing the persistent explanatory sidebars. */
 .ls-work-layout,.ls-model-layout{grid-template-columns:minmax(0,1fr);max-width:1050px}
 .ls-work-primary,.ls-model-main{min-width:0;width:100%}
+
+/* Work data · approved direction B: useful form + concise contextual section info. */
+.ls-work-layout{grid-template-columns:minmax(0,1.9fr) minmax(260px,.8fr);gap:18px;max-width:1180px;margin:0 auto;align-items:start}
+.ls-work-intro{max-width:1180px;margin:5px auto 20px}
+.ls-work-section-aside{min-width:0}
+.ls-work-section-info{padding:23px 22px;min-width:0}
+.ls-work-section-info h3{font-size:16px;line-height:1.35;font-weight:780;letter-spacing:-.3px;margin:9px 0 8px}
+.ls-work-section-intro{font-size:11px;color:#858e86;line-height:1.65;margin:0 0 20px}
+.ls-work-about-items{display:grid;gap:0}
+.ls-work-about-item{border-top:1px solid #edf0eb;padding:14px 0}
+.ls-work-about-item strong{display:block;font-size:11.5px;font-weight:745;color:#424d43;line-height:1.4}
+.ls-work-about-item p{font-size:10.5px;color:#929c93;line-height:1.6;margin:5px 0 0}
+.ls-work-section-more{display:flex;flex-direction:column;gap:7px;border-top:1px solid #e9ede7;padding-top:17px}
+.ls-work-section-more>span{color:#919a92;font-size:10.5px;line-height:1.5}
+.ls-work-section-more>a{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;text-decoration:none;color:#4e6c53;font-size:11px;font-weight:750;line-height:1.6}
+.ls-work-section-more>a:hover{text-decoration:underline;text-underline-offset:3px}
+.ls-work-section-more>a .icon{width:13px;height:13px}
+@media(max-width:1240px){
+ .ls-work-layout{grid-template-columns:minmax(0,1fr);max-width:850px}
+ .ls-work-intro{max-width:850px}
+ .ls-work-section-info{padding:21px}
+ .ls-work-about-items{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+ .ls-work-about-item{border-top:1px solid #edf0eb}
+}
+@media(max-width:620px){
+ .ls-work-layout{gap:14px}
+ .ls-work-section-info{padding:20px 17px}
+ .ls-work-about-items{grid-template-columns:minmax(0,1fr);gap:0}
+ .ls-work-about-item{padding:13px 0}
+}
