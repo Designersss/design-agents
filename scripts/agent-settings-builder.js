@@ -32,7 +32,7 @@ const initial=()=>({
  result:{destination:"aimock",recipient:"owner",crmAction:"none",notify:true},
  model:{mode:"automatic",modelId:"",tags:"заявки, магазин",access:"team"}
 });
-let state=load(), selected="kitchen", tab="types", editField=null;
+let state=load(), selected="kitchen", tab="types", editField=null, editingTypeName=false;
 function normalize(x){
  if(!x||!Array.isArray(x.types)||!x.types.length) return initial();
  x.model={...initial().model,...(x.model||{})};
@@ -55,59 +55,109 @@ function tabs(){
   '<button type="button" class="ls-tab'+(tab===id?" is-active":"")+'" role="tab" aria-selected="'+(tab===id)+'" data-ls-tab="'+id+'">'+text+'</button>').join("")+'</div>';
 }
 function typesList(){
- return '<aside class="ls-panel ls-types" aria-label="Типы заявок"><h2 class="ls-section-eyebrow">Типы заявок</h2>'+
-   '<div class="ls-type-list">'+state.types.map(t=>'<button type="button" class="ls-type'+(t.id===type().id?" is-active":"")+'" data-ls-type="'+escape(t.id)+'">'+icon("file")+'<span>'+escape(t.name)+'</span><small>'+t.fields.length+'</small></button>').join("")+'</div>'+
-   '<button type="button" class="ls-addtype" data-ls-action="add-type"'+disabled()+'>'+icon("plus")+' Добавить тип</button></aside>';
+ return '<aside class="ls-panel ls-types" aria-label="Типы заявок">'+
+  '<div class="ls-types-sidebar-head"><span class="ls-section-eyebrow">ВАШИ СЦЕНАРИИ</span>'+
+  '<h2>Типы заявок <span>'+state.types.length+'</span></h2>'+
+  '<p>Для каждого обращения можно задать собственные поля и правила завершения.</p></div>'+
+  '<div class="ls-type-list">'+state.types.map((t,i)=>
+    '<button type="button" class="ls-type'+(t.id===type().id?" is-active":"")+
+    '" aria-current="'+(t.id===type().id?"true":"false")+'" data-ls-type="'+escape(t.id)+'">'+
+    '<span class="ls-type-index">'+String(i+1).padStart(2,"0")+'</span>'+
+    '<span class="ls-type-text"><strong>'+escape(t.name||"Без названия")+'</strong>'+
+    '<small>'+t.fields.length+' '+(t.fields.length===1?"поле":t.fields.length<5?"поля":"полей")+'</small></span>'+
+    icon("right")+'</button>').join("")+'</div>'+
+  '<button type="button" class="ls-addtype" data-ls-action="add-type"'+disabled()+'>'+icon("plus")+' Добавить тип заявки</button>'+
+  '<div class="ls-types-sidebar-note">'+icon("message")+' Агент определяет тип обращения по сообщениям клиента и собирает соответствующие сведения.</div>'+
+  '</aside>';
 }
 function fieldList(t){
- let rows=t.fields.map((f,i)=>'<div class="ls-field" data-field-row="'+escape(f.id)+'">'+
-  '<span class="ls-grip" aria-hidden="true">⠿</span>'+
+ const rows=t.fields.map((f,i)=>'<div class="ls-field" data-field-row="'+escape(f.id)+'">'+
+  '<span class="ls-field-index">'+String(i+1).padStart(2,"0")+'</span>'+
   '<button type="button" class="ls-field-main'+(editField===f.id?" is-selected":"")+'" data-ls-field="'+escape(f.id)+'">'+
-  '<strong>'+escape(f.title)+'</strong><small>'+escape(fieldKinds[f.type]||"Текст")+(f.hint?" · "+escape(f.hint):"")+'</small></button>'+
+  '<strong>'+escape(f.title||"Новое поле")+'</strong>'+
+  '<small>'+escape(fieldKinds[f.type]||"Текст")+(f.hint?" · "+escape(f.hint):"")+'</small></button>'+
+  (f.condition==="match"?'<span class="ls-conditional-tag">По условию</span>':"")+
   '<span class="ls-required'+(f.required?"":" is-optional")+'">'+(f.required?"Обязательно":"Необязательно")+'</span>'+
   '<button class="ls-field-arrow" type="button" aria-label="Редактировать поле '+escape(f.title)+'" data-ls-field="'+escape(f.id)+'">'+icon("right")+'</button>'+
   '</div>').join("");
- const open=editField?t.fields.find(x=>x.id===editField):null;
- return '<div class="ls-fields-head"><strong>Поля заявки <span>· '+t.fields.length+'</span></strong><span class="ls-count">'+t.fields.filter(f=>f.required).length+' обязательных</span></div>'+
-  '<div class="ls-field-list">'+rows+'</div>'+
-  '<button class="ls-addfield" type="button" data-ls-action="add-field"'+disabled()+'>'+icon("plus")+' Добавить поле</button>'+
-  (open?fieldEditor(t,open):"");
+ const open=editField?t.fields.find(f=>f.id===editField):null;
+ return '<div class="ls-fields-head"><strong>Поля заявки <span>· '+t.fields.length+'</span></strong>'+
+   '<span class="ls-count">'+t.fields.filter(f=>f.required).length+' обязательных</span></div>'+
+   '<div class="ls-field-list">'+(rows||'<div class="ls-fields-empty"><strong>Поля ещё не добавлены</strong>'+
+     '<p>Начните с информации, без которой заявку нельзя обработать: тип услуги, контакт клиента или необходимые детали.</p></div>')+'</div>'+
+   '<button class="ls-addfield" type="button" data-ls-action="add-field"'+disabled()+'>'+icon("plus")+' Добавить поле</button>'+
+   (open?fieldEditor(t,open):"");
 }
 function fieldEditor(t,f){
+ const sources=t.fields.filter(other=>other.id!==f.id&&other.type==="select");
  return '<section class="ls-field-editor" aria-label="Редактор поля">'+
-  '<div class="ls-editor-head"><strong>Настройка поля</strong><button type="button" class="ls-icon-btn" aria-label="Закрыть редактор" data-ls-action="close-field">'+icon("close")+'</button></div>'+
-  '<div class="ls-editor-grid">'+
-   row("Название поля","Какую информацию нужно получить от клиента",input(f.title,'data-ls-fieldprop="title"'))+
-   row("Тип данных","Значения проверяются по выбранному типу",select(f.type,Object.entries(fieldKinds),'data-ls-fieldprop="type"'))+
-   row("Подсказка","Необязательно",input(f.hint,'data-ls-fieldprop="hint"'))+
-   (f.type==="select"?row("Варианты выбора","Указывайте каждый вариант через запятую",input((f.options||[]).join(", "),'data-ls-fieldprop="options"')):"")+
-   row("Условие появления","Можно показывать поле только при выбранном значении другого поля.",select(f.condition||"always",[["always","Всегда"],["match","Когда выбрано значение"]],'data-ls-fieldprop="condition"'))+
-   (f.condition==="match"?
-      row("Зависит от поля","Доступны другие поля со списком",select(f.conditionField||"",[["","Выберите поле"],...t.fields.filter(other=>other.id!==f.id&&other.type==="select").map(other=>[other.id,other.title])],'data-ls-fieldprop="conditionField"'))+
-      row("Значение","При каком ответе показывать это поле",select(f.conditionValue||"",[["","Выберите значение"],...(t.fields.find(other=>other.id===f.conditionField)?.options||[]).map(value=>[value,value])],'data-ls-fieldprop="conditionValue"'))
-     :"")+
-  '</div>'+
-  '<label class="ls-check"><input type="checkbox" data-ls-fieldprop="required"'+(f.required?" checked":"")+disabled()+'> Обязательное поле</label>'+
-  '<div class="ls-editor-actions">'+
-   '<button type="button" data-ls-action="move-up"'+disabled()+'>↑ Выше</button>'+
-   '<button type="button" data-ls-action="move-down"'+disabled()+'>↓ Ниже</button>'+
-   '<button type="button" class="ls-danger" data-ls-action="delete-field"'+disabled()+'>Удалить поле</button></div></section>';
+   '<div class="ls-editor-head"><div><span class="ls-section-eyebrow">ПАРАМЕТРЫ ПОЛЯ</span>'+
+   '<h3>'+escape(f.title||"Новое поле")+'</h3><p>Настройте, какую информацию должен получить агент.</p></div>'+
+   '<button type="button" class="ls-icon-btn" aria-label="Закрыть редактор" data-ls-action="close-field">'+icon("close")+'</button></div>'+
+   '<div class="ls-editor-section-label">Основное</div>'+
+   '<div class="ls-editor-grid">'+
+    row("Название поля","Например: контакт для связи, размеры помещения",input(f.title,'data-ls-fieldprop="title"'))+
+    row("Тип данных","По типу проверяется формат ответа клиента",select(f.type,Object.entries(fieldKinds),'data-ls-fieldprop="type"'))+
+    row("Подсказка для заполнения","Необязательно",input(f.hint,'data-ls-fieldprop="hint"'))+
+    (f.type==="select"?row("Варианты ответа","Указывайте значения через запятую",input((f.options||[]).join(", "),'data-ls-fieldprop="options"')):"")+
+   '</div>'+
+   '<div class="ls-editor-section-label">Условия сбора</div>'+
+   '<p class="ls-editor-explain">Обычно агент собирает поле всегда. Если оно нужно только при определённом ответе, задайте условие.</p>'+
+   '<div class="ls-editor-grid">'+
+    row("Условие появления","Когда нужно уточнять информацию",select(f.condition||"always",[["always","Всегда"],["match","Когда выбрано значение"]],'data-ls-fieldprop="condition"'))+
+    (f.condition==="match"?
+      row("Зависит от поля","Можно выбрать другое поле типа «Список»",select(f.conditionField||"",[["","Выберите поле"],...sources.map(other=>[other.id,other.title])],'data-ls-fieldprop="conditionField"'))+
+      row("Значение","При каком ответе спрашивать это поле",select(f.conditionValue||"",[["","Выберите значение"],...(t.fields.find(other=>other.id===f.conditionField)?.options||[]).map(value=>[value,value])],'data-ls-fieldprop="conditionValue"')):"")+
+   '</div>'+
+   '<label class="ls-check ls-editor-required"><input type="checkbox" data-ls-fieldprop="required"'+(f.required?" checked":"")+disabled()+'>'+
+     '<span><strong>Обязательное поле</strong><small>Агент уточнит сведения, если их не хватает для полной заявки.</small></span></label>'+
+   '<div class="ls-editor-actions">'+
+    '<button type="button" data-ls-action="move-up"'+disabled()+'>↑ Выше</button>'+
+    '<button type="button" data-ls-action="move-down"'+disabled()+'>↓ Ниже</button>'+
+    '<button type="button" class="ls-danger" data-ls-action="delete-field"'+disabled()+'>Удалить поле</button></div></section>';
 }
 function builder(){
  const t=type();
- return '<div class="ls-workbench">'+typesList()+
-  '<div class="ls-main-column"><section class="ls-panel ls-builder"><div class="ls-builder-heading"><div><span class="ls-section-eyebrow">Настройка типа заявки</span>'+
-   '<h2>'+escape(t.name)+'</h2><p>Укажите, какие сведения нужны для этого обращения.</p></div>'+
-   '<button type="button" class="ls-outline-btn" data-ls-action="rename-type"'+disabled()+'>'+icon("sliders")+' Изменить тип</button></div>'+
-   fieldList(t)+
-   '<div class="ls-criteria"><div><strong>Критерий готовности</strong><small>Для этого типа заявки</small></div>'+
-    select(t.criteria,[["required","Все обязательные поля"],["incomplete","Допускается неполная заявка"]],'data-ls-config="criteria"')+
-    '<p>Полностью готовая заявка содержит все обязательные сведения. Неполная всегда отмечается отдельно.</p>'+
-    '<div class="ls-criteria-divider"></div>'+
-    '<div><strong>Если данных не хватает</strong><small>Сценарий для неполной заявки</small></div>'+
-    select(t.incompleteAction||"wait",[["wait","Ожидать уточнения от клиента"],["handoff","Направить ответственному на рассмотрение"]],'data-ls-config="incompleteAction"')+
-    '<p>Передача человеку не делает неполную заявку полностью готовой. В этом макете реальные уведомления не отправляются.</p>'+
-   '</div></section>'+resultSummary()+'</div></div>';
+ return '<div class="ls-types-view">'+
+   '<div class="ls-types-intro"><span class="ls-section-eyebrow">НАСТРОЙКА ОБРАЩЕНИЙ</span>'+
+   '<h2>Типы заявок и поля</h2>'+
+   '<p>Определите, какие обращения принимает менеджер и что ему нужно узнать у клиента. Агент задаёт вопросы в переписке, а не показывает клиенту анкету.</p></div>'+
+   '<div class="ls-workbench">'+typesList()+
+   '<div class="ls-main-column">'+
+     '<section class="ls-panel ls-builder"><div class="ls-builder-heading"><div>'+
+       '<span class="ls-section-eyebrow">ВЫБРАННЫЙ ТИП ЗАЯВКИ</span>'+
+       '<h2>'+escape(t.name||"Новый тип заявки")+'</h2>'+
+       '<p>Настройте сведения, которые агент соберёт для этого обращения.</p></div>'+
+       '<button type="button" class="ls-outline-btn" data-ls-action="rename-type"'+disabled()+'>'+icon("sliders")+' Название</button></div>'+
+       (editingTypeName?'<div class="ls-type-name-editor"><label for="lsTypeName">Название типа заявки</label>'+
+          '<div class="ls-type-name-controls"><input id="lsTypeName" data-ls-type-name class="ls-input" type="text" maxlength="80" value="'+escape(t.name)+'"'+disabled()+'>'+
+          '<button type="button" class="ls-outline-btn" data-ls-action="done-type-name">Готово</button></div>'+
+          '<p>Например: «Расчёт кухни», «Запись на замер» или «Консультация».</p></div>':"")+
+       '<div class="ls-builder-divider"></div>'+
+       '<div class="ls-builder-section-head"><span class="ls-work-step">01</span><div><h3>Какие данные собирать</h3>'+
+         '<p>Поля определяют, какую информацию агент должен получить. Уже названное клиентом он не спрашивает повторно.</p></div></div>'+
+       fieldList(t)+'</section>'+
+     '<section class="ls-panel ls-completion-panel">'+
+       '<div class="ls-builder-section-head"><span class="ls-work-step">02</span><div><h3>Когда заявка готова</h3>'+
+       '<p>Выберите, как поступить, если клиент предоставил не всю информацию.</p></div></div>'+
+       '<div class="ls-criteria"><div class="ls-criteria-row">'+
+         '<label for="lsCriteria">Критерий готовности</label>'+
+         '<p>Какие сведения обязательны для завершения.</p>'+
+         select(t.criteria,[["required","Все обязательные поля"],["incomplete","Допускается неполная заявка"]],'id="lsCriteria" data-ls-config="criteria"')+
+       '</div><div class="ls-criteria-row">'+
+         '<label for="lsIncompleteAction">Если данных не хватает</label>'+
+         '<p>Что делать с неполным обращением.</p>'+
+         select(t.incompleteAction||"wait",[["wait","Ожидать уточнения от клиента"],["handoff","Направить ответственному на рассмотрение"]],'id="lsIncompleteAction" data-ls-config="incompleteAction"')+
+       '</div></div>'+
+       '<div class="ls-completion-note">'+icon("alert")+
+         '<span>Передача человеку не делает неполную заявку полностью готовой. Настройки не запускают реальные уведомления в этом макете.</span></div>'+
+     '</section>'+
+     '<section class="ls-types-help"><div class="ls-types-help-icon">'+icon("book")+'</div>'+
+       '<div><h3>Как работают эти настройки?</h3><p>Тип заявки определяет сценарий обращения, поля — необходимые сведения, а критерий готовности — когда можно завершить сбор данных.</p>'+
+       '<details class="ls-types-example"><summary>Показать пример '+icon("right")+'</summary>'+
+       '<p>Для заявки «Расчёт кухни» агент может уточнить размеры и контакт, но не должен повторно спрашивать уже полученные ответы. Данные о материалах и сроках он берёт из назначенных знаний.</p></details></div></section>'+
+     resultSummary()+
+   '</div></div></div>';
 }
 function resultSummary(){
  return '<section class="ls-panel ls-result"><button type="button" class="ls-summary-link" data-ls-tab="result"><strong>Результат заявки</strong>'+icon("right")+'</button>'+
@@ -304,6 +354,15 @@ function mutate(event,phase){
  if(document.getElementById("agentSettingsView").hidden)return;
  const el=event.target;
  if(isRunning())return;
+ if(el.matches("[data-ls-type-name]")){
+   if(phase==="change"){
+     const next=el.value.trim();
+     if(next){type().name=next.slice(0,80);save()}
+     else el.value=type().name;
+     render();
+   }
+   return;
+ }
  const fieldProp=el.dataset.lsFieldprop;
  if(fieldProp){mutField(fieldProp,el.type==="checkbox"?el.checked:el.value);if(phase==="change")render();return}
  const k=el.dataset.lsConfig;
@@ -336,12 +395,13 @@ function removeModelTag(index){
  save();render();
 }
 function handleAction(name){
+ if(name==="done-type-name"){editingTypeName=false;render();return}
  if(name==="add-tag"){addModelTag();return}
  if(name==="close-field"){editField=null;render();return}
  if(isRunning())return;
  const t=type();
- if(name==="add-type"){const id="type"+Date.now();state.types.push({id,name:"Новый тип заявки",criteria:"required",incompleteAction:"wait",fields:[]});selected=id;editField=null;save();render();return}
- if(name==="rename-type"){const next=prompt("Название типа заявки",t.name);if(next&&next.trim()){t.name=next.trim().slice(0,80);save();render()}return}
+ if(name==="add-type"){const id="type"+Date.now();state.types.push({id,name:"Новый тип заявки",criteria:"required",incompleteAction:"wait",fields:[]});selected=id;editField=null;editingTypeName=true;save();render();document.getElementById("lsTypeName")?.select();return}
+ if(name==="rename-type"){editingTypeName=!editingTypeName;render();if(editingTypeName)document.getElementById("lsTypeName")?.focus();return}
  if(name==="add-field"){const id="field"+Date.now();t.fields.push(mk(id,"Новое поле","text",false));editField=id;save();render();return}
  if(name==="delete-field"){if(!editField)return;if(!confirm("Удалить выбранное поле?"))return;t.fields=t.fields.filter(f=>f.id!==editField);editField=null;save();render();return}
  const i=t.fields.findIndex(f=>f.id===editField);if(i<0)return;
@@ -362,7 +422,7 @@ function setup(){
   if(button.dataset.lsModelMode){if(!isRunning()){state.model.mode=button.dataset.lsModelMode;save();render()}return}
   if(button.dataset.lsRemoveTag!==undefined){removeModelTag(Number(button.dataset.lsRemoveTag));return}
   if(button.dataset.lsTab){tab=button.dataset.lsTab;render();return}
-  if(button.dataset.lsType){selected=button.dataset.lsType;editField=null;render();return}
+  if(button.dataset.lsType){selected=button.dataset.lsType;editField=null;editingTypeName=false;render();return}
   if(button.dataset.lsField){editField=button.dataset.lsField;render();return}
   if(button.dataset.lsAction)handleAction(button.dataset.lsAction);
  });
