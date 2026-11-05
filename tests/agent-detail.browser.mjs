@@ -377,7 +377,7 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
  }
- for(const section of ["messages","integrations","knowledge","testing","automation","analytics","logs"]){
+ for(const section of ["messages","knowledge","testing","automation","analytics","logs"]){
    await page.goto(base+"#/agent/leads/"+section);
    await page.waitForSelector("#placeholderView:not([hidden])");
    assert.equal((await page.locator("#placeholderName").textContent()).trim(),
@@ -385,6 +385,72 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/agent/leads/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in agent "+section);
  }
+ // Agent integrations are separate from the generic Hub and from Settings.
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal((await page.locator("#agentIntegrationsHeading").textContent()).trim(),"Интеграции");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Интеграции");
+ assert.equal(await page.locator(".ai-integrations-panel").count(),2);
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ assert.equal(await page.locator(".ai-grant input").count(),3);
+ assert.equal(await page.locator(".ai-assigned-label").count(),2);
+ assert.equal(await page.locator(".ai-readonly-note").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"agent-integrations-desktop.png"),fullPage:true});
+ await page.locator('[data-ai-open="channel"]').click();
+ assert.equal(await page.locator('.ai-picker-dialog[role="dialog"]').count(),1);
+ assert.equal(await page.locator('[data-ai-catalog="tg-help"] [data-ai-assign]').count(),0);
+ assert.match(await page.locator('[data-ai-catalog="tg-help"]').innerText(),/Занято другим агентом/);
+ assert.equal(await page.locator('[data-ai-catalog="tg-backup"] [data-ai-assign]').isEnabled(),true);
+ await page.screenshot({path:resolve(artifactDir,"agent-integrations-picker.png"),fullPage:true});
+ await page.locator('[data-ai-assign="tg-backup"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="tg-backup"]').count(),1);
+ assert.equal(await page.locator(".ai-connection-card").count(),3);
+ let savedIntegration=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-integration-assignments:v1")));
+ assert.ok(savedIntegration.assigned.includes("tg-backup"),"New bot assignment autosaves locally");
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ai-remove="tg-backup"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="tg-backup"]').count(),0);
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ await page.locator('[data-ai-open="crm"]').click();
+ assert.equal(await page.locator('[data-ai-catalog="bitrix-main"] [data-ai-assign]').isDisabled(),true);
+ assert.match(await page.locator('[data-ai-catalog="bitrix-main"]').innerText(),/Нужна авторизация/);
+ await page.locator('[data-ai-assign="amo-service"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="amo-service"]').count(),1);
+ assert.equal(await page.locator(".ai-connection-card").count(),3);
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ai-remove="amo-service"]').click();
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ const grant=page.locator('[data-ai-connection="amo-sales"][data-ai-grant="leads_update"]');
+ assert.equal(await grant.isChecked(),false);
+ await grant.check();
+ savedIntegration=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-integration-assignments:v1")));
+ assert.ok(savedIntegration.permissions["amo-sales"].includes("leads_update"));
+ await grant.uncheck();
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Работает/);
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ assert.equal(await page.locator('[data-ai-open="channel"]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ai-open="crm"]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ai-connection="amo-sales"][data-ai-grant="leads_create"]').isDisabled(),true);
+ assert.match(await page.locator(".ai-readonly-note").innerText(),/сначала остановите его/);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Остановлен/);
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   const widths=await page.evaluate(()=>({page:document.documentElement.scrollWidth,window:innerWidth}));
+   assert.ok(widths.page<=widths.window+2,"Agent integrations overflow at "+size.width+": "+JSON.stringify(widths));
+   if(size.width===390)await page.screenshot({path:resolve(artifactDir,"agent-integrations-mobile.png"),fullPage:true});
+ }
+ await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/consultant/settings");
  await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#agentSettingsView").isVisible(),false);
