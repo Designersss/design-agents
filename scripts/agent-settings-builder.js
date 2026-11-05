@@ -54,6 +54,7 @@ function tabs(){
  return '<div class="ls-tabs" role="tablist" aria-label="Разделы настроек">'+list.map(([id,text])=>
   '<button type="button" class="ls-tab'+(tab===id?" is-active":"")+'" role="tab" aria-selected="'+(tab===id)+'" data-ls-tab="'+id+'">'+text+'</button>').join("")+'</div>';
 }
+function fieldCountLabel(n){const tail=n%100;if(n%10===1&&tail!==11)return n+" поле";if([2,3,4].includes(n%10)&&![12,13,14].includes(tail))return n+" поля";return n+" полей"}
 function typesList(){
  return '<aside class="ls-panel ls-types" aria-label="Типы заявок">'+
   '<div class="ls-types-sidebar-head"><span class="ls-section-eyebrow">ВАШИ СЦЕНАРИИ</span>'+
@@ -64,7 +65,7 @@ function typesList(){
     '" aria-current="'+(t.id===type().id?"true":"false")+'" data-ls-type="'+escape(t.id)+'">'+
     '<span class="ls-type-index">'+String(i+1).padStart(2,"0")+'</span>'+
     '<span class="ls-type-text"><strong>'+escape(t.name||"Без названия")+'</strong>'+
-    '<small>'+t.fields.length+' '+(t.fields.length===1?"поле":t.fields.length<5?"поля":"полей")+'</small></span>'+
+    '<small>'+fieldCountLabel(t.fields.length)+'</small></span>'+
     icon("right")+'</button>').join("")+'</div>'+
   '<button type="button" class="ls-addtype" data-ls-action="add-type"'+disabled()+'>'+icon("plus")+' Добавить тип заявки</button>'+
   '<div class="ls-types-sidebar-note">'+icon("message")+' Агент определяет тип обращения по сообщениям клиента и собирает соответствующие сведения.</div>'+
@@ -132,7 +133,8 @@ function builder(){
        (editingTypeName?'<div class="ls-type-name-editor"><label for="lsTypeName">Название типа заявки</label>'+
           '<div class="ls-type-name-controls"><input id="lsTypeName" data-ls-type-name class="ls-input" type="text" maxlength="80" value="'+escape(t.name)+'"'+disabled()+'>'+
           '<button type="button" class="ls-outline-btn" data-ls-action="done-type-name">Готово</button></div>'+
-          '<p>Например: «Расчёт кухни», «Запись на замер» или «Консультация».</p></div>':"")+
+          '<p>Например: «Расчёт кухни», «Запись на замер» или «Консультация».</p>'+
+          (state.types.length>1?'<button class="ls-type-delete" type="button" data-ls-action="delete-type"'+disabled()+'>Удалить этот тип заявки</button>':"")+'</div>':"")+
        '<div class="ls-builder-divider"></div>'+
        '<div class="ls-builder-section-head"><span class="ls-work-step">01</span><div><h3>Какие данные собирать</h3>'+
          '<p>Поля определяют, какую информацию агент должен получить. Уже названное клиентом он не спрашивает повторно.</p></div></div>'+
@@ -401,6 +403,12 @@ function handleAction(name){
  const t=type();
  if(name==="add-type"){const id="type"+Date.now();state.types.push({id,name:"Новый тип заявки",criteria:"required",incompleteAction:"wait",fields:[]});selected=id;editField=null;editingTypeName=true;save();render();document.getElementById("lsTypeName")?.select();return}
  if(name==="rename-type"){editingTypeName=!editingTypeName;render();if(editingTypeName)document.getElementById("lsTypeName")?.focus();return}
+ if(name==="delete-type"){
+   if(state.types.length<=1)return;
+   if(!window.confirm("Удалить тип заявки «"+t.name+"» со всеми его полями и правилами?"))return;
+   state.types=state.types.filter(item=>item.id!==t.id);
+   selected=state.types[0].id;editField=null;editingTypeName=false;save();render();return;
+ }
  if(name==="add-field"){const id="field"+Date.now();t.fields.push(mk(id,"Новое поле","text",false));editField=id;save();render();return}
  if(name==="delete-field"){if(!editField)return;if(!confirm("Удалить выбранное поле?"))return;t.fields=t.fields.filter(f=>f.id!==editField);editField=null;save();render();return}
  const i=t.fields.findIndex(f=>f.id===editField);if(i<0)return;
