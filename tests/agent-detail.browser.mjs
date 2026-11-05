@@ -276,7 +276,7 @@ try {
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  await page.locator('[data-ls-model-mode="automatic"]').click();
  assert.equal(await page.locator(".ls-model-manual").count(),0);
- await page.locator('.ls-model-nav-link[data-ls-tab="access"]').click();
+ await page.locator('.ls-tab[data-ls-tab="access"]').click();
  assert.match(await page.locator(".ls-model-intro h2").textContent(),/Доступы и теги/);
  assert.equal(await page.locator(".ls-model-choice").count(),0,"Access page must not contain model controls");
  assert.equal(await page.locator(".ls-model-tag").count(),2);
