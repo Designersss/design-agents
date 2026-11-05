@@ -10,6 +10,7 @@ const catalog=[
  {id:"tg-help",kind:"channel",provider:"telegram",title:"Бот консультаций",subtitle:"Telegram Bot API",meta:"Используется агентом «Консультант»",state:"occupied",owner:"consultant"},
  {id:"tg-backup",kind:"channel",provider:"telegram",title:"Второй бот",subtitle:"Telegram Bot API",meta:"Свободен для назначения",state:"ready"},
  {id:"amo-sales",kind:"crm",provider:"amocrm",title:"amoCRM · Продажи",subtitle:"amoCRM",meta:"Сделки и контакты",state:"ready"},
+ {id:"amo-service",kind:"crm",provider:"amocrm",title:"amoCRM · Сервис",subtitle:"amoCRM",meta:"Доступно для совместного назначения",state:"ready"},
  {id:"bitrix-main",kind:"crm",provider:"bitrix",title:"Битрикс24 · Основная",subtitle:"Битрикс24",meta:"Требуется повторная авторизация",state:"reauth"}
 ];
 const grants=[
