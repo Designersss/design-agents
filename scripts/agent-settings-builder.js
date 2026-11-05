@@ -118,8 +118,7 @@ function workTab(){
  const typeNames=types.map(t=>'<span class="ls-work-type">'+escape(t.name)+'</span>').join("");
  return '<div class="ls-work-view">'+
    '<div class="ls-work-intro"><div><span class="ls-section-eyebrow">ОСНОВНОЕ</span>'+
-     '<h2>Рабочие данные</h2><p>Расскажите о бизнесе и его особенностях. Это поможет менеджеру заявок понимать контекст обращений.</p></div>'+
-     '<span class="ls-work-optional">Сохраняется автоматически</span></div>'+
+     '<h2>Рабочие данные</h2><p>Расскажите о бизнесе и его особенностях. Это поможет менеджеру заявок понимать контекст обращений.</p></div></div>'+
    '<div class="ls-work-layout">'+
      '<div class="ls-work-primary">'+
        '<section class="ls-panel ls-work-form" aria-labelledby="lsWorkBusinessHeading">'+
