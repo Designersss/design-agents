@@ -16,6 +16,28 @@ try {
  page.on("pageerror",error=>exceptions.push(error.message));
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),true);
+ assert.equal(await page.locator("#appHelpBanner a").getAttribute("href"),"#/help");
+ assert.equal(await page.locator('[data-global-route="help"]').count(),1);
+ await page.screenshot({path:resolve(artifactDir,"help-banner-desktop.png"),fullPage:true});
+ await page.locator("#appHelpBanner a").click();
+ await page.waitForSelector("#helpView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal((await page.locator("#helpHeading").textContent()).trim(),"Справка AIMock");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+ assert.equal(await page.locator(".app-help-article").count(),3);
+ assert.equal(await page.locator("#agentKnowledgeView").isVisible(),false,"Help Center and agent Knowledge are different pages");
+ await page.screenshot({path:resolve(artifactDir,"help-center-desktop.png"),fullPage:true});
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),true);
+ await page.locator("#appHelpDismiss").click();
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+ assert.equal(await page.evaluate(()=>localStorage.getItem("aimock:help-banner:dismissed:v1")),"1");
+ await page.reload();
+ await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+
  assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Входящие заявки");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
  assert.equal(await page.locator("#agentDetailView").isVisible(),true);
@@ -162,10 +184,9 @@ try {
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
  assert.equal(await page.locator(".ls-types-view").count(),1);
  assert.equal(await page.locator(".ls-completion-panel").count(),1);
- assert.equal(await page.locator(".ls-types-help").count(),1);
+ assert.equal(await page.locator(".ls-types-help").count(),0);
  assert.equal(await page.locator(".ls-editor-section-label").count(),0);
- await page.locator(".ls-types-example summary").click();
- assert.match(await page.locator(".ls-types-example").innerText(),/Расчёт кухни/);
+ assert.equal(await page.locator(".ls-types-example").count(),0);
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:resolve(artifactDir,"settings-types-desktop.png"),fullPage:true});
  await page.locator('[data-ls-action="add-type"]').click();
@@ -214,7 +235,7 @@ try {
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  assert.equal(await page.locator(".ls-work-form").count(),1);
- assert.equal(await page.locator(".ls-work-guide").count(),1);
+ assert.equal(await page.locator(".ls-work-guide").count(),0);
  assert.equal(await page.locator("#lsWorkProject").count(),1);
  assert.equal(await page.locator("#lsWorkRequirements").count(),1);
  assert.equal(await page.locator(".ls-work-type").count(),3);
@@ -346,11 +367,10 @@ try {
    await page.setViewportSize({width,height:900});
    const boxes=await page.evaluate(()=>{
      const main=document.querySelector(".ls-work-form").getBoundingClientRect();
-     const guide=document.querySelector(".ls-work-guide").getBoundingClientRect();
-     return {main:{x:main.x,width:main.width},guide:{x:guide.x,width:guide.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
+     return {main:{x:main.x,width:main.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
    });
    assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
-   if(width<=1240)assert.ok(Math.abs(boxes.guide.x-boxes.main.x)<=3,"Guide aligns with form when stacked");
+   assert.ok(boxes.main.width<=boxes.viewport-boxes.main.x+2,"Work data form fits viewport");
    if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
@@ -360,11 +380,10 @@ try {
      await page.setViewportSize({width,height:900});
      const bounds=await page.evaluate(()=>{
        const content=document.querySelector(".ls-model-main").getBoundingClientRect();
-       const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
-       return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
+       return {left:content.left,width:content.width,body:document.documentElement.scrollWidth,viewport:innerWidth};
      });
      assert.ok(bounds.body<=bounds.viewport+2,section+" horizontal overflow at "+width+": "+JSON.stringify(bounds));
-     if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,section+" aside should stack under main at "+width);
+     assert.ok(bounds.width<=bounds.viewport-bounds.left+2,section+" controls fit inside the viewport");
      if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-"+(section==="model"?"model":"access-tags")+"-mobile.png"),fullPage:true});
    }
    await page.setViewportSize({width:1440,height:900});
@@ -414,6 +433,7 @@ try {
  assert.equal((await page.locator("#agentIntegrationsHeading").textContent()).trim(),"Интеграции");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Интеграции");
  assert.equal(await page.locator(".ai-integrations-panel").count(),2);
+ assert.equal(await page.locator(".ai-aside-guide").count(),0);
  assert.equal(await page.locator(".ai-connection-card").count(),2);
  assert.equal(await page.locator(".ai-grant input").count(),3);
  assert.equal(await page.locator(".ai-assigned-label").count(),2);
@@ -490,6 +510,7 @@ try {
  await page.waitForSelector("#agentKnowledgeView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
  assert.equal(await page.locator(".ak-main-panel").count(),1);
+ assert.equal(await page.locator(".ak-overview-card").count(),0);
  assert.equal(await page.locator(".ak-source-row").count(),2);
  assert.equal(await page.locator("#agentKnowledgeHeading").textContent(),"Знания");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Знания");
