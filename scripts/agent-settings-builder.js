@@ -196,6 +196,23 @@ function workTab(){
          '<button type="button" class="ls-outline-btn" data-ls-tab="types">Настроить поля '+icon("right")+'</button></div>'+
          '<div class="ls-work-types">'+(typeNames||'<span class="ls-work-muted">Нет настроенных типов заявок</span>')+'</div></section>'+
      '</div>'+
+     '<aside class="ls-work-section-aside" aria-labelledby="lsWorkAboutHeading">'+
+       '<section class="ls-panel ls-work-section-info">'+
+         '<span class="ls-section-eyebrow">О РАЗДЕЛЕ</span>'+
+         '<h3 id="lsWorkAboutHeading">Кратко о разделе</h3>'+
+         '<p class="ls-work-section-intro">Здесь указывают основной контекст, который нужен менеджеру заявок для работы с обращениями.</p>'+
+         '<div class="ls-work-about-items">'+
+           '<div class="ls-work-about-item"><strong>О вашем бизнесе</strong>'+
+             '<p>Какие товары или услуги вы предлагаете и для каких клиентов.</p></div>'+
+           '<div class="ls-work-about-item"><strong>Дополнительные пожелания</strong>'+
+             '<p>Что важно учитывать при общении с клиентами.</p></div>'+
+           '<div class="ls-work-about-item"><strong>Типы обращений</strong>'+
+             '<p>Какие заявки агент обрабатывает и какие сведения собирает.</p></div>'+
+         '</div>'+
+         '<div class="ls-work-section-more"><span>Нужна подробная инструкция?</span>'+
+           '<a href="#/help">Подробнее в справке '+icon("right")+'</a></div>'+
+       '</section>'+
+     '</aside>'+
    '</div></div>';
 }
 function resultTab(){
