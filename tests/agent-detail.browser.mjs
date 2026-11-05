@@ -482,9 +482,9 @@ try {
  await page.locator('.ak-details-top [data-ak-close]').click();
  await page.locator("[data-ak-open]").click();
  assert.equal(await page.locator(".ak-picker").count(),1);
- assert.equal(await page.locator(".ak-picker-source").count(),6);
+ assert.equal(await page.locator(".ak-picker-source").count(),5);
  assert.equal(await page.locator('[data-ak-catalog="pricing"] button[data-ak-assign]').isDisabled(),true);
- assert.equal(await page.locator('[data-ak-catalog="private"] button[data-ak-assign]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ak-catalog="private"]').count(),0,"Restricted sources must not leak through the picker");
  await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker.png"),fullPage:true});
  await page.locator('[data-ak-filter="faq"]').click();
  assert.equal(await page.locator(".ak-picker-source").count(),2);
