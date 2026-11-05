@@ -131,7 +131,7 @@ function render(){
 function assign(id){
  if(isRunning())return;
  const s=lookup(id);if(!s||!isCurrent(s)||state.assigned.includes(id))return;
- state.assigned.push(id);save();render();
+ state.assigned.push(id);pickOpen=false;search="";filter="all";save();render();
 }
 function remove(id){
  if(isRunning()||!state.assigned.includes(id))return;
