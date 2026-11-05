@@ -163,7 +163,6 @@
 .ls-work-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:5px 0 20px}
 .ls-work-intro h2{font-size:26px;letter-spacing:-.8px;font-weight:790;line-height:1.22;margin:7px 0}
 .ls-work-intro p{max-width:640px;color:#848b86;font-size:12px;line-height:1.65}
-.ls-work-optional{color:#8a958c;font-size:10.5px;white-space:nowrap;padding-bottom:4px}
 .ls-work-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(265px,.8fr);align-items:start;gap:17px}
 .ls-work-primary{display:grid;gap:15px;min-width:0}
 .ls-work-form{padding:27px 28px}
@@ -217,7 +216,6 @@
 }
 @media(max-width:800px){
  .ls-work-intro{align-items:flex-start;flex-direction:column}
- .ls-work-optional{display:none}
  .ls-work-aside{grid-template-columns:1fr}
 }
 @media(max-width:620px){
