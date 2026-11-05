@@ -9,8 +9,7 @@ const catalog=[
  {id:"faq",kind:"faq",title:"Частые вопросы клиентов",details:"Ответы на повторяющиеся вопросы о заказах, материалах, способах связи и порядке оформления.",format:"FAQ",version:"5",state:"current",audience:"Общие знания компании",size:"18 вопросов"},
  {id:"delivery",kind:"document",title:"Доставка, замер и монтаж",details:"Условия выезда на замер, доставки и установки изделий, а также ограничения по регионам.",format:"DOCX",version:"2",state:"current",audience:"Для отдела продаж",size:"124 КБ"},
  {id:"payments",kind:"faq",title:"Оплата и гарантии",details:"Информация о доступных способах оплаты, гарантийных обязательствах и возвратах.",format:"FAQ",version:"1",state:"current",audience:"Общие знания компании",size:"12 вопросов"},
- {id:"pricing",kind:"document",title:"Прайс-лист",details:"Справочный прайс-лист требует пересмотра перед использованием в ответах клиентам.",format:"XLSX",version:"1",state:"outdated",audience:"Для отдела продаж",size:"310 КБ"},
- {id:"private",kind:"document",title:"Внутренние документы руководства",details:"Доступ к источнику ограничен правами рабочего пространства.",format:"PDF",version:"4",state:"restricted",audience:"Закрытая область",size:"—"}
+ {id:"pricing",kind:"document",title:"Прайс-лист",details:"Справочный прайс-лист требует пересмотра перед использованием в ответах клиентам.",format:"XLSX",version:"1",state:"outdated",audience:"Для отдела продаж",size:"310 КБ"}
 ];
 const initial=()=>({assigned:["products","faq"]});
 function load(){try{
