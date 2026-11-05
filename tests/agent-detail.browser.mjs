@@ -565,7 +565,9 @@ try {
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
-   const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+   const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,
+     offenders:[...document.querySelectorAll("#agentSettingsView *")].map(el=>({el,right:el.getBoundingClientRect().right,w:el.getBoundingClientRect().width}))
+       .filter(v=>v.right>innerWidth+2).slice(0,15).map(v=>({tag:v.el.tagName,cls:String(v.el.className).slice(0,85),right:Math.round(v.right),w:Math.round(v.w)}))}));
    assert.ok(widths.width<=widths.viewport+2,"Lead settings horizontal overflow at "+size.width+": "+JSON.stringify(widths));
    const cardBounds=await page.evaluate(()=>{
      const editor=document.querySelector(".ls-builder").getBoundingClientRect();
