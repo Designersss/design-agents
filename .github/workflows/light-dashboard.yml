@@ -17,7 +17,7 @@ on:
       - "tests/light-dashboard.test.mjs"
       - "tests/agent-detail-modular.test.mjs"
       - "tests/lead-settings.test.mjs"
-      - "tests/agent-integrations.test.mjs tests/agent-knowledge.test.mjs"
+      - "tests/agent-integrations.test.mjs"
       - "tests/agent-knowledge.test.mjs"
       - "tests/agent-detail.browser.mjs"
       - ".github/workflows/light-dashboard.yml"
@@ -48,7 +48,7 @@ jobs:
           node --check scripts/agent-integrations.js
           node --check scripts/agent-knowledge.js
       - name: Run static tests
-        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs tests/agent-integrations.test.mjs
+        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs tests/agent-integrations.test.mjs tests/agent-knowledge.test.mjs
       - name: Install browser test runner
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
