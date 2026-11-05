@@ -448,7 +448,19 @@ try {
    await page.setViewportSize(size);
    const widths=await page.evaluate(()=>({page:document.documentElement.scrollWidth,window:innerWidth}));
    assert.ok(widths.page<=widths.window+2,"Agent integrations overflow at "+size.width+": "+JSON.stringify(widths));
-   if(size.width===390)await page.screenshot({path:resolve(artifactDir,"agent-integrations-mobile.png"),fullPage:true});
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"agent-integrations-mobile.png"),fullPage:true});
+     await page.locator('[data-ai-open="channel"]').click();
+     assert.equal(await page.locator('.ai-picker-dialog[role="dialog"]').count(),1);
+     const pickerBounds=await page.locator(".ai-picker-dialog").evaluate(el=>{
+       const r=el.getBoundingClientRect();
+       return {left:r.left,right:r.right,width:innerWidth};
+     });
+     assert.ok(pickerBounds.left>=0&&pickerBounds.right<=pickerBounds.width+1,
+       "Integration picker must fit mobile viewport: "+JSON.stringify(pickerBounds));
+     await page.screenshot({path:resolve(artifactDir,"agent-integrations-picker-mobile.png"),fullPage:true});
+     await page.locator(".ai-picker-close").click();
+   }
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/consultant/settings");
