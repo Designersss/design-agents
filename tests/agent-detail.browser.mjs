@@ -160,6 +160,28 @@ try {
  assert.equal(await page.locator("#ls-preview-form").count(),0);
  assert.doesNotMatch(await page.locator("#agentSettingsView").innerText(),/Предпросмотр заявки|Проверить заполнение/);
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
+ assert.equal(await page.locator(".ls-types-view").count(),1);
+ assert.equal(await page.locator(".ls-completion-panel").count(),1);
+ assert.equal(await page.locator(".ls-types-help").count(),1);
+ assert.equal(await page.locator(".ls-editor-section-label").count(),0);
+ await page.locator(".ls-types-example summary").click();
+ assert.match(await page.locator(".ls-types-example").innerText(),/Расчёт кухни/);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-types-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-action="add-type"]').click();
+ assert.equal(await page.locator(".ls-type").count(),4);
+ assert.equal(await page.locator("#lsTypeName").count(),1);
+ assert.match(await page.locator(".ls-fields-empty").innerText(),/Поля ещё не добавлены/);
+ await page.locator("#lsTypeName").fill("Новая услуга");
+ await page.locator("#lsTypeName").press("Tab");
+ await page.locator('[data-ls-action="done-type-name"]').click();
+ assert.match(await page.locator(".ls-builder-heading h2").innerText(),/Новая услуга/);
+ await page.locator('[data-ls-action="rename-type"]').click();
+ assert.equal(await page.locator('[data-ls-action="delete-type"]').count(),1);
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ls-action="delete-type"]').click();
+ assert.equal(await page.locator(".ls-type").count(),3);
+ assert.match(await page.locator(".ls-builder-heading h2").innerText(),/Расчёт кухни/);
  await page.screenshot({path:resolve(artifactDir,"settings-lead-desktop.png"),fullPage:true});
  await page.locator('[data-ls-type="measure"]').click();
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Замер/);
@@ -552,7 +574,10 @@ try {
    });
    assert.ok(Math.abs(cardBounds.summary-cardBounds.editor)<=3,
       "Result summary should align with the editor: "+JSON.stringify(cardBounds));
-   if(size.width===390)await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
+     assert.equal(await page.locator(".ls-type").count(),3);
+   }
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
