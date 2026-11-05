@@ -359,7 +359,6 @@ function mutate(event,phase){
      const next=el.value.trim();
      if(next){type().name=next.slice(0,80);save()}
      else el.value=type().name;
-     render();
    }
    return;
  }
