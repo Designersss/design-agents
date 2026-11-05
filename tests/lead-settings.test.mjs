@@ -60,3 +60,23 @@ test("responsive editor retains light full-screen layout",()=>{
  const approved=readFileSync(resolve(root,"styles/agent-detail-modular-v3.css"),"utf8");
  assert.match(approved,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
 });
+
+test("work data redesign explains business context without duplicating knowledge or lead fields",()=>{
+ assert.match(script,/function workTab\(\)/);
+ assert.match(script,/class="ls-work-view"/);
+ assert.match(script,/id="lsWorkProject"/);
+ assert.match(script,/id="lsWorkRequirements"/);
+ assert.match(script,/data-ls-config="project"/);
+ assert.match(script,/data-ls-config="requirements"/);
+ assert.match(script,/data-ls-counter="project"/);
+ assert.match(script,/data-ls-counter="requirements"/);
+ assert.match(script,/Посмотреть пример заполнения/);
+ assert.match(script,/Перейти к знаниям/);
+ assert.match(script,/data-ls-tab="types"/);
+ assert.match(script,/Встроенные правила профессии и безопасности не меняются/);
+ assert.match(css,/\.ls-work-layout\{display:grid;grid-template-columns:/);
+ assert.match(css,/@media\(max-width:1240px\)/);
+ assert.match(css,/\.ls-work-textarea\{/);
+ assert.match(css,/\.ls-work-aside\{/);
+ assert.match(script,/counter\.textContent=el\.value\.length\+" символов"/);
+});
