@@ -20,6 +20,11 @@ try {
  assert.equal(await page.locator("#appHelpBanner a").getAttribute("href"),"#/help");
  assert.equal(await page.locator('[data-global-route="help"]').count(),1);
  await page.screenshot({path:resolve(artifactDir,"help-banner-desktop.png"),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ const helpBannerWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+ assert.ok(helpBannerWidth.page<=helpBannerWidth.viewport+2,"Help banner overflows mobile viewport");
+ await page.screenshot({path:resolve(artifactDir,"help-banner-mobile.png"),fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
  await page.locator("#appHelpBanner a").click();
  await page.waitForSelector("#helpView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
@@ -28,6 +33,11 @@ try {
  assert.equal(await page.locator(".app-help-article").count(),3);
  assert.equal(await page.locator("#agentKnowledgeView").isVisible(),false,"Help Center and agent Knowledge are different pages");
  await page.screenshot({path:resolve(artifactDir,"help-center-desktop.png"),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ const helpPageWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+ assert.ok(helpPageWidth.page<=helpPageWidth.viewport+2,"Help articles overflow mobile viewport");
+ await page.screenshot({path:resolve(artifactDir,"help-center-mobile.png"),fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
  assert.equal(await page.locator("#appHelpBanner").isVisible(),true);
