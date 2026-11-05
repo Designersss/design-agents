@@ -331,6 +331,8 @@
 .ls-type-name-controls{display:flex;gap:9px}
 .ls-type-name-controls .ls-input{font-size:12px;flex:1;min-width:0}
 .ls-type-name-editor>p{font-size:10px;line-height:1.5;color:#939e94;margin-top:9px}
+.ls-type-delete{font-size:10.5px;color:#a46161;border:0;background:transparent;padding:10px 0 0;text-align:left;font-weight:700}
+.ls-type-delete:not(:disabled):hover{text-decoration:underline;text-underline-offset:3px}
 .ls-builder-divider{height:1px;background:#eaece8;margin:23px 0 22px}
 .ls-builder-section-head{display:flex;align-items:flex-start;gap:12px}
 .ls-builder-section-head h3{font-size:16px;font-weight:780;letter-spacing:-.3px;line-height:1.4}
