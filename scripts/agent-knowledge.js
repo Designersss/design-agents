@@ -57,12 +57,6 @@ function assignedPanel(){
 }
 function sidePanel(){
  return '<aside class="ak-aside">'+
- '<section class="ak-overview-card"><span class="ak-eyebrow">КАК ЭТО РАБОТАЕТ</span><h2>Знания для ответов</h2>'+
- '<p>Здесь выбирают информацию, на которую агент может опираться при общении с клиентами.</p>'+
- '<div class="ak-guide-row"><span class="ak-guide-index">01</span><div><strong>Добавьте материалы</strong><small>Документы и FAQ хранятся в общей библиотеке рабочего пространства.</small></div></div>'+
- '<div class="ak-guide-row"><span class="ak-guide-index">02</span><div><strong>Назначьте агенту</strong><small>Агент не получает доступ ко всем файлам компании автоматически.</small></div></div>'+
- '<div class="ak-guide-row"><span class="ak-guide-index">03</span><div><strong>Следите за актуальностью</strong><small>Проверяйте версии и обновляйте сведения при изменении условий.</small></div></div>'+
- '</section>'+
  '<section class="ak-library-card"><span class="ak-library-icon">'+icon("book")+'</span><div><strong>Библиотека знаний</strong>'+
  '<p>Добавление файлов, создание FAQ, версии и общие права — в отдельном разделе AIMock.</p>'+
  '<a href="#/knowledge">Открыть библиотеку '+icon("right")+'</a></div></section>'+
