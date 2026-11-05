@@ -191,6 +191,27 @@ try {
  assert.match(await page.locator(".ls-result-rules").innerText(),/Неполная заявка направляется ответственному/);
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
+ assert.equal(await page.locator(".ls-work-form").count(),1);
+ assert.equal(await page.locator(".ls-work-guide").count(),1);
+ assert.equal(await page.locator("#lsWorkProject").count(),1);
+ assert.equal(await page.locator("#lsWorkRequirements").count(),1);
+ assert.equal(await page.locator(".ls-work-type").count(),3);
+ assert.equal(await page.locator(".ls-preview").count(),0);
+ await page.screenshot({path:resolve(artifactDir,"settings-work-data-desktop.png"),fullPage:true});
+ const businessDescription=await page.locator("#lsWorkProject").inputValue();
+ await page.locator("#lsWorkProject").fill("Изготавливаем мебель на заказ и принимаем заявки на замер.");
+ assert.match(await page.locator('[data-ls-counter="project"]').textContent(),/символов/);
+ await page.locator("#lsWorkRequirements").fill("Общаться с клиентами на «вы».");
+ const workSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.match(workSaved.project,/Изготавливаем мебель на заказ/);
+ assert.equal(workSaved.requirements,"Общаться с клиентами на «вы».");
+ await page.locator(".ls-work-example summary").click();
+ assert.equal(await page.locator(".ls-work-example").getAttribute("open"),"");
+ await page.locator(".ls-work-related [data-ls-tab='types']").click();
+ assert.equal(await page.locator(".ls-type").count(),3);
+ await page.locator(".ls-tab[data-ls-tab='work']").click();
+ assert.equal(await page.locator("#lsWorkRequirements").inputValue(),"Общаться с клиентами на «вы».");
+ await page.locator("#lsWorkProject").fill(businessDescription);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
  await page.locator('[data-ls-tab="model"]').click();
@@ -250,6 +271,20 @@ try {
      await page.locator("#mobileScrim").click({position:{x:380,y:100}});
      await page.screenshot({path:resolve(artifactDir,"support-mobile.png"),fullPage:true});
    }
+ }
+ await page.goto(base+"#/agent/leads/settings");
+ await page.waitForSelector("#agentSettingsView:not([hidden])");
+ await page.locator(".ls-tab[data-ls-tab='work']").click();
+ for(const width of [1024,768,390]){
+   await page.setViewportSize({width,height:900});
+   const boxes=await page.evaluate(()=>{
+     const main=document.querySelector(".ls-work-form").getBoundingClientRect();
+     const guide=document.querySelector(".ls-work-guide").getBoundingClientRect();
+     return {main:{x:main.x,width:main.width},guide:{x:guide.x,width:guide.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
+   });
+   assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
+   if(width<=1240)assert.ok(Math.abs(boxes.guide.x-boxes.main.x)<=3,"Guide aligns with form when stacked");
+   if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
