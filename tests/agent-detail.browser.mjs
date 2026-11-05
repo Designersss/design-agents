@@ -329,6 +329,7 @@ try {
  assert.equal(await page.locator("#agentSettingsView").isVisible(),false);
  await page.goto(base+"#/agent/leads/settings");
  await page.waitForSelector("#agentSettingsView:not([hidden])");
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
    const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
