@@ -377,7 +377,7 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
  }
- for(const section of ["messages","knowledge","testing","automation","analytics","logs"]){
+ for(const section of ["messages","testing","automation","analytics","logs"]){
    await page.goto(base+"#/agent/leads/"+section);
    await page.waitForSelector("#placeholderView:not([hidden])");
    assert.equal((await page.locator("#placeholderName").textContent()).trim(),
@@ -460,6 +460,78 @@ try {
        "Integration picker must fit mobile viewport: "+JSON.stringify(pickerBounds));
      await page.screenshot({path:resolve(artifactDir,"agent-integrations-picker-mobile.png"),fullPage:true});
      await page.locator(".ai-picker-close").click();
+   }
+ }
+ await page.setViewportSize({width:1440,height:900});
+ // Knowledge assignments are separate from the shared Knowledge library.
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal(await page.locator(".ak-main-panel").count(),1);
+ assert.equal(await page.locator(".ak-source-row").count(),2);
+ assert.equal(await page.locator("#agentKnowledgeHeading").textContent(),"Знания");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Знания");
+ assert.equal(await page.locator(".ak-source-state.is-current").count(),2);
+ assert.equal(await page.locator("#agentIntegrationsView").isVisible(),false);
+ assert.equal(await page.locator(".ak-readonly").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"agent-knowledge-desktop.png"),fullPage:true});
+ await page.locator('[data-ak-details="products"]').click();
+ assert.match(await page.locator(".ak-details").innerText(),/Версия/);
+ assert.match(await page.locator(".ak-details").innerText(),/Область доступа/);
+ await page.locator('.ak-details [data-ak-close]').click();
+ await page.locator("[data-ak-open]").click();
+ assert.equal(await page.locator(".ak-picker").count(),1);
+ assert.equal(await page.locator(".ak-picker-source").count(),6);
+ assert.equal(await page.locator('[data-ak-catalog="pricing"] button[data-ak-assign]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ak-catalog="private"] button[data-ak-assign]').isDisabled(),true);
+ await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker.png"),fullPage:true});
+ await page.locator('[data-ak-filter="faq"]').click();
+ assert.equal(await page.locator(".ak-picker-source").count(),2);
+ await page.locator('[data-ak-filter="all"]').click();
+ await page.locator("#akSearch").fill("доставка");
+ assert.equal(await page.locator(".ak-picker-source").count(),1);
+ await page.locator('[data-ak-assign="delivery"]').click();
+ assert.equal(await page.locator('[data-ak-assigned="delivery"]').count(),1);
+ assert.equal(await page.locator(".ak-source-row").count(),3);
+ const assignedKnowledge=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-knowledge-assignments:v1")));
+ assert.ok(assignedKnowledge.assigned.includes("delivery"),"Knowledge assignment autosaves locally");
+ await page.locator('[data-ak-remove="delivery"]').click();
+ assert.match(await page.locator(".ak-confirm").innerText(),/Отвязать материал/);
+ await page.locator('.ak-confirm [data-ak-close]').click();
+ assert.equal(await page.locator(".ak-source-row").count(),3,"Cancel must preserve source");
+ await page.locator('[data-ak-remove="delivery"]').click();
+ await page.locator('[data-ak-confirm-remove]').click();
+ assert.equal(await page.locator(".ak-source-row").count(),2);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Работает/);
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ assert.equal(await page.locator("[data-ak-open]").isDisabled(),true);
+ assert.equal(await page.locator('[data-ak-remove="products"]').isDisabled(),true);
+ assert.match(await page.locator(".ak-readonly").innerText(),/остановки на странице обзора/);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Остановлен/);
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   const width=await page.evaluate(()=>({full:document.documentElement.scrollWidth,viewport:innerWidth}));
+   assert.ok(width.full<=width.viewport+2,"Knowledge horizontal overflow at "+size.width+": "+JSON.stringify(width));
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"agent-knowledge-mobile.png"),fullPage:true});
+     await page.locator("[data-ak-open]").click();
+     const modal=await page.locator(".ak-picker").evaluate(el=>{
+       const r=el.getBoundingClientRect();
+       return {left:r.left,right:r.right,viewport:innerWidth};
+     });
+     assert.ok(modal.left>=0&&modal.right<=modal.viewport+1,"Knowledge modal overflows on mobile: "+JSON.stringify(modal));
+     await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker-mobile.png"),fullPage:true});
+     await page.locator(".ak-picker [data-ak-close]").click();
    }
  }
  await page.setViewportSize({width:1440,height:900});
