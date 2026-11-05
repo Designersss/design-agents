@@ -215,14 +215,14 @@ try {
  await page.locator("#lsWorkProject").fill(businessDescription);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
- await page.locator('[data-ls-tab="model"]').click();
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
  assert.equal(await page.locator(".ls-model-choice").count(),2);
  assert.equal(await page.locator(".ls-model-choice.is-selected").count(),1);
- assert.equal(await page.locator(".ls-model-tag").count(),2);
- assert.equal(await page.locator("#lsAccessScope").count(),1);
+ assert.equal(await page.locator(".ls-model-tag").count(),0,"Model page must not contain tags");
+ assert.equal(await page.locator("#lsAccessScope").count(),0,"Model page must not contain access controls");
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:resolve(artifactDir,"settings-model-access-desktop.png"),fullPage:true});
+ await page.screenshot({path:resolve(artifactDir,"settings-model-desktop.png"),fullPage:true});
  await page.locator('[data-ls-model-mode="explicit"]').click();
  assert.equal(await page.locator(".ls-model-manual").count(),1);
  assert.match(await page.locator(".ls-model-manual").innerText(),/Модель не выбрана|Не выбрана/);
@@ -233,6 +233,13 @@ try {
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  await page.locator('[data-ls-model-mode="automatic"]').click();
  assert.equal(await page.locator(".ls-model-manual").count(),0);
+ await page.locator('.ls-model-nav-link[data-ls-tab="access"]').click();
+ assert.match(await page.locator(".ls-model-intro h2").textContent(),/Доступы и теги/);
+ assert.equal(await page.locator(".ls-model-choice").count(),0,"Access page must not contain model controls");
+ assert.equal(await page.locator(".ls-model-tag").count(),2);
+ assert.equal(await page.locator("#lsAccessScope").count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-access-tags-desktop.png"),fullPage:true});
  await page.locator("#lsTagInput").fill("монтаж");
  await page.locator('[data-ls-action="add-tag"]').click();
  assert.equal(await page.locator(".ls-model-tag").count(),3);
@@ -249,7 +256,11 @@ try {
  tagConfig=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
  assert.equal(tagConfig.model.access,"owner");
  await page.locator("#lsAccessScope").selectOption("team");
- await page.screenshot({path:resolve(artifactDir,"settings-model-access-after-edit.png"),fullPage:true});
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
+ assert.equal(await page.locator(".ls-model-choice").count(),2,"Model controls persist after switching tabs");
+ await page.locator('.ls-tab[data-ls-tab="access"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),2,"Tags persist after switching tabs");
+ await page.screenshot({path:resolve(artifactDir,"settings-access-tags-after-edit.png"),fullPage:true});
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
@@ -321,17 +332,20 @@ try {
    if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
- await page.locator('.ls-tab[data-ls-tab="model"]').click();
- for(const width of [1024,768,390]){
-   await page.setViewportSize({width,height:900});
-   const bounds=await page.evaluate(()=>{
-      const content=document.querySelector(".ls-model-main").getBoundingClientRect();
-      const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
-      return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
-   });
-   assert.ok(bounds.body<=bounds.viewport+2,"Model settings horizontal overflow at "+width+": "+JSON.stringify(bounds));
-   if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,"Model settings aside should stack under main at "+width);
-   if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-model-access-mobile.png"),fullPage:true});
+ for(const section of ["model","access"]){
+   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
+   for(const width of [1024,768,390]){
+     await page.setViewportSize({width,height:900});
+     const bounds=await page.evaluate(()=>{
+       const content=document.querySelector(".ls-model-main").getBoundingClientRect();
+       const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
+       return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
+     });
+     assert.ok(bounds.body<=bounds.viewport+2,section+" horizontal overflow at "+width+": "+JSON.stringify(bounds));
+     if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,section+" aside should stack under main at "+width);
+     if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-"+(section==="model"?"model":"access-tags")+"-mobile.png"),fullPage:true});
+   }
+   await page.setViewportSize({width:1440,height:900});
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
