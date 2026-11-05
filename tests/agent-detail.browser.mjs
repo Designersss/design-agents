@@ -531,7 +531,7 @@ try {
      });
      assert.ok(modal.left>=0&&modal.right<=modal.viewport+1,"Knowledge modal overflows on mobile: "+JSON.stringify(modal));
      await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker-mobile.png"),fullPage:true});
-     await page.locator(".ak-picker [data-ak-close]").click();
+     await page.locator(".ak-picker-header [data-ak-close]").click();
    }
  }
  await page.setViewportSize({width:1440,height:900});
