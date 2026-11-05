@@ -114,10 +114,53 @@ function resultSummary(){
   '<p class="ls-result-note"><span class="ls-indicator"></span>CRM — '+(state.result.crmAction==="none"?"без внешних действий":"настроить подключение")+'</p></section>';
 }
 function workTab(){
- return '<div class="ls-simple-grid">'+panel("Рабочие данные","Контекст проекта и предмет работы агента.",
-   row("Чем занимается проект или бизнес","Кратко и обычными словами, без системных инструкций.",textArea(state.project,'data-ls-config="project"'))+
-   row("Дополнительные пожелания","Необязательно. Особенности работы, которые не меняют правила профессии.",textArea(state.requirements,'data-ls-config="requirements"')))+
-   panel("Типы обращений","Допустимые сценарии обработки.",'<div class="ls-type-chips">'+state.types.map(t=>'<span>'+escape(t.name)+'</span>').join("")+'</div><button type="button" data-ls-tab="types" class="ls-outline-btn">Настроить типы и поля '+icon("right")+'</button>')+'</div>';
+ const types=state.types;
+ const typeNames=types.map(t=>'<span class="ls-work-type">'+escape(t.name)+'</span>').join("");
+ return '<div class="ls-work-view">'+
+   '<div class="ls-work-intro"><div><span class="ls-section-eyebrow">ОСНОВНОЕ</span>'+
+     '<h2>Рабочие данные</h2><p>Расскажите о бизнесе и его особенностях. Это поможет менеджеру заявок понимать контекст обращений.</p></div>'+
+     '<span class="ls-work-optional">Сохраняется автоматически</span></div>'+
+   '<div class="ls-work-layout">'+
+     '<div class="ls-work-primary">'+
+       '<section class="ls-panel ls-work-form" aria-labelledby="lsWorkBusinessHeading">'+
+         '<div class="ls-work-fieldgroup">'+
+           '<div class="ls-work-field-title"><span class="ls-work-step">01</span><div><h3 id="lsWorkBusinessHeading">О вашем бизнесе</h3>'+
+           '<p>Чем занимается компания, какие товары или услуги предлагает и кому они предназначены.</p></div></div>'+
+           '<label class="ls-work-label" for="lsWorkProject">Описание бизнеса <span class="ls-work-required">Обязательно</span></label>'+
+           '<textarea id="lsWorkProject" class="ls-input ls-work-textarea" data-ls-config="project" placeholder="Например: изготавливаем кухни, шкафы и гардеробные на заказ. Помогаем с подбором материалов и оформлением замера."'+disabled()+'>'+escape(state.project)+'</textarea>'+
+           '<div class="ls-work-field-bottom"><span>Пишите своими словами — без команд и технических инструкций.</span>'+
+             '<span data-ls-counter="project">'+String(state.project||"").length+' символов</span></div>'+
+           '<details class="ls-work-example"><summary>'+icon("book")+' Посмотреть пример заполнения '+icon("right")+'</summary>'+
+             '<p>«Мы изготавливаем корпусную мебель по индивидуальным размерам. Работаем с частными клиентами, предлагаем кухни, шкафы и гардеробные. Клиенты обращаются за консультацией, расчётом стоимости и записью на замер».</p></details>'+
+         '</div>'+
+         '<div class="ls-work-separator"></div>'+
+         '<div class="ls-work-fieldgroup">'+
+           '<div class="ls-work-field-title"><span class="ls-work-step">02</span><div><h3>Дополнительные пожелания</h3>'+
+           '<p>Особенности общения с клиентами, которые важно учитывать именно в вашем бизнесе.</p></div></div>'+
+           '<label class="ls-work-label" for="lsWorkRequirements">Что ещё учитывать <span class="ls-work-muted">Необязательно</span></label>'+
+           '<textarea id="lsWorkRequirements" class="ls-input ls-work-textarea ls-work-textarea-small" data-ls-config="requirements" placeholder="Например: стараться отвечать кратко, обращаться к клиенту на «вы», учитывать предпочтительный способ связи."'+disabled()+'>'+escape(state.requirements)+'</textarea>'+
+           '<div class="ls-work-field-bottom"><span>Встроенные правила профессии и безопасности не меняются.</span>'+
+             '<span data-ls-counter="requirements">'+String(state.requirements||"").length+' символов</span></div>'+
+         '</div>'+
+       '</section>'+
+       '<section class="ls-panel ls-work-related"><div class="ls-work-related-head"><div>'+
+         '<h3>Типы обращений</h3><p>Какие запросы обрабатывает агент и какие данные собирает.</p></div>'+
+         '<button type="button" class="ls-outline-btn" data-ls-tab="types">Настроить поля '+icon("right")+'</button></div>'+
+         '<div class="ls-work-types">'+(typeNames||'<span class="ls-work-muted">Нет настроенных типов заявок</span>')+'</div></section>'+
+     '</div>'+
+     '<aside class="ls-work-aside" aria-label="Подсказки по настройке">'+
+       '<section class="ls-work-guide"><span class="ls-section-eyebrow">ПОДСКАЗКА</span><h3>Что здесь указывать?</h3>'+
+         '<p>Достаточно объяснить, с каким бизнесом работает менеджер заявок. Не нужно описывать его алгоритм или писать промпт.</p>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Рабочие данные</strong><small>Контекст компании и особенности общения.</small></div></div>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Знания</strong><small>Каталоги, цены, сроки, документы и FAQ.</small></div></div>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Типы заявок</strong><small>Какие поля агент должен собрать у клиента.</small></div></div>'+
+       '</section>'+
+       '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("book")+'</div><div>'+
+         '<strong>Нужны сведения о товарах и услугах?</strong>'+
+         '<p>Добавляйте справочные материалы в «Знания», чтобы не дублировать их в описании.</p>'+
+         '<a href="#/agent/leads/knowledge">Перейти к знаниям '+icon("right")+'</a></div></div>'+
+     '</aside>'+
+   '</div></div>';
 }
 function resultTab(){
  const v=state.result,t=type();
@@ -188,7 +231,7 @@ function mutate(event,phase){
  const fieldProp=el.dataset.lsFieldprop;
  if(fieldProp){mutField(fieldProp,el.type==="checkbox"?el.checked:el.value);if(phase==="change")render();return}
  const k=el.dataset.lsConfig;
- if(k==="project"||k==="requirements"){state[k]=el.value;save();return}
+ if(k==="project"||k==="requirements"){state[k]=el.value;save();const counter=document.querySelector('[data-ls-counter="'+k+'"]');if(counter)counter.textContent=el.value.length+" символов";return}
  if(k==="criteria"||k==="incompleteAction"){type()[k]=el.value;save();render();return}
  if(el.dataset.lsResult){state.result[el.dataset.lsResult]=el.type==="checkbox"?el.checked:el.value;save();render();return}
  if(el.dataset.lsModel){state.model[el.dataset.lsModel]=el.value;save();if(phase==="change")render()}
