@@ -25,7 +25,7 @@ test("only authorized current workspace sources can be assigned",()=>{
  assert.match(code,/localStorage\.setItem/);
  assert.match(code,/state:"current"/);
  assert.match(code,/state:"outdated"/);
- assert.match(code,/state:"restricted"/);
+ assert.doesNotMatch(code,/Внутренние документы руководства/);
  assert.match(code,/if\(!s\|\|!isCurrent\(s\)\|\|state\.assigned\.includes\(id\)\)return/);
  assert.match(code,/if\(isRunning\(\)\)return/);
  assert.match(code,/\.filter\(id=>catalog\.some\(c=>c\.id===id&&c\.state!=="restricted"\)\)/);
