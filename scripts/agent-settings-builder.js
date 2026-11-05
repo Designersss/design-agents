@@ -30,11 +30,12 @@ const initial=()=>({
   ]}
  ],
  result:{destination:"aimock",recipient:"owner",crmAction:"none",notify:true},
- model:{mode:"automatic",tags:"заявки, магазин",access:"team"}
+ model:{mode:"automatic",modelId:"",tags:"заявки, магазин",access:"team"}
 });
 let state=load(), selected="kitchen", tab="types", editField=null;
 function normalize(x){
  if(!x||!Array.isArray(x.types)||!x.types.length) return initial();
+ x.model={...initial().model,...(x.model||{})};
  return x;
 }
 function load(){try{return normalize(JSON.parse(localStorage.getItem(storeKey)))}catch{return initial()}}
@@ -179,14 +180,71 @@ function resultTab(){
       '<button type="button" class="ls-outline-btn" data-ls-tab="types">Изменить правила заявки '+icon("right")+'</button>')+
    '</div>';
 }
+function modelTags(){return String(state.model.tags||"").split(",").map(tag=>tag.trim()).filter(Boolean)}
+function isCompanyWorkspace(){return /компании/i.test(document.querySelector(".workspace-link small")?.textContent||"")}
 function modelTab(){
- return '<div class="ls-simple-grid">'+panel("AI-модель","Настройка публичной модели агента.",
-   row("Выбор модели","Автоматически — модель, назначенная для профессии в Admin.",select(state.model.mode,[["automatic","Автоматически"],["explicit","Выбрать вручную"]],'data-ls-model="mode"'))+
-   (state.model.mode==="explicit"?'<p class="ls-hint">Доступные модели выбираются из каталога провайдера; каталог в этом интерфейсе не загружен.</p>':""))+
-   panel("Доступы и теги","Теги служат поиску и не предоставляют права.",
-   row("Теги","Через запятую",input(state.model.tags,'data-ls-model="tags"'))+
-   row("Группа доступа","Только для пространства компании.",select(state.model.access,[["team","Отдел продаж"],["owner","Только владелец"]],'data-ls-model="access"'))+
-   '<p class="ls-hint">Реальные права сотрудников определяются доступами рабочего пространства.</p>')+'</div>';
+ const mode=state.model.mode, tags=modelTags(), group=isCompanyWorkspace();
+ return '<div class="ls-model-view">'+
+   '<div class="ls-model-intro"><span class="ls-section-eyebrow">КОНФИГУРАЦИЯ</span>'+
+     '<h2>AI-модель и доступы</h2><p>Выберите, какая модель будет обрабатывать обращения, и определите, кто может работать с агентом.</p></div>'+
+   '<div class="ls-model-layout"><div class="ls-model-main">'+
+     '<section class="ls-panel ls-model-card" aria-labelledby="lsModelHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">01</span><div>'+
+         '<h3 id="lsModelHeading">Модель для обработки заявок</h3>'+
+         '<p>Модель отвечает за понимание сообщений и подготовку ответов. Профессиональные правила AIMock остаются неизменными.</p>'+
+       '</div></div>'+
+       '<div class="ls-model-choices" role="group" aria-label="Способ выбора модели">'+
+         '<button type="button" class="ls-model-choice'+(mode==="automatic"?" is-selected":"")+'" data-ls-model-mode="automatic" aria-pressed="'+(mode==="automatic")+'"'+disabled()+'>'+
+           '<span class="ls-choice-radio" aria-hidden="true"></span><span class="ls-choice-body"><strong>Автоматически</strong>'+
+             '<small>AIMock использует модель, назначенную администратором для этой профессии.</small></span>'+
+           '<span class="ls-choice-suffix">Рекомендуется</span></button>'+
+         '<button type="button" class="ls-model-choice'+(mode==="explicit"?" is-selected":"")+'" data-ls-model-mode="explicit" aria-pressed="'+(mode==="explicit")+'"'+disabled()+'>'+
+           '<span class="ls-choice-radio" aria-hidden="true"></span><span class="ls-choice-body"><strong>Выбрать модель</strong>'+
+             '<small>Выберите конкретную модель из каталога подключённого провайдера.</small></span></button>'+
+       '</div>'+
+       (mode==="automatic"?
+         '<div class="ls-model-choice-info">'+icon("check")+' <span>Используется значение по умолчанию для профессии «Менеджер заявок».</span></div>':
+         '<div class="ls-model-manual"><div class="ls-model-manual-head">'+
+           '<strong>Конкретная модель</strong><span class="ls-model-catalog-status">Не выбрана</span></div>'+
+           '<p>Для ручного выбора необходим актуальный каталог моделей провайдера. Здесь нет загруженного каталога — название модели не подставляется автоматически.</p>'+
+           '<span class="ls-model-manual-note">'+icon("alert")+' Для запуска с ручным выбором модель должна быть указана.</span></div>')+
+     '</section>'+
+     (group?'<section class="ls-panel ls-model-card" aria-labelledby="lsAccessHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">02</span><div>'+
+       '<h3 id="lsAccessHeading">Доступ к агенту</h3>'+
+       '<p>В пространстве компании права сотрудников определяются ролями и назначенными областями доступа.</p>'+
+       '</div></div>'+
+       '<label class="ls-work-label" for="lsAccessScope">Кому доступен агент</label>'+
+       '<select id="lsAccessScope" class="ls-input ls-model-select" data-ls-model="access"'+disabled()+'>'+
+         option("team","Группа «Отдел продаж»",state.model.access)+
+         option("owner","Только владелец",state.model.access)+'</select>'+
+       '<p class="ls-model-help">Выбор области доступа не заменяет проверку ролей и разрешений. Изменение этого параметра не выдаёт права на CRM или другие интеграции.</p>'+
+       '</section>':'')+
+     '<section class="ls-panel ls-model-card ls-model-tags-card" aria-labelledby="lsTagsHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">'+(group?"03":"02")+'</span><div>'+
+       '<h3 id="lsTagsHeading">Теги</h3>'+
+       '<p>Помогают находить агентов, группировать их и фильтровать списки. Теги не управляют доступом.</p>'+
+       '</div></div>'+
+       '<div class="ls-model-tag-list" aria-label="Назначенные теги">'+
+         (tags.length?tags.map((tag,index)=>'<span class="ls-model-tag">'+escape(tag)+
+           '<button type="button" aria-label="Убрать тег '+escape(tag)+'" data-ls-remove-tag="'+index+'"'+disabled()+'>'+icon("close")+'</button></span>').join(""):
+           '<span class="ls-model-no-tags">Теги не назначены</span>')+'</div>'+
+       '<div class="ls-model-tag-row"><input id="lsTagInput" class="ls-input" type="text" maxlength="32" placeholder="Название нового тега" aria-label="Название нового тега"'+disabled()+'>'+
+       '<button type="button" class="ls-outline-btn" data-ls-action="add-tag"'+disabled()+'>'+icon("plus")+' Добавить</button></div>'+
+       '<p class="ls-model-tag-hint" role="status" id="lsTagHint">Добавьте тег, чтобы быстрее находить агента в общем списке.</p>'+
+     '</section>'+
+   '</div><aside class="ls-model-aside" aria-label="Объяснения настроек">'+
+     '<section class="ls-work-guide"><span class="ls-section-eyebrow">КАК ЭТО РАБОТАЕТ</span><h3>Что означают настройки?</h3>'+
+       '<p>Модель отвечает за обработку сообщений, а доступы и теги решают другие задачи.</p>'+
+       '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>AI-модель</strong><small>Выбор механизма обработки запросов. Не меняет профессию агента.</small></div></div>'+
+       (group?'<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Доступы</strong><small>Кто может видеть агента и работать с ним при наличии нужных прав.</small></div></div>':"")+
+       '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Теги</strong><small>Подписи для поиска и фильтрации. Не предоставляют разрешения.</small></div></div>'+
+     '</section>'+
+     '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("sliders")+'</div><div>'+
+       '<strong>Нужны права на действия агента?</strong>'+
+       '<p>Работа с Telegram, CRM и другими инструментами настраивается отдельно через разрешённые интеграции.</p>'+
+       '<a href="#/agent/leads/integrations">Перейти к интеграциям '+icon("right")+'</a></div></div>'+
+   '</aside></div></div>';
 }
 function readyTab(){
  const hasFields=state.types.some(t=>t.fields.some(f=>f.required));
@@ -194,6 +252,7 @@ function readyTab(){
   ["Рабочие данные",!!state.project.trim(),"Описание предмета работы"],
   ["Типы заявок",state.types.length>0,"Хотя бы один тип"],
   ["Поля заявки",hasFields,"Есть обязательные поля"],
+  ["AI-модель",state.model.mode==="automatic"||!!state.model.modelId,"Автоматически или выбрана конкретная модель"],
   ["Подключённый канал",null,"Проверяется после подключения"],
   ["Права на действия в CRM",null,"Проверяются по интеграциям"],
   ["Лимиты и баланс",null,"Проверяются сервером при запуске"]
@@ -235,7 +294,31 @@ function mutate(event,phase){
  if(el.dataset.lsResult){state.result[el.dataset.lsResult]=el.type==="checkbox"?el.checked:el.value;save();render();return}
  if(el.dataset.lsModel){state.model[el.dataset.lsModel]=el.value;save();if(phase==="change")render()}
 }
+function addModelTag(){
+ if(isRunning())return;
+ const input=document.getElementById("lsTagInput");
+ if(!input)return;
+ const tag=input.value.trim().replace(/,/g,"");
+ const hint=document.getElementById("lsTagHint");
+ if(!tag){if(hint)hint.textContent="Введите название тега.";return}
+ const tags=modelTags();
+ if(tags.some(t=>t.toLocaleLowerCase("ru")===tag.toLocaleLowerCase("ru"))){
+   if(hint)hint.textContent="Этот тег уже назначен.";return
+ }
+ if(tags.length>=12){if(hint)hint.textContent="Можно назначить не более 12 тегов.";return}
+ state.model.tags=[...tags,tag].join(", ");
+ save();render();
+ document.getElementById("lsTagInput")?.focus();
+}
+function removeModelTag(index){
+ if(isRunning())return;
+ const tags=modelTags();
+ if(index<0||index>=tags.length)return;
+ state.model.tags=tags.filter((_,i)=>i!==index).join(", ");
+ save();render();
+}
 function handleAction(name){
+ if(name==="add-tag"){addModelTag();return}
  if(name==="close-field"){editField=null;render();return}
  if(isRunning())return;
  const t=type();
@@ -248,11 +331,18 @@ function handleAction(name){
  if(n>=0&&n<t.fields.length&&n!==i){[t.fields[i],t.fields[n]]=[t.fields[n],t.fields[i]];save();render()}
 }
 function setup(){
+ document.addEventListener("keydown",event=>{
+  if(event.key==="Enter"&&event.target.id==="lsTagInput"){
+    event.preventDefault();addModelTag();
+  }
+ });
  document.addEventListener("click",event=>{
   const root=document.getElementById("agentSettingsView");
   if(!root||root.hidden||!root.contains(event.target))return;
   const button=event.target.closest("button");
   if(!button)return;
+  if(button.dataset.lsModelMode){if(!isRunning()){state.model.mode=button.dataset.lsModelMode;save();render()}return}
+  if(button.dataset.lsRemoveTag!==undefined){removeModelTag(Number(button.dataset.lsRemoveTag));return}
   if(button.dataset.lsTab){tab=button.dataset.lsTab;render();return}
   if(button.dataset.lsType){selected=button.dataset.lsType;editField=null;render();return}
   if(button.dataset.lsField){editField=button.dataset.lsField;render();return}
