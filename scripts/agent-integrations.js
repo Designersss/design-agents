@@ -63,11 +63,6 @@ function summary(){
      '<div class="ai-summary-line"><span>'+icon("message")+' Каналы общения</span><strong>'+channelCount+'</strong></div>'+
      '<div class="ai-summary-line"><span>'+icon("plug")+' CRM</span><strong>'+crmCount+'</strong></div>'+
      '<p>Выбранные подключения принадлежат текущему рабочему пространству.</p></section>'+
-   '<section class="ai-aside-guide"><span class="ai-section-kicker">КАК ЭТО РАБОТАЕТ</span><h2>Один хаб, разные агенты</h2>'+
-     '<div class="ai-guide-item"><span class="ai-guide-number">01</span><div><strong>Создайте подключение</strong><p>Авторизация и управление подключениями происходят в общем хабе.</p></div></div>'+
-     '<div class="ai-guide-item"><span class="ai-guide-number">02</span><div><strong>Назначьте агенту</strong><p>Бот имеет одного основного обработчика, CRM можно использовать совместно.</p></div></div>'+
-     '<div class="ai-guide-item"><span class="ai-guide-number">03</span><div><strong>Разрешите действия</strong><p>Для CRM отдельно выбираются необходимые возможности.</p></div></div>'+
-   '</section>'+
    '<section class="ai-hub-note"><span class="ai-hub-icon">'+icon("plug")+'</span><div><strong>Нужно новое подключение?</strong>'+
      '<p>Добавьте его в Integration Hub, затем назначьте агенту.</p>'+
      '<a href="#/integrations">Перейти в хаб '+icon("right")+'</a></div></section>'+
