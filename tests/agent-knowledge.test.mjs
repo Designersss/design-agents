@@ -50,7 +50,7 @@ test("knowledge UI has source metadata, FAQ, search, filtering and safe detach",
  assert.match(code,/isRunning\(\)/);
  assert.match(code,/aria-modal="true"/);
  assert.match(css,/\.ak-layout\{display:grid;/);
- assert.match(css,/\.ak-picker\{/);
+ assert.match(css,/\.ak-picker,\.ak-details,\.ak-confirm\{/);
  assert.match(css,/@media\(max-width:620px\)/);
  assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
 });
