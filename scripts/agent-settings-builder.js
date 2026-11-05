@@ -245,7 +245,7 @@ function modelTab(){
            '<p>Для ручного выбора необходим актуальный каталог моделей провайдера. Здесь нет загруженного каталога — название модели не подставляется автоматически.</p>'+
            '<span class="ls-model-manual-note">'+icon("alert")+' Для запуска с ручным выбором модель должна быть указана.</span></div>')+
      '</section></div>'+
-     '</aside></div></div>';
+     '</div></div>';
 }
 function accessTab(){
  const tags=modelTags(), group=isCompanyWorkspace();
@@ -277,7 +277,7 @@ function accessTab(){
        '<button type="button" class="ls-outline-btn" data-ls-action="add-tag"'+disabled()+'>'+icon("plus")+' Добавить</button></div>'+
        '<p class="ls-model-tag-hint" role="status" id="lsTagHint">Добавьте тег, чтобы быстрее находить агента в общем списке.</p>'+
      '</section></div>'+
-   '</aside></div></div>';
+   '</div></div>';
 }
 function readyTab(){
  const hasFields=state.types.some(t=>t.fields.some(f=>f.required));
