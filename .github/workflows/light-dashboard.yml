@@ -7,12 +7,18 @@ on:
       - "styles/redesign-v1.css"
       - "styles/agent-detail-modular-v3.css"
       - "styles/agent-settings-builder.css"
+      - "styles/agent-integrations.css"
+      - "styles/agent-knowledge.css"
       - "scripts/redesign-v1.js"
       - "scripts/agent-detail-modular-v3.js"
       - "scripts/agent-settings-builder.js"
+      - "scripts/agent-integrations.js"
+      - "scripts/agent-knowledge.js"
       - "tests/light-dashboard.test.mjs"
       - "tests/agent-detail-modular.test.mjs"
       - "tests/lead-settings.test.mjs"
+      - "tests/agent-integrations.test.mjs"
+      - "tests/agent-knowledge.test.mjs"
       - "tests/agent-detail.browser.mjs"
       - ".github/workflows/light-dashboard.yml"
   push:
@@ -39,8 +45,10 @@ jobs:
           node --check scripts/redesign-v1.js
           node --check scripts/agent-detail-modular-v3.js
           node --check scripts/agent-settings-builder.js
+          node --check scripts/agent-integrations.js
+          node --check scripts/agent-knowledge.js
       - name: Run static tests
-        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs
+        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs tests/agent-integrations.test.mjs tests/agent-knowledge.test.mjs
       - name: Install browser test runner
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1

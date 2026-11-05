@@ -30,11 +30,12 @@ const initial=()=>({
   ]}
  ],
  result:{destination:"aimock",recipient:"owner",crmAction:"none",notify:true},
- model:{mode:"automatic",tags:"заявки, магазин",access:"team"}
+ model:{mode:"automatic",modelId:"",tags:"заявки, магазин",access:"team"}
 });
 let state=load(), selected="kitchen", tab="types", editField=null;
 function normalize(x){
  if(!x||!Array.isArray(x.types)||!x.types.length) return initial();
+ x.model={...initial().model,...(x.model||{})};
  return x;
 }
 function load(){try{return normalize(JSON.parse(localStorage.getItem(storeKey)))}catch{return initial()}}
@@ -49,7 +50,7 @@ function select(value,entries,attrs=""){return '<select class="ls-input" '+attrs
 function textArea(value,attrs=""){return '<textarea class="ls-input ls-textarea" '+attrs+disabled()+'>'+escape(value)+'</textarea>'}
 function panel(title,desc,content,addon=""){return '<section class="ls-panel"><div class="ls-panel-head"><div><h2>'+title+'</h2>'+(desc?'<p>'+desc+'</p>':"")+'</div>'+addon+'</div>'+content+'</section>'}
 function tabs(){
- const list=[["work","Рабочие данные"],["types","Типы заявок и поля"],["result","Результат и передача"],["model","AI-модель и доступы"],["ready","Перед запуском"]];
+ const list=[["work","Рабочие данные"],["types","Типы заявок и поля"],["result","Результат и передача"],["model","AI-модель"],["access","Доступы и теги"],["ready","Перед запуском"]];
  return '<div class="ls-tabs" role="tablist" aria-label="Разделы настроек">'+list.map(([id,text])=>
   '<button type="button" class="ls-tab'+(tab===id?" is-active":"")+'" role="tab" aria-selected="'+(tab===id)+'" data-ls-tab="'+id+'">'+text+'</button>').join("")+'</div>';
 }
@@ -114,10 +115,52 @@ function resultSummary(){
   '<p class="ls-result-note"><span class="ls-indicator"></span>CRM — '+(state.result.crmAction==="none"?"без внешних действий":"настроить подключение")+'</p></section>';
 }
 function workTab(){
- return '<div class="ls-simple-grid">'+panel("Рабочие данные","Контекст проекта и предмет работы агента.",
-   row("Чем занимается проект или бизнес","Кратко и обычными словами, без системных инструкций.",textArea(state.project,'data-ls-config="project"'))+
-   row("Дополнительные пожелания","Необязательно. Особенности работы, которые не меняют правила профессии.",textArea(state.requirements,'data-ls-config="requirements"')))+
-   panel("Типы обращений","Допустимые сценарии обработки.",'<div class="ls-type-chips">'+state.types.map(t=>'<span>'+escape(t.name)+'</span>').join("")+'</div><button type="button" data-ls-tab="types" class="ls-outline-btn">Настроить типы и поля '+icon("right")+'</button>')+'</div>';
+ const types=state.types;
+ const typeNames=types.map(t=>'<span class="ls-work-type">'+escape(t.name)+'</span>').join("");
+ return '<div class="ls-work-view">'+
+   '<div class="ls-work-intro"><div><span class="ls-section-eyebrow">ОСНОВНОЕ</span>'+
+     '<h2>Рабочие данные</h2><p>Расскажите о бизнесе и его особенностях. Это поможет менеджеру заявок понимать контекст обращений.</p></div></div>'+
+   '<div class="ls-work-layout">'+
+     '<div class="ls-work-primary">'+
+       '<section class="ls-panel ls-work-form" aria-labelledby="lsWorkBusinessHeading">'+
+         '<div class="ls-work-fieldgroup">'+
+           '<div class="ls-work-field-title"><span class="ls-work-step">01</span><div><h3 id="lsWorkBusinessHeading">О вашем бизнесе</h3>'+
+           '<p>Чем занимается компания, какие товары или услуги предлагает и кому они предназначены.</p></div></div>'+
+           '<label class="ls-work-label" for="lsWorkProject">Описание бизнеса <span class="ls-work-required">Обязательно</span></label>'+
+           '<textarea id="lsWorkProject" class="ls-input ls-work-textarea" data-ls-config="project" placeholder="Например: изготавливаем кухни, шкафы и гардеробные на заказ. Помогаем с подбором материалов и оформлением замера."'+disabled()+'>'+escape(state.project)+'</textarea>'+
+           '<div class="ls-work-field-bottom"><span>Пишите своими словами — без команд и технических инструкций.</span>'+
+             '<span data-ls-counter="project">'+String(state.project||"").length+' символов</span></div>'+
+           '<details class="ls-work-example"><summary>'+icon("book")+' Посмотреть пример заполнения '+icon("right")+'</summary>'+
+             '<p>«Мы изготавливаем корпусную мебель по индивидуальным размерам. Работаем с частными клиентами, предлагаем кухни, шкафы и гардеробные. Клиенты обращаются за консультацией, расчётом стоимости и записью на замер».</p></details>'+
+         '</div>'+
+         '<div class="ls-work-separator"></div>'+
+         '<div class="ls-work-fieldgroup">'+
+           '<div class="ls-work-field-title"><span class="ls-work-step">02</span><div><h3>Дополнительные пожелания</h3>'+
+           '<p>Особенности общения с клиентами, которые важно учитывать именно в вашем бизнесе.</p></div></div>'+
+           '<label class="ls-work-label" for="lsWorkRequirements">Что ещё учитывать <span class="ls-work-muted">Необязательно</span></label>'+
+           '<textarea id="lsWorkRequirements" class="ls-input ls-work-textarea ls-work-textarea-small" data-ls-config="requirements" placeholder="Например: стараться отвечать кратко, обращаться к клиенту на «вы», учитывать предпочтительный способ связи."'+disabled()+'>'+escape(state.requirements)+'</textarea>'+
+           '<div class="ls-work-field-bottom"><span>Встроенные правила профессии и безопасности не меняются.</span>'+
+             '<span data-ls-counter="requirements">'+String(state.requirements||"").length+' символов</span></div>'+
+         '</div>'+
+       '</section>'+
+       '<section class="ls-panel ls-work-related"><div class="ls-work-related-head"><div>'+
+         '<h3>Типы обращений</h3><p>Какие запросы обрабатывает агент и какие данные собирает.</p></div>'+
+         '<button type="button" class="ls-outline-btn" data-ls-tab="types">Настроить поля '+icon("right")+'</button></div>'+
+         '<div class="ls-work-types">'+(typeNames||'<span class="ls-work-muted">Нет настроенных типов заявок</span>')+'</div></section>'+
+     '</div>'+
+     '<aside class="ls-work-aside" aria-label="Подсказки по настройке">'+
+       '<section class="ls-work-guide"><span class="ls-section-eyebrow">ПОДСКАЗКА</span><h3>Что здесь указывать?</h3>'+
+         '<p>Достаточно объяснить, с каким бизнесом работает менеджер заявок. Не нужно описывать его алгоритм или писать промпт.</p>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Рабочие данные</strong><small>Контекст компании и особенности общения.</small></div></div>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Знания</strong><small>Каталоги, цены, сроки, документы и FAQ.</small></div></div>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Типы заявок</strong><small>Какие поля агент должен собрать у клиента.</small></div></div>'+
+       '</section>'+
+       '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("book")+'</div><div>'+
+         '<strong>Нужны сведения о товарах и услугах?</strong>'+
+         '<p>Добавляйте справочные материалы в «Знания», чтобы не дублировать их в описании.</p>'+
+         '<a href="#/agent/leads/knowledge">Перейти к знаниям '+icon("right")+'</a></div></div>'+
+     '</aside>'+
+   '</div></div>';
 }
 function resultTab(){
  const v=state.result,t=type();
@@ -137,14 +180,89 @@ function resultTab(){
       '<button type="button" class="ls-outline-btn" data-ls-tab="types">Изменить правила заявки '+icon("right")+'</button>')+
    '</div>';
 }
+function modelTags(){return String(state.model.tags||"").split(",").map(tag=>tag.trim()).filter(Boolean)}
+function isCompanyWorkspace(){return /компании/i.test(document.querySelector(".workspace-link small")?.textContent||"")}
 function modelTab(){
- return '<div class="ls-simple-grid">'+panel("AI-модель","Настройка публичной модели агента.",
-   row("Выбор модели","Автоматически — модель, назначенная для профессии в Admin.",select(state.model.mode,[["automatic","Автоматически"],["explicit","Выбрать вручную"]],'data-ls-model="mode"'))+
-   (state.model.mode==="explicit"?'<p class="ls-hint">Доступные модели выбираются из каталога провайдера; каталог в этом интерфейсе не загружен.</p>':""))+
-   panel("Доступы и теги","Теги служат поиску и не предоставляют права.",
-   row("Теги","Через запятую",input(state.model.tags,'data-ls-model="tags"'))+
-   row("Группа доступа","Только для пространства компании.",select(state.model.access,[["team","Отдел продаж"],["owner","Только владелец"]],'data-ls-model="access"'))+
-   '<p class="ls-hint">Реальные права сотрудников определяются доступами рабочего пространства.</p>')+'</div>';
+ const mode=state.model.mode;
+ return '<div class="ls-model-view">'+
+   '<div class="ls-model-intro"><span class="ls-section-eyebrow">КОНФИГУРАЦИЯ</span>'+
+     '<h2>AI-модель</h2><p>Выберите модель для обработки сообщений. Все остальные настройки агента находятся в своих разделах.</p></div>'+
+   '<div class="ls-model-layout"><div class="ls-model-main">'+
+     '<section class="ls-panel ls-model-card" aria-labelledby="lsModelHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">01</span><div>'+
+         '<h3 id="lsModelHeading">Модель для обработки заявок</h3>'+
+         '<p>Модель отвечает за понимание сообщений и подготовку ответов. Профессиональные правила AIMock остаются неизменными.</p>'+
+       '</div></div>'+
+       '<div class="ls-model-choices" role="group" aria-label="Способ выбора модели">'+
+         '<button type="button" class="ls-model-choice'+(mode==="automatic"?" is-selected":"")+'" data-ls-model-mode="automatic" aria-pressed="'+(mode==="automatic")+'"'+disabled()+'>'+
+           '<span class="ls-choice-radio" aria-hidden="true"></span><span class="ls-choice-body"><strong>Автоматически</strong>'+
+             '<small>AIMock использует модель, назначенную администратором для этой профессии.</small></span>'+
+           '<span class="ls-choice-suffix">Рекомендуется</span></button>'+
+         '<button type="button" class="ls-model-choice'+(mode==="explicit"?" is-selected":"")+'" data-ls-model-mode="explicit" aria-pressed="'+(mode==="explicit")+'"'+disabled()+'>'+
+           '<span class="ls-choice-radio" aria-hidden="true"></span><span class="ls-choice-body"><strong>Выбрать модель</strong>'+
+             '<small>Выберите конкретную модель из каталога подключённого провайдера.</small></span></button>'+
+       '</div>'+
+       (mode==="automatic"?
+         '<div class="ls-model-choice-info">'+icon("check")+' <span>Используется значение по умолчанию для профессии «Менеджер заявок».</span></div>':
+         '<div class="ls-model-manual"><div class="ls-model-manual-head">'+
+           '<strong>Конкретная модель</strong><span class="ls-model-catalog-status">Не выбрана</span></div>'+
+           '<p>Для ручного выбора необходим актуальный каталог моделей провайдера. Здесь нет загруженного каталога — название модели не подставляется автоматически.</p>'+
+           '<span class="ls-model-manual-note">'+icon("alert")+' Для запуска с ручным выбором модель должна быть указана.</span></div>')+
+     '</section></div>'+
+     '<aside class="ls-model-aside" aria-label="Объяснение настройки модели">'+
+       '<section class="ls-work-guide"><span class="ls-section-eyebrow">КАК ЭТО РАБОТАЕТ</span><h3>Выбор AI-модели</h3>'+
+         '<p>По умолчанию AIMock выбирает модель, которую администратор назначил для профессии «Менеджер заявок».</p>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Автоматически</strong><small>Можно использовать без ручного выбора модели.</small></div></div>'+
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Вручную</strong><small>Требует модель из актуального каталога провайдера.</small></div></div>'+
+       '</section>'+
+       '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("sliders")+'</div><div>'+
+         '<strong>Кто может управлять агентом?</strong>'+
+         '<p>Области доступа и теги находятся в отдельном разделе настроек.</p>'+
+         '<button type="button" class="ls-model-nav-link" data-ls-tab="access">Доступы и теги '+icon("right")+'</button></div></div>'+
+     '</aside></div></div>';
+}
+function accessTab(){
+ const tags=modelTags(), group=isCompanyWorkspace();
+ return '<div class="ls-model-view ls-access-view">'+
+   '<div class="ls-model-intro"><span class="ls-section-eyebrow">ОРГАНИЗАЦИЯ</span>'+
+     '<h2>Доступы и теги</h2><p>Управляйте областью доступа к агенту и метками для поиска. Эти настройки не влияют на выбор AI-модели.</p></div>'+
+   '<div class="ls-model-layout"><div class="ls-model-main">'+
+     (group?'<section class="ls-panel ls-model-card" aria-labelledby="lsAccessHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">01</span><div>'+
+       '<h3 id="lsAccessHeading">Доступ к агенту</h3>'+
+       '<p>В пространстве компании права сотрудников определяются ролями и назначенными областями доступа.</p>'+
+       '</div></div>'+
+       '<label class="ls-work-label" for="lsAccessScope">Кому доступен агент</label>'+
+       '<select id="lsAccessScope" class="ls-input ls-model-select" data-ls-model="access"'+disabled()+'>'+
+         option("team","Группа «Отдел продаж»",state.model.access)+
+         option("owner","Только владелец",state.model.access)+'</select>'+
+       '<p class="ls-model-help">Выбор области доступа не заменяет проверку ролей и разрешений. Изменение этого параметра не выдаёт права на CRM или другие интеграции.</p>'+
+       '</section>':'')+
+     '<section class="ls-panel ls-model-card ls-model-tags-card" aria-labelledby="lsTagsHeading">'+
+       '<div class="ls-model-section-title"><span class="ls-work-step">'+(group?"02":"01")+'</span><div>'+
+       '<h3 id="lsTagsHeading">Теги</h3>'+
+       '<p>Помогают находить агентов, группировать их и фильтровать списки. Теги не управляют доступом.</p>'+
+       '</div></div>'+
+       '<div class="ls-model-tag-list" aria-label="Назначенные теги">'+
+         (tags.length?tags.map((tag,index)=>'<span class="ls-model-tag">'+escape(tag)+
+           '<button type="button" aria-label="Убрать тег '+escape(tag)+'" data-ls-remove-tag="'+index+'"'+disabled()+'>'+icon("close")+'</button></span>').join(""):
+           '<span class="ls-model-no-tags">Теги не назначены</span>')+'</div>'+
+       '<div class="ls-model-tag-row"><input id="lsTagInput" class="ls-input" type="text" maxlength="32" placeholder="Название нового тега" aria-label="Название нового тега"'+disabled()+'>'+
+       '<button type="button" class="ls-outline-btn" data-ls-action="add-tag"'+disabled()+'>'+icon("plus")+' Добавить</button></div>'+
+       '<p class="ls-model-tag-hint" role="status" id="lsTagHint">Добавьте тег, чтобы быстрее находить агента в общем списке.</p>'+
+     '</section></div>'+
+   '<aside class="ls-model-aside" aria-label="Объяснение настроек доступа">'+
+     '<section class="ls-work-guide"><span class="ls-section-eyebrow">КАК ЭТО РАБОТАЕТ</span><h3>Доступы и теги — не одно и то же</h3>'+
+       '<p>Эти настройки решают разные задачи и не заменяют серверные проверки прав.</p>'+
+       (group?'<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Доступы</strong><small>Кто может видеть агента и работать с ним при наличии нужных прав.</small></div></div>':
+         '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Личное пространство</strong><small>Агент принадлежит владельцу; групп сотрудников здесь нет.</small></div></div>')+
+       '<div class="ls-work-guide-item"><span class="ls-work-guide-dot"></span><div><strong>Теги</strong><small>Подписи для поиска и фильтрации. Не предоставляют разрешения.</small></div></div>'+
+     '</section>'+
+     '<div class="ls-work-knowledge"><div class="ls-work-knowledge-icon">'+icon("sliders")+'</div><div>'+
+       '<strong>Нужны права на действия агента?</strong>'+
+       '<p>Работа с Telegram, CRM и другими инструментами настраивается отдельно через разрешённые интеграции.</p>'+
+       '<a href="#/agent/leads/integrations">Перейти к интеграциям '+icon("right")+'</a></div></div>'+
+   '</aside></div></div>';
 }
 function readyTab(){
  const hasFields=state.types.some(t=>t.fields.some(f=>f.required));
@@ -152,6 +270,7 @@ function readyTab(){
   ["Рабочие данные",!!state.project.trim(),"Описание предмета работы"],
   ["Типы заявок",state.types.length>0,"Хотя бы один тип"],
   ["Поля заявки",hasFields,"Есть обязательные поля"],
+  ["AI-модель",state.model.mode==="automatic"||!!state.model.modelId,"Автоматически или выбрана конкретная модель"],
   ["Подключённый канал",null,"Проверяется после подключения"],
   ["Права на действия в CRM",null,"Проверяются по интеграциям"],
   ["Лимиты и баланс",null,"Проверяются сервером при запуске"]
@@ -160,7 +279,7 @@ function readyTab(){
    '<div class="ls-readiness">'+checks.map(([name,ok,sub])=>'<div class="ls-checkrow"><span class="ls-ready-icon '+(ok===true?"is-ok":"")+'">'+icon(ok===true?"check":"clock")+'</span><span><strong>'+name+'</strong><small>'+sub+'</small></span></div>').join("")+'</div>'+
    '<a href="#/agent/leads/integrations" class="ls-outline-btn">Настроить подключения '+icon("right")+'</a>');
 }
-function content(){return tab==="types"?builder():tab==="work"?workTab():tab==="result"?resultTab():tab==="model"?modelTab():readyTab()}
+function content(){return tab==="types"?builder():tab==="work"?workTab():tab==="result"?resultTab():tab==="model"?modelTab():tab==="access"?accessTab():readyTab()}
 function render(){
  const root=document.getElementById("agentSettingsView");if(!root||root.hidden)return;
  const running=isRunning();
@@ -188,12 +307,36 @@ function mutate(event,phase){
  const fieldProp=el.dataset.lsFieldprop;
  if(fieldProp){mutField(fieldProp,el.type==="checkbox"?el.checked:el.value);if(phase==="change")render();return}
  const k=el.dataset.lsConfig;
- if(k==="project"||k==="requirements"){state[k]=el.value;save();return}
+ if(k==="project"||k==="requirements"){state[k]=el.value;save();const counter=document.querySelector('[data-ls-counter="'+k+'"]');if(counter)counter.textContent=el.value.length+" символов";return}
  if(k==="criteria"||k==="incompleteAction"){type()[k]=el.value;save();render();return}
  if(el.dataset.lsResult){state.result[el.dataset.lsResult]=el.type==="checkbox"?el.checked:el.value;save();render();return}
  if(el.dataset.lsModel){state.model[el.dataset.lsModel]=el.value;save();if(phase==="change")render()}
 }
+function addModelTag(){
+ if(isRunning())return;
+ const input=document.getElementById("lsTagInput");
+ if(!input)return;
+ const tag=input.value.trim().replace(/,/g,"");
+ const hint=document.getElementById("lsTagHint");
+ if(!tag){if(hint)hint.textContent="Введите название тега.";return}
+ const tags=modelTags();
+ if(tags.some(t=>t.toLocaleLowerCase("ru")===tag.toLocaleLowerCase("ru"))){
+   if(hint)hint.textContent="Этот тег уже назначен.";return
+ }
+ if(tags.length>=12){if(hint)hint.textContent="Можно назначить не более 12 тегов.";return}
+ state.model.tags=[...tags,tag].join(", ");
+ save();render();
+ document.getElementById("lsTagInput")?.focus();
+}
+function removeModelTag(index){
+ if(isRunning())return;
+ const tags=modelTags();
+ if(index<0||index>=tags.length)return;
+ state.model.tags=tags.filter((_,i)=>i!==index).join(", ");
+ save();render();
+}
 function handleAction(name){
+ if(name==="add-tag"){addModelTag();return}
  if(name==="close-field"){editField=null;render();return}
  if(isRunning())return;
  const t=type();
@@ -206,11 +349,18 @@ function handleAction(name){
  if(n>=0&&n<t.fields.length&&n!==i){[t.fields[i],t.fields[n]]=[t.fields[n],t.fields[i]];save();render()}
 }
 function setup(){
+ document.addEventListener("keydown",event=>{
+  if(event.key==="Enter"&&event.target.id==="lsTagInput"){
+    event.preventDefault();addModelTag();
+  }
+ });
  document.addEventListener("click",event=>{
   const root=document.getElementById("agentSettingsView");
   if(!root||root.hidden||!root.contains(event.target))return;
   const button=event.target.closest("button");
   if(!button)return;
+  if(button.dataset.lsModelMode){if(!isRunning()){state.model.mode=button.dataset.lsModelMode;save();render()}return}
+  if(button.dataset.lsRemoveTag!==undefined){removeModelTag(Number(button.dataset.lsRemoveTag));return}
   if(button.dataset.lsTab){tab=button.dataset.lsTab;render();return}
   if(button.dataset.lsType){selected=button.dataset.lsType;editField=null;render();return}
   if(button.dataset.lsField){editField=button.dataset.lsField;render();return}

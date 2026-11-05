@@ -50,11 +50,15 @@ function renderRoute(){
  const route=currentRoute(),isAgent=route.key==="agent";
  const isAgentOverview=isAgent&&route.section==="overview";
  const isLeadSettings=isAgent&&route.id==="leads"&&route.section==="settings";
+ const isLeadIntegrations=isAgent&&route.id==="leads"&&route.section==="integrations";
+ const isLeadKnowledge=isAgent&&route.id==="leads"&&route.section==="knowledge";
  document.body.classList.toggle("is-agent-route",isAgent);
  $("overviewView").hidden=route.key!=="overview";
  $("agentDetailView").hidden=!isAgentOverview;
  $("agentSettingsView").hidden=!isLeadSettings;
- $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings;
+ $("agentIntegrationsView").hidden=!isLeadIntegrations;
+ $("agentKnowledgeView").hidden=!isLeadKnowledge;
+ $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
  $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
@@ -77,6 +81,8 @@ function renderRoute(){
    $("placeholderReturnLabel").textContent="К обзору агента";
    if(isAgentOverview)window.AIMockAgentDetail.render(route);
    if(isLeadSettings)window.AIMockLeadSettings.render(route);
+   if(isLeadIntegrations)window.AIMockAgentIntegrations.render(route);
+   if(isLeadKnowledge)window.AIMockAgentKnowledge.render(route);
  }else{
    document.querySelectorAll("[data-global-route]").forEach(link=>{
      const active=link.dataset.globalRoute===route.key;

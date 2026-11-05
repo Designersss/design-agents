@@ -191,10 +191,76 @@ try {
  assert.match(await page.locator(".ls-result-rules").innerText(),/Неполная заявка направляется ответственному/);
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
+ assert.equal(await page.locator(".ls-work-form").count(),1);
+ assert.equal(await page.locator(".ls-work-guide").count(),1);
+ assert.equal(await page.locator("#lsWorkProject").count(),1);
+ assert.equal(await page.locator("#lsWorkRequirements").count(),1);
+ assert.equal(await page.locator(".ls-work-type").count(),3);
+ assert.equal(await page.locator(".ls-preview").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-work-data-desktop.png"),fullPage:true});
+ const businessDescription=await page.locator("#lsWorkProject").inputValue();
+ await page.locator("#lsWorkProject").fill("Изготавливаем мебель на заказ и принимаем заявки на замер.");
+ assert.match(await page.locator('[data-ls-counter="project"]').textContent(),/символов/);
+ await page.locator("#lsWorkRequirements").fill("Общаться с клиентами на «вы».");
+ const workSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.match(workSaved.project,/Изготавливаем мебель на заказ/);
+ assert.equal(workSaved.requirements,"Общаться с клиентами на «вы».");
+ await page.locator(".ls-work-example summary").click();
+ assert.equal(await page.locator(".ls-work-example").getAttribute("open"),"");
+ await page.locator(".ls-work-related [data-ls-tab='types']").click();
+ assert.equal(await page.locator(".ls-type").count(),3);
+ await page.locator(".ls-tab[data-ls-tab='work']").click();
+ assert.equal(await page.locator("#lsWorkRequirements").inputValue(),"Общаться с клиентами на «вы».");
+ await page.locator("#lsWorkProject").fill(businessDescription);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
- await page.locator('[data-ls-tab="model"]').click();
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
+ assert.equal(await page.locator(".ls-model-choice").count(),2);
+ assert.equal(await page.locator(".ls-model-choice.is-selected").count(),1);
+ assert.equal(await page.locator(".ls-model-tag").count(),0,"Model page must not contain tags");
+ assert.equal(await page.locator("#lsAccessScope").count(),0,"Model page must not contain access controls");
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-model-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-model-mode="explicit"]').click();
+ assert.equal(await page.locator(".ls-model-manual").count(),1);
+ assert.match(await page.locator(".ls-model-manual").innerText(),/Модель не выбрана|Не выбрана/);
+ const manualState=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.equal(manualState.model.mode,"explicit");
+ await page.locator('.ls-tab[data-ls-tab="ready"]').click();
+ assert.match(await page.locator(".ls-checkrow").filter({hasText:"AI-модель"}).innerText(),/Автоматически или выбрана конкретная модель/);
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
+ await page.locator('[data-ls-model-mode="automatic"]').click();
+ assert.equal(await page.locator(".ls-model-manual").count(),0);
+ await page.locator('.ls-model-nav-link[data-ls-tab="access"]').click();
+ assert.match(await page.locator(".ls-model-intro h2").textContent(),/Доступы и теги/);
+ assert.equal(await page.locator(".ls-model-choice").count(),0,"Access page must not contain model controls");
+ assert.equal(await page.locator(".ls-model-tag").count(),2);
+ assert.equal(await page.locator("#lsAccessScope").count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-access-tags-desktop.png"),fullPage:true});
+ await page.locator("#lsTagInput").fill("монтаж");
+ await page.locator('[data-ls-action="add-tag"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),3);
+ assert.match(await page.locator(".ls-model-tag-list").innerText(),/монтаж/);
+ let tagConfig=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.match(tagConfig.model.tags,/монтаж/);
+ await page.locator("#lsTagInput").fill("МОНТАЖ");
+ await page.locator("#lsTagInput").press("Enter");
+ assert.equal(await page.locator(".ls-model-tag").count(),3,"Duplicate tags must not be created");
+ assert.match(await page.locator("#lsTagHint").innerText(),/уже назначен/);
+ await page.locator('[data-ls-remove-tag="2"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),2);
+ await page.locator("#lsAccessScope").selectOption("owner");
+ tagConfig=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.equal(tagConfig.model.access,"owner");
+ await page.locator("#lsAccessScope").selectOption("team");
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
+ assert.equal(await page.locator(".ls-model-choice").count(),2,"Model controls persist after switching tabs");
+ await page.locator('.ls-tab[data-ls-tab="access"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),2,"Tags persist after switching tabs");
+ await page.screenshot({path:resolve(artifactDir,"settings-access-tags-after-edit.png"),fullPage:true});
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
@@ -251,6 +317,36 @@ try {
      await page.screenshot({path:resolve(artifactDir,"support-mobile.png"),fullPage:true});
    }
  }
+ await page.goto(base+"#/agent/leads/settings");
+ await page.waitForSelector("#agentSettingsView:not([hidden])");
+ await page.locator(".ls-tab[data-ls-tab='work']").click();
+ for(const width of [1024,768,390]){
+   await page.setViewportSize({width,height:900});
+   const boxes=await page.evaluate(()=>{
+     const main=document.querySelector(".ls-work-form").getBoundingClientRect();
+     const guide=document.querySelector(".ls-work-guide").getBoundingClientRect();
+     return {main:{x:main.x,width:main.width},guide:{x:guide.x,width:guide.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
+   });
+   assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
+   if(width<=1240)assert.ok(Math.abs(boxes.guide.x-boxes.main.x)<=3,"Guide aligns with form when stacked");
+   if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
+ }
+ await page.setViewportSize({width:1440,height:900});
+ for(const section of ["model","access"]){
+   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
+   for(const width of [1024,768,390]){
+     await page.setViewportSize({width,height:900});
+     const bounds=await page.evaluate(()=>{
+       const content=document.querySelector(".ls-model-main").getBoundingClientRect();
+       const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
+       return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
+     });
+     assert.ok(bounds.body<=bounds.viewport+2,section+" horizontal overflow at "+width+": "+JSON.stringify(bounds));
+     if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,section+" aside should stack under main at "+width);
+     if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-"+(section==="model"?"model":"access-tags")+"-mobile.png"),fullPage:true});
+   }
+   await page.setViewportSize({width:1440,height:900});
+ }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
@@ -281,7 +377,7 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
  }
- for(const section of ["messages","integrations","knowledge","testing","automation","analytics","logs"]){
+ for(const section of ["messages","testing","automation","analytics","logs"]){
    await page.goto(base+"#/agent/leads/"+section);
    await page.waitForSelector("#placeholderView:not([hidden])");
    assert.equal((await page.locator("#placeholderName").textContent()).trim(),
@@ -289,11 +385,162 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/agent/leads/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in agent "+section);
  }
+ // Agent integrations are separate from the generic Hub and from Settings.
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal((await page.locator("#agentIntegrationsHeading").textContent()).trim(),"Интеграции");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Интеграции");
+ assert.equal(await page.locator(".ai-integrations-panel").count(),2);
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ assert.equal(await page.locator(".ai-grant input").count(),3);
+ assert.equal(await page.locator(".ai-assigned-label").count(),2);
+ assert.equal(await page.locator(".ai-readonly-note").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"agent-integrations-desktop.png"),fullPage:true});
+ await page.locator('[data-ai-open="channel"]').click();
+ assert.equal(await page.locator('.ai-picker-dialog[role="dialog"]').count(),1);
+ assert.equal(await page.locator('[data-ai-catalog="tg-help"] [data-ai-assign]').count(),0);
+ assert.match(await page.locator('[data-ai-catalog="tg-help"]').innerText(),/Занято другим агентом/);
+ assert.equal(await page.locator('[data-ai-catalog="tg-backup"] [data-ai-assign]').isEnabled(),true);
+ await page.screenshot({path:resolve(artifactDir,"agent-integrations-picker.png"),fullPage:true});
+ await page.locator('[data-ai-assign="tg-backup"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="tg-backup"]').count(),1);
+ assert.equal(await page.locator(".ai-connection-card").count(),3);
+ let savedIntegration=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-integration-assignments:v1")));
+ assert.ok(savedIntegration.assigned.includes("tg-backup"),"New bot assignment autosaves locally");
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ai-remove="tg-backup"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="tg-backup"]').count(),0);
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ await page.locator('[data-ai-open="crm"]').click();
+ assert.equal(await page.locator('[data-ai-catalog="bitrix-main"] [data-ai-assign]').isDisabled(),true);
+ assert.match(await page.locator('[data-ai-catalog="bitrix-main"]').innerText(),/Нужна авторизация/);
+ await page.locator('[data-ai-assign="amo-service"]').click();
+ assert.equal(await page.locator('[data-ai-assigned="amo-service"]').count(),1);
+ assert.equal(await page.locator(".ai-connection-card").count(),3);
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ai-remove="amo-service"]').click();
+ assert.equal(await page.locator(".ai-connection-card").count(),2);
+ const grant=page.locator('[data-ai-connection="amo-sales"][data-ai-grant="leads_update"]');
+ assert.equal(await grant.isChecked(),false);
+ await grant.check();
+ savedIntegration=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-integration-assignments:v1")));
+ assert.ok(savedIntegration.permissions["amo-sales"].includes("leads_update"));
+ await grant.uncheck();
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Работает/);
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ assert.equal(await page.locator('[data-ai-open="channel"]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ai-open="crm"]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ai-connection="amo-sales"][data-ai-grant="leads_create"]').isDisabled(),true);
+ assert.match(await page.locator(".ai-readonly-note").innerText(),/сначала остановите его/);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Остановлен/);
+ await page.goto(base+"#/agent/leads/integrations");
+ await page.waitForSelector("#agentIntegrationsView:not([hidden])");
+ for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   const widths=await page.evaluate(()=>({page:document.documentElement.scrollWidth,window:innerWidth}));
+   assert.ok(widths.page<=widths.window+2,"Agent integrations overflow at "+size.width+": "+JSON.stringify(widths));
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"agent-integrations-mobile.png"),fullPage:true});
+     await page.locator('[data-ai-open="channel"]').click();
+     assert.equal(await page.locator('.ai-picker-dialog[role="dialog"]').count(),1);
+     const pickerBounds=await page.locator(".ai-picker-dialog").evaluate(el=>{
+       const r=el.getBoundingClientRect();
+       return {left:r.left,right:r.right,width:innerWidth};
+     });
+     assert.ok(pickerBounds.left>=0&&pickerBounds.right<=pickerBounds.width+1,
+       "Integration picker must fit mobile viewport: "+JSON.stringify(pickerBounds));
+     await page.screenshot({path:resolve(artifactDir,"agent-integrations-picker-mobile.png"),fullPage:true});
+     await page.locator(".ai-picker-close").click();
+   }
+ }
+ await page.setViewportSize({width:1440,height:900});
+ // Knowledge assignments are separate from the shared Knowledge library.
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal(await page.locator(".ak-main-panel").count(),1);
+ assert.equal(await page.locator(".ak-source-row").count(),2);
+ assert.equal(await page.locator("#agentKnowledgeHeading").textContent(),"Знания");
+ assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Знания");
+ assert.equal(await page.locator(".ak-source-state.is-current").count(),2);
+ assert.equal(await page.locator("#agentIntegrationsView").isVisible(),false);
+ assert.equal(await page.locator(".ak-readonly").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"agent-knowledge-desktop.png"),fullPage:true});
+ await page.locator('[data-ak-details="products"]').click();
+ assert.match(await page.locator(".ak-details").innerText(),/Версия/);
+ assert.match(await page.locator(".ak-details").innerText(),/Область доступа/);
+ await page.locator('.ak-details-top [data-ak-close]').click();
+ await page.locator("[data-ak-open]").click();
+ assert.equal(await page.locator(".ak-picker").count(),1);
+ assert.equal(await page.locator(".ak-picker-source").count(),5);
+ assert.equal(await page.locator('[data-ak-catalog="pricing"] button[data-ak-assign]').isDisabled(),true);
+ assert.equal(await page.locator('[data-ak-catalog="private"]').count(),0,"Restricted sources must not leak through the picker");
+ await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker.png"),fullPage:true});
+ await page.locator('[data-ak-filter="faq"]').click();
+ assert.equal(await page.locator(".ak-picker-source").count(),2);
+ await page.locator('[data-ak-filter="all"]').click();
+ await page.locator("#akSearch").fill("доставка");
+ assert.equal(await page.locator(".ak-picker-source").count(),1);
+ await page.locator('[data-ak-assign="delivery"]').click();
+ assert.equal(await page.locator('[data-ak-assigned="delivery"]').count(),1);
+ assert.equal(await page.locator(".ak-source-row").count(),3);
+ const assignedKnowledge=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-knowledge-assignments:v1")));
+ assert.ok(assignedKnowledge.assigned.includes("delivery"),"Knowledge assignment autosaves locally");
+ await page.locator('[data-ak-remove="delivery"]').click();
+ assert.match(await page.locator(".ak-confirm").innerText(),/Отвязать материал/);
+ await page.locator('.ak-confirm [data-ak-close]').click();
+ assert.equal(await page.locator(".ak-source-row").count(),3,"Cancel must preserve source");
+ await page.locator('[data-ak-remove="delivery"]').click();
+ await page.locator('[data-ak-confirm-remove]').click();
+ assert.equal(await page.locator(".ak-source-row").count(),2);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Работает/);
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ assert.equal(await page.locator("[data-ak-open]").isDisabled(),true);
+ assert.equal(await page.locator('[data-ak-remove="products"]').isDisabled(),true);
+ assert.match(await page.locator(".ak-readonly").innerText(),/остановки на странице обзора/);
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ await page.locator("#detailToggleStatus").click();
+ assert.match(await page.locator(".detail-status").innerText(),/Остановлен/);
+ await page.goto(base+"#/agent/leads/knowledge");
+ await page.waitForSelector("#agentKnowledgeView:not([hidden])");
+ for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   const width=await page.evaluate(()=>({full:document.documentElement.scrollWidth,viewport:innerWidth}));
+   assert.ok(width.full<=width.viewport+2,"Knowledge horizontal overflow at "+size.width+": "+JSON.stringify(width));
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"agent-knowledge-mobile.png"),fullPage:true});
+     await page.locator("[data-ak-open]").click();
+     const modal=await page.locator(".ak-picker").evaluate(el=>{
+       const r=el.getBoundingClientRect();
+       return {left:r.left,right:r.right,viewport:innerWidth};
+     });
+     assert.ok(modal.left>=0&&modal.right<=modal.viewport+1,"Knowledge modal overflows on mobile: "+JSON.stringify(modal));
+     await page.screenshot({path:resolve(artifactDir,"agent-knowledge-picker-mobile.png"),fullPage:true});
+     await page.locator(".ak-picker-header [data-ak-close]").click();
+   }
+ }
+ await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/consultant/settings");
  await page.waitForSelector("#placeholderView:not([hidden])");
  assert.equal(await page.locator("#agentSettingsView").isVisible(),false);
  await page.goto(base+"#/agent/leads/settings");
  await page.waitForSelector("#agentSettingsView:not([hidden])");
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
    const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));

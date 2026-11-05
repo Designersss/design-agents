@@ -34,7 +34,7 @@ test("application preview is entirely removed from the active settings screen",(
 test("types, fields, conditions and local autosave remain available",()=>{
  for(const label of [
   "Расчёт кухни","Замер","Консультация","Тип мебели","Размеры помещения",
-  "Контакт для связи","Критерий готовности","Результат и передача","AI-модель и доступы",
+  "Контакт для связи","Критерий готовности","Результат и передача","AI-модель","Доступы и теги",
   "Перед запуском","Обязательное поле","Условие появления",
   "Когда выбрано значение","Сценарии обработки"
  ])assert.ok(script.includes(label),label);
@@ -59,4 +59,55 @@ test("responsive editor retains light full-screen layout",()=>{
  assert.match(css,/\.agent-settings-view \[hidden\]\{display:none!important\}/);
  const approved=readFileSync(resolve(root,"styles/agent-detail-modular-v3.css"),"utf8");
  assert.match(approved,/\.detail-top-grid\s*\{[^}]*align-items:stretch/);
+});
+
+test("work data redesign explains business context without duplicating knowledge or lead fields",()=>{
+ assert.match(script,/function workTab\(\)/);
+ assert.match(script,/class="ls-work-view"/);
+ assert.match(script,/id="lsWorkProject"/);
+ assert.match(script,/id="lsWorkRequirements"/);
+ assert.match(script,/data-ls-config="project"/);
+ assert.match(script,/data-ls-config="requirements"/);
+ assert.match(script,/data-ls-counter="project"/);
+ assert.match(script,/data-ls-counter="requirements"/);
+ assert.match(script,/Посмотреть пример заполнения/);
+ assert.match(script,/Перейти к знаниям/);
+ assert.match(script,/data-ls-tab="types"/);
+ assert.match(script,/Встроенные правила профессии и безопасности не меняются/);
+ assert.match(css,/\.ls-work-layout\{display:grid;grid-template-columns:/);
+ assert.match(css,/@media\(max-width:1240px\)/);
+ assert.match(css,/\.ls-work-textarea\{/);
+ assert.match(css,/\.ls-work-aside\{/);
+ assert.match(script,/counter\.textContent=el\.value\.length\+" символов"/);
+});
+
+test("AI model and access are separate tabs with independent responsibilities",()=>{
+ assert.match(script,/class="ls-model-view"/);
+ assert.match(script,/\["model","AI-модель"\],\["access","Доступы и теги"\]/);
+ assert.match(script,/function accessTab\(\)/);
+ assert.match(script,/tab==="model"\?modelTab\(\):tab==="access"\?accessTab\(\)/);
+ assert.match(script,/<h2>AI-модель<\/h2>/);
+ assert.match(script,/<h2>Доступы и теги<\/h2>/);
+ assert.doesNotMatch(script,/AI-модель и доступы/);
+ assert.match(script,/data-ls-tab="access"/);
+ assert.match(script,/function modelTab\(\)/);
+ assert.match(script,/data-ls-model-mode="automatic"/);
+ assert.match(script,/data-ls-model-mode="explicit"/);
+ assert.match(script,/назначенную администратором для этой профессии/);
+ assert.match(script,/каталог моделей/i);
+ assert.match(script,/ls-model-catalog-status/);
+ assert.match(script,/isCompanyWorkspace\(\)/);
+ assert.match(script,/Только владелец/);
+ assert.match(script,/Группа «Отдел продаж»/);
+ assert.match(script,/data-ls-model="access"/);
+ assert.match(script,/Теги не управляют доступом/);
+ assert.match(script,/data-ls-remove-tag/);
+ assert.match(script,/function addModelTag\(\)/);
+ assert.match(script,/function removeModelTag\(index\)/);
+ assert.match(script,/if\(isRunning\(\)\)return/);
+ assert.match(script,/AI-модель",state\.model\.mode==="automatic"\|\|!!state\.model\.modelId/);
+ assert.match(css,/\.ls-model-layout\{display:grid;grid-template-columns:/);
+ assert.match(css,/@media\(max-width:1240px\)/);
+ assert.match(css,/\.ls-model-tag-list\{/);
+ assert.match(css,/\.ls-model-choice\.is-selected\{/);
 });
