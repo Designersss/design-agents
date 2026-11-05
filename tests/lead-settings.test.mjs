@@ -66,6 +66,16 @@ test("work data redesign explains business context without duplicating knowledge
  assert.match(script,/class="ls-work-view"/);
  assert.match(script,/id="lsWorkProject"/);
  assert.match(script,/id="lsWorkRequirements"/);
+ assert.match(script,/class="ls-work-section-aside"/);
+ assert.match(script,/Кратко о разделе/);
+ assert.match(script,/О вашем бизнесе/);
+ assert.match(script,/Дополнительные пожелания/);
+ assert.match(script,/Типы обращений/);
+ assert.match(script,/href="#\/help">Подробнее в справке/);
+ assert.match(css,/\.ls-work-layout\{grid-template-columns:minmax\(0,1\.9fr\) minmax\(260px,\.8fr\)/);
+ assert.match(css,/\.ls-work-section-info\{/);
+ assert.match(css,/@media\(max-width:1240px\)\{/);
+
  assert.match(script,/data-ls-config="project"/);
  assert.match(script,/data-ls-config="requirements"/);
  assert.match(script,/data-ls-counter="project"/);
