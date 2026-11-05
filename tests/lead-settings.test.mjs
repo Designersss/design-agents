@@ -80,3 +80,27 @@ test("work data redesign explains business context without duplicating knowledge
  assert.match(css,/\.ls-work-aside\{/);
  assert.match(script,/counter\.textContent=el\.value\.length\+" символов"/);
 });
+
+test("AI model and access redesign respects profession defaults and company permissions",()=>{
+ assert.match(script,/class="ls-model-view"/);
+ assert.match(script,/function modelTab\(\)/);
+ assert.match(script,/data-ls-model-mode="automatic"/);
+ assert.match(script,/data-ls-model-mode="explicit"/);
+ assert.match(script,/назначенную администратором для этой профессии/);
+ assert.match(script,/Каталог моделей/);
+ assert.match(script,/ls-model-catalog-status/);
+ assert.match(script,/isCompanyWorkspace\(\)/);
+ assert.match(script,/Только владелец/);
+ assert.match(script,/Группа «Отдел продаж»/);
+ assert.match(script,/data-ls-model="access"/);
+ assert.match(script,/Теги не управляют доступом/);
+ assert.match(script,/data-ls-remove-tag/);
+ assert.match(script,/function addModelTag\(\)/);
+ assert.match(script,/function removeModelTag\(index\)/);
+ assert.match(script,/if\(isRunning\(\)\)return/);
+ assert.match(script,/AI-модель",state\.model\.mode==="automatic"\|\|!!state\.model\.modelId/);
+ assert.match(css,/\.ls-model-layout\{display:grid;grid-template-columns:/);
+ assert.match(css,/@media\(max-width:1240px\)/);
+ assert.match(css,/\.ls-model-tag-list\{/);
+ assert.match(css,/\.ls-model-choice\.is-selected\{/);
+});
