@@ -34,7 +34,7 @@ test("application preview is entirely removed from the active settings screen",(
 test("types, fields, conditions and local autosave remain available",()=>{
  for(const label of [
   "Расчёт кухни","Замер","Консультация","Тип мебели","Размеры помещения",
-  "Контакт для связи","Критерий готовности","Результат и передача","AI-модель и доступы",
+  "Контакт для связи","Критерий готовности","Результат и передача","AI-модель","Доступы и теги",
   "Перед запуском","Обязательное поле","Условие появления",
   "Когда выбрано значение","Сценарии обработки"
  ])assert.ok(script.includes(label),label);
@@ -81,8 +81,15 @@ test("work data redesign explains business context without duplicating knowledge
  assert.match(script,/counter\.textContent=el\.value\.length\+" символов"/);
 });
 
-test("AI model and access redesign respects profession defaults and company permissions",()=>{
+test("AI model and access are separate tabs with independent responsibilities",()=>{
  assert.match(script,/class="ls-model-view"/);
+ assert.match(script,/\["model","AI-модель"\],\["access","Доступы и теги"\]/);
+ assert.match(script,/function accessTab\(\)/);
+ assert.match(script,/tab==="model"\?modelTab\(\):tab==="access"\?accessTab\(\)/);
+ assert.match(script,/<h2>AI-модель<\/h2>/);
+ assert.match(script,/<h2>Доступы и теги<\/h2>/);
+ assert.doesNotMatch(script,/AI-модель и доступы/);
+ assert.match(script,/data-ls-tab="access"/);
  assert.match(script,/function modelTab\(\)/);
  assert.match(script,/data-ls-model-mode="automatic"/);
  assert.match(script,/data-ls-model-mode="explicit"/);
