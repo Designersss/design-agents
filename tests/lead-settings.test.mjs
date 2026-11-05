@@ -111,3 +111,26 @@ test("AI model and access are separate tabs with independent responsibilities",(
  assert.match(css,/\.ls-model-tag-list\{/);
  assert.match(css,/\.ls-model-choice\.is-selected\{/);
 });
+
+test("types of applications use a guided two-column flow without reinstating the preview",()=>{
+ assert.match(script,/class="ls-types-view"/);
+ assert.match(script,/ls-types-intro/);
+ assert.match(script,/ВЫБРАННЫЙ ТИП ЗАЯВКИ/);
+ assert.match(script,/Какие данные собирать/);
+ assert.match(script,/Когда заявка готова/);
+ assert.match(script,/ls-completion-panel/);
+ assert.match(script,/ls-types-help/);
+ assert.match(script,/Показать пример/);
+ assert.match(script,/ls-fields-empty/);
+ assert.match(script,/data-ls-action="add-type"/);
+ assert.match(script,/data-ls-action="rename-type"/);
+ assert.match(script,/data-ls-type-name/);
+ assert.match(script,/data-ls-action="delete-type"/);
+ assert.match(script,/state\.types\.length<=1/);
+ assert.match(script,/fieldCountLabel\(n\)/);
+ assert.doesNotMatch(script,/prompt\("Название типа заявки"/);
+ assert.doesNotMatch(script,/Предпросмотр заявки/);
+ assert.match(css,/\.ls-types-view \.ls-workbench\{grid-template-columns:/);
+ assert.match(css,/@media\(max-width:880px\)/);
+ assert.match(css,/\.ls-types-view \.ls-criteria\{[^}]*grid-template-columns:1fr 1fr/);
+});
