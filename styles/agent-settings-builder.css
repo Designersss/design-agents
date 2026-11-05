@@ -406,3 +406,17 @@
  .ls-types-view .ls-field-editor{padding:15px}
  .ls-types-help{padding:16px 14px}
 }
+
+
+/* Intrinsic flex/select widths must never expand the mobile workspace. */
+.ls-types-view .ls-workbench,.ls-types-view .ls-main-column,.ls-types-view .ls-types,
+.ls-types-view .ls-builder,.ls-types-view .ls-completion-panel,.ls-types-view .ls-criteria-row,
+.ls-types-view .ls-field,.ls-types-view .ls-field-main{min-width:0;max-width:100%}
+.ls-types-view .ls-type .ls-type-index{flex:0 0 28px;width:28px}
+.ls-types-view .ls-type .ls-type-text{flex:1 1 auto}
+.ls-types-view .ls-criteria-row .ls-input{min-width:0;max-width:100%}
+@media(max-width:880px){
+ .ls-types-view .ls-type{width:175px;min-width:175px;flex:0 0 175px}
+ .ls-types-view .ls-type-list{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+ .ls-types-view .ls-criteria{grid-template-columns:minmax(0,1fr)}
+}
