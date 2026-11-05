@@ -197,6 +197,7 @@ try {
  assert.equal(await page.locator("#lsWorkRequirements").count(),1);
  assert.equal(await page.locator(".ls-work-type").count(),3);
  assert.equal(await page.locator(".ls-preview").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:resolve(artifactDir,"settings-work-data-desktop.png"),fullPage:true});
  const businessDescription=await page.locator("#lsWorkProject").inputValue();
  await page.locator("#lsWorkProject").fill("Изготавливаем мебель на заказ и принимаем заявки на замер.");
