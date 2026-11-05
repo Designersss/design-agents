@@ -479,7 +479,7 @@ try {
  await page.locator('[data-ak-details="products"]').click();
  assert.match(await page.locator(".ak-details").innerText(),/Версия/);
  assert.match(await page.locator(".ak-details").innerText(),/Область доступа/);
- await page.locator('.ak-details [data-ak-close]').click();
+ await page.locator('.ak-details-top [data-ak-close]').click();
  await page.locator("[data-ak-open]").click();
  assert.equal(await page.locator(".ak-picker").count(),1);
  assert.equal(await page.locator(".ak-picker-source").count(),6);
