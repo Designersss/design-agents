@@ -87,7 +87,7 @@ test("AI model and access redesign respects profession defaults and company perm
  assert.match(script,/data-ls-model-mode="automatic"/);
  assert.match(script,/data-ls-model-mode="explicit"/);
  assert.match(script,/назначенную администратором для этой профессии/);
- assert.match(script,/Каталог моделей/);
+ assert.match(script,/каталог моделей/i);
  assert.match(script,/ls-model-catalog-status/);
  assert.match(script,/isCompanyWorkspace\(\)/);
  assert.match(script,/Только владелец/);
