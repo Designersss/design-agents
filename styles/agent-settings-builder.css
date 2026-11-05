@@ -230,8 +230,11 @@
 }
 
 
-/* AI model and access settings — follows the Work data editorial layout. */
+/* AI model and separate access/tags settings — follows the Work data editorial layout. */
 .ls-model-view{min-width:0;max-width:1420px}
+.ls-model-nav-link{display:inline-flex;align-items:center;gap:6px;border:0;padding:0;background:transparent;color:#444e46;font-size:10.5px;font-weight:720;text-decoration:none;cursor:pointer}
+.ls-model-nav-link:hover{text-decoration:underline;text-underline-offset:3px}
+.ls-model-nav-link .icon{width:13px;height:13px}
 .ls-model-intro{margin:5px 0 20px}
 .ls-model-intro h2{font-size:26px;letter-spacing:-.8px;font-weight:790;line-height:1.22;margin:7px 0}
 .ls-model-intro p{max-width:690px;color:#848b86;font-size:12px;line-height:1.65}
