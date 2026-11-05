@@ -251,3 +251,38 @@ h1 { font-size:clamp(31px,3vw,40px); line-height:1.12; letter-spacing:-1.8px; fo
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
 }
+
+/* Help is product documentation, never the agent's business knowledge library. */
+.app-help-banner{display:flex;align-items:center;gap:11px;margin:14px 35px 0;padding:10px 12px;background:#f6f7f5;border:1px solid #e8ebe7;border-radius:11px;color:#727d74;max-width:calc(100% - 70px);min-width:0}
+.app-help-banner[hidden],.app-help-page[hidden]{display:none!important}
+.app-help-mark{display:grid;place-items:center;width:27px;height:27px;flex:0 0 27px;border-radius:8px;background:#ecefeb;color:#768478}
+.app-help-mark .icon{width:15px;height:15px}
+.app-help-banner p{flex:1;min-width:0;font-size:11px;line-height:1.55}
+.app-help-banner a{color:#3f5a45;font-weight:740;text-decoration:underline;text-decoration-color:#afc1b0;text-underline-offset:3px}
+.app-help-banner a:hover{color:#1f3e26;text-decoration-color:#1f3e26}
+.app-help-banner button{display:grid;place-items:center;width:26px;height:26px;flex:0 0 26px;border:0;border-radius:7px;background:transparent;color:#9fa7a0}
+.app-help-banner button:hover{background:#e9ede9;color:#536459}
+.app-help-banner button .icon{width:14px;height:14px}
+.app-help-page{padding:32px 35px 70px;max-width:1200px}
+.app-help-title h1{font-size:32px;font-weight:800;letter-spacing:-1px;margin:10px 0}
+.app-help-title p{font-size:12px;line-height:1.7;color:#859087;max-width:680px}
+.app-help-articles{display:grid;gap:14px;margin-top:26px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.app-help-article{border:1px solid #e5eae5;border-radius:15px;background:#fff;padding:25px;min-width:0}
+.app-help-article>span{font-size:10px;color:#96a098;font-weight:750;letter-spacing:.035em}
+.app-help-article h2{font-size:17px;font-weight:780;letter-spacing:-.35px;margin:11px 0 9px}
+.app-help-article p{font-size:11.5px;line-height:1.7;color:#859087;margin-bottom:18px}
+.app-help-article a{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:750;color:#4b6650;text-decoration:none}
+.app-help-article a:hover{text-decoration:underline;text-underline-offset:3px}
+.app-help-article a .icon{width:13px;height:13px}
+.app-help-links{display:flex;gap:18px;flex-wrap:wrap}
+@media(max-width:980px){
+ .app-help-banner{margin-inline:26px;max-width:calc(100% - 52px)}
+ .app-help-page{padding:28px 26px 55px}
+}
+@media(max-width:720px){
+ .app-help-banner{margin:12px 18px 0;max-width:calc(100% - 36px);padding:10px;align-items:flex-start}
+ .app-help-banner .app-help-mark{margin-top:1px}
+ .app-help-page{padding:28px 18px 50px}
+ .app-help-articles{grid-template-columns:minmax(0,1fr)}
+ .app-help-title h1{font-size:28px}
+}
