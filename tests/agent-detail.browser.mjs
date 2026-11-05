@@ -217,6 +217,39 @@ try {
  assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
  await page.locator('[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
+ assert.equal(await page.locator(".ls-model-choice").count(),2);
+ assert.equal(await page.locator(".ls-model-choice.is-selected").count(),1);
+ assert.equal(await page.locator(".ls-model-tag").count(),2);
+ assert.equal(await page.locator("#lsAccessScope").count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-model-access-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-model-mode="explicit"]').click();
+ assert.equal(await page.locator(".ls-model-manual").count(),1);
+ assert.match(await page.locator(".ls-model-manual").innerText(),/Модель не выбрана|Не выбрана/);
+ const manualState=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.equal(manualState.model.mode,"explicit");
+ await page.locator('.ls-tab[data-ls-tab="ready"]').click();
+ assert.match(await page.locator(".ls-checkrow").filter({hasText:"AI-модель"}).innerText(),/Автоматически или выбрана конкретная модель/);
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
+ await page.locator('[data-ls-model-mode="automatic"]').click();
+ assert.equal(await page.locator(".ls-model-manual").count(),0);
+ await page.locator("#lsTagInput").fill("монтаж");
+ await page.locator('[data-ls-action="add-tag"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),3);
+ assert.match(await page.locator(".ls-model-tag-list").innerText(),/монтаж/);
+ let tagConfig=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.match(tagConfig.model.tags,/монтаж/);
+ await page.locator("#lsTagInput").fill("МОНТАЖ");
+ await page.locator("#lsTagInput").press("Enter");
+ assert.equal(await page.locator(".ls-model-tag").count(),3,"Duplicate tags must not be created");
+ assert.match(await page.locator("#lsTagHint").innerText(),/уже назначен/);
+ await page.locator('[data-ls-remove-tag="2"]').click();
+ assert.equal(await page.locator(".ls-model-tag").count(),2);
+ await page.locator("#lsAccessScope").selectOption("owner");
+ tagConfig=await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")));
+ assert.equal(tagConfig.model.access,"owner");
+ await page.locator("#lsAccessScope").selectOption("team");
+ await page.screenshot({path:resolve(artifactDir,"settings-model-access-after-edit.png"),fullPage:true});
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
@@ -286,6 +319,19 @@ try {
    assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
    if(width<=1240)assert.ok(Math.abs(boxes.guide.x-boxes.main.x)<=3,"Guide aligns with form when stacked");
    if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
+ }
+ await page.setViewportSize({width:1440,height:900});
+ await page.locator('.ls-tab[data-ls-tab="model"]').click();
+ for(const width of [1024,768,390]){
+   await page.setViewportSize({width,height:900});
+   const bounds=await page.evaluate(()=>{
+      const content=document.querySelector(".ls-model-main").getBoundingClientRect();
+      const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
+      return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
+   });
+   assert.ok(bounds.body<=bounds.viewport+2,"Model settings horizontal overflow at "+width+": "+JSON.stringify(bounds));
+   if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,"Model settings aside should stack under main at "+width);
+   if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-model-access-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
