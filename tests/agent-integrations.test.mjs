@@ -17,7 +17,7 @@ test("lead-only integration screen is mounted in the existing agent shell",()=>{
  assert.ok(shell.indexOf('scripts/agent-integrations.js')<shell.indexOf('scripts/redesign-v1.js'));
  assert.match(router,/route\.id==="leads"&&route\.section==="integrations"/);
  assert.match(router,/window\.AIMockAgentIntegrations\.render\(route\)/);
- assert.match(router,/isAgentOverview\|\|isLeadSettings\|\|isLeadIntegrations/);
+ assert.match(router,/isAgentOverview\|\|(?:isAgentTesting\|\|)?isLeadSettings\|\|isLeadIntegrations/);
 });
 
 test("only approved launch connectors appear and assignments are distinct from Hub credentials",()=>{
