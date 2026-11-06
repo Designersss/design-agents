@@ -232,22 +232,50 @@ function workTab(){
    '</div></div>';
 }
 function resultTab(){
- const v=state.result,t=type();
- return '<div class="ls-simple-grid">'+panel("Результат заявки","Куда записывать подтверждённые данные.",
-   row("Внутренняя заявка","Создаётся в AIMock независимо от внешней CRM.",'<div class="ls-static-setting">'+icon("check")+' Внутренняя заявка в AIMock</div>')+
-   row("Получатель результата","В личном пространстве доступен владелец; в компании — уполномоченные сотрудники.",select(v.recipient,[["owner","Владелец пространства"],["team","Ответственный сотрудник команды"]],'data-ls-result="recipient"'))+
-   row("Кому направлять уведомление","При готовности заявки.",'<label class="ls-check"><input type="checkbox" data-ls-result="notify"'+(v.notify?" checked":"")+disabled()+'> Уведомлять ответственного</label>'))+
-   panel("Работа с CRM","Внешние действия доступны только при реальном подключении и разрешениях.",
-     row("Действие в CRM","Отдельное разрешение требуется для создания и обновления.",select(v.crmAction,[["none","Не выполнять"],["create","Создавать запись"],["update","Обновлять запись"]],'data-ls-result="crmAction"'))+
-     '<p class="ls-hint">Подключения и сопоставление полей задаются в разделе «Интеграции».</p><a class="ls-outline-btn" href="#/agent/leads/integrations">Интеграции '+icon("right")+'</a>')+
-   panel("Сценарии обработки · "+escape(t.name),"Действия по выбранным правилам, без фактической отправки.",
-      '<div class="ls-result-rules"><div><strong>Все обязательные поля заполнены</strong><p>Формируется полная внутренняя заявка для выбранного получателя.</p></div>'+
-      '<div><strong>Сведений не хватает</strong><p>'+
-       ((t.incompleteAction||"wait")==="handoff"?
-       "Неполная заявка направляется ответственному для рассмотрения.":
-       "Заявка ожидает дополнительных сведений от клиента.")+'</p></div></div>'+
-      '<button type="button" class="ls-outline-btn" data-ls-tab="types">Изменить правила заявки '+icon("right")+'</button>')+
-   '</div>';
+ const v=state.result,t=type(),required=t.fields.filter(f=>f.required);
+ const fields=t.fields.map(f=>'<div class="ls-result-field"><span>'+icon("check")+' '+escape(f.title||"Поле")+'</span>'+
+   '<small>'+(f.required?"Обязательно":"Необязательно")+'</small></div>').join("");
+ const body='<section class="ls-panel ls-setting-card">'+
+   '<div class="ls-setting-heading"><span class="ls-work-step">01</span><div><h3>Итоговая заявка</h3>'+
+   '<p>Какие сведения попадут в результат после завершения сбора данных.</p></div></div>'+
+   '<div class="ls-result-guarantee">'+icon("check")+' <span><strong>Внутренняя заявка AIMock</strong>'+
+     '<small>Создаётся внутри платформы независимо от внешних интеграций.</small></span></div>'+
+   '<div class="ls-result-fields-heading"><strong>Состав результата · '+escape(t.name)+'</strong>'+
+     '<span>'+fieldCountLabel(t.fields.length)+' · '+required.length+' обязательных</span></div>'+
+   '<div class="ls-result-fields-grid">'+(fields||'<p class="ls-empty-result">Поля не настроены. Добавьте их в разделе «Типы заявок и поля».</p>')+'</div>'+
+   '<p class="ls-result-note-small">Состав определяется настроенными полями выбранного типа. Значения поступают из диалога с клиентом.</p>'+
+   '</section>'+
+   '<section class="ls-panel ls-setting-card">'+
+    '<div class="ls-setting-heading"><span class="ls-work-step">02</span><div><h3>Передача результата</h3>'+
+    '<p>Кому отправить итоговую заявку и какие действия разрешить после её формирования.</p></div></div>'+
+    '<div class="ls-result-options">'+
+     row("Получатель результата","В личном пространстве доступен владелец; в компании — уполномоченные сотрудники.",select(v.recipient,[["owner","Владелец пространства"],["team","Ответственный сотрудник команды"]],"data-ls-result=\"recipient\""))+
+     row("Работа с CRM","Внешние действия требуют подключённой CRM и соответствующих разрешений.",select(v.crmAction,[["none","Не выполнять"],["create","Создавать запись"],["update","Обновлять запись"]],"data-ls-result=\"crmAction\""))+
+    '</div>'+
+    '<label class="ls-check ls-result-notify"><input type="checkbox" data-ls-result="notify"'+(v.notify?" checked":"")+disabled()+'>'+
+     '<span><strong>Уведомлять ответственного</strong><small>После готовности внутренней заявки.</small></span></label>'+
+    '<div class="ls-result-connection">'+icon("plug")+' <span>Подключения и права на действия CRM задаются в разделе «Интеграции».</span>'+
+     '<a href="#/agent/leads/integrations">Интеграции '+icon("right")+'</a></div>'+
+   '</section>'+
+   '<section class="ls-panel ls-setting-card">'+
+    '<div class="ls-setting-heading"><span class="ls-work-step">03</span><div><h3>Неполные заявки</h3>'+
+    '<p>Текущий сценарий обработки для типа «'+escape(t.name)+'».</p></div></div>'+
+    '<div class="ls-result-rules"><div><strong>Все обязательные поля заполнены</strong>'+
+       '<p>Формируется полная внутренняя заявка для выбранного получателя.</p></div>'+
+     '<div><strong>Сведений не хватает</strong><p>'+
+        ((t.incompleteAction||"wait")==="handoff"?
+          "Неполная заявка направляется ответственному для рассмотрения.":
+          "Заявка ожидает дополнительных сведений от клиента.")+'</p></div></div>'+
+    '<button type="button" class="ls-outline-btn" data-ls-tab="types">Изменить правила заявки '+icon("right")+'</button>'+
+   '</section>';
+ return '<div class="ls-result-view"><div class="ls-setting-intro">'+
+  '<span class="ls-section-eyebrow">ОСНОВНОЕ</span><h2>Результат и передача</h2>'+
+  '<p>Определите, что войдёт в заявку, кому направлять результат и как поступать при нехватке данных.</p></div>'+
+  guided(body,[
+   ["Формирование результата","Итоговая заявка содержит данные, которые агент собрал по выбранному сценарию."],
+   ["Передача заявки","Внутренняя заявка создаётся в AIMock. Внешние действия требуют подключений и разрешений."],
+   ["Неполные обращения","Правила уточнения и передачи определяются отдельно для каждого типа заявки."]
+  ],"ls-result-guided")+'</div>';
 }
 function modelTags(){return String(state.model.tags||"").split(",").map(tag=>tag.trim()).filter(Boolean)}
 function isCompanyWorkspace(){return /компании/i.test(document.querySelector(".workspace-link small")?.textContent||"")}
