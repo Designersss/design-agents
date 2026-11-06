@@ -37,26 +37,6 @@ try {
  const helpPageWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
  assert.ok(helpPageWidth.page<=helpPageWidth.viewport+2,"Help articles overflow mobile viewport");
  await page.screenshot({path:resolve(artifactDir,"help-center-mobile.png"),fullPage:true});
- await page.setViewportSize({width:390,height:844});
- await page.locator('.ls-tab[data-ls-tab="types"]').click();
- for(const [section,sideClass] of [
-    ["types",".ls-types-guided"],
-    ["result",".ls-result-guided"],
-    ["model",".ls-model-guided"],
-    ["access",".ls-access-guided"],
-    ["ready",".ls-ready-guided"]
- ]){
-   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
-   const geometry=await page.evaluate(className=>{
-     const layout=document.querySelector(className);
-     const body=layout.querySelector(".ls-guided-main").getBoundingClientRect();
-     const aside=layout.querySelector(".ls-section-aside").getBoundingClientRect();
-     return {width:document.documentElement.scrollWidth,viewport:innerWidth,bodyBottom:body.bottom,asideTop:aside.top};
-   },sideClass);
-   assert.ok(geometry.width<=geometry.viewport+2,section+" mobile overflow: "+JSON.stringify(geometry));
-   assert.ok(geometry.asideTop>=geometry.bodyBottom-2,section+" section guidance should stack under form: "+JSON.stringify(geometry));
-   await page.screenshot({path:resolve(artifactDir,"settings-"+section+"-optionb-mobile.png"),fullPage:true});
- }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
@@ -673,6 +653,26 @@ try {
      await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
      assert.equal(await page.locator(".ls-type").count(),3);
    }
+ }
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
+ for(const [section,sideClass] of [
+    ["types",".ls-types-guided"],
+    ["result",".ls-result-guided"],
+    ["model",".ls-model-guided"],
+    ["access",".ls-access-guided"],
+    ["ready",".ls-ready-guided"]
+ ]){
+   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
+   const geometry=await page.evaluate(className=>{
+     const layout=document.querySelector(className);
+     const body=layout.querySelector(".ls-guided-main").getBoundingClientRect();
+     const aside=layout.querySelector(".ls-section-aside").getBoundingClientRect();
+     return {width:document.documentElement.scrollWidth,viewport:innerWidth,bodyBottom:body.bottom,asideTop:aside.top};
+   },sideClass);
+   assert.ok(geometry.width<=geometry.viewport+2,section+" mobile overflow: "+JSON.stringify(geometry));
+   assert.ok(geometry.asideTop>=geometry.bodyBottom-2,section+" section guidance should stack under form: "+JSON.stringify(geometry));
+   await page.screenshot({path:resolve(artifactDir,"settings-"+section+"-optionb-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
