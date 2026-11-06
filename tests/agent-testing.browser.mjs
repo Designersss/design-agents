@@ -73,7 +73,7 @@ try{
  assert.equal(await page.locator(".at-tools").isVisible(),false);
  await page.locator("[data-at-tools-toggle]").click();
  assert.equal(await page.locator(".at-tools").isVisible(),true);
- await page.locator("[data-at-dismiss]").first().click();
+ await page.locator(".at-tools .at-drawer-close").click();
  assert.equal(await page.locator(".at-tools").isVisible(),false);
  await page.setViewportSize({width:390,height:844});
  await page.reload();await page.waitForSelector(".at-workspace");
@@ -92,7 +92,7 @@ try{
  await page.locator("[data-at-history-toggle]").click();
  assert.equal(await page.locator(".at-history").isVisible(),true);
  await page.screenshot({path:resolve(out,"testing-mobile-history.png"),fullPage:true});
- await page.locator("[data-at-dismiss]").first().click();
+ await page.locator(".at-history .at-drawer-close").click();
  assert.equal(await page.locator(".at-history").isVisible(),false);
  await page.locator("[data-at-tools-toggle]").click();
  assert.equal(await page.locator(".at-tools").isVisible(),true);
