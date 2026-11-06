@@ -6,18 +6,21 @@ const pageTitles = {
  messages:"Сообщения", knowledge:"Знания",integrations:"Интеграции",
  contacts:"Контакты",automation:"Автоматизации",finance:"Финансы",
  workspace:"Пространства",profile:"Профиль",settings:"Настройки",
- notifications:"Уведомления",create:"Создание агента",attention:"Требует внимания"
+ notifications:"Уведомления",create:"Создание агента",attention:"Требует внимания",help:"Справка AIMock"
 };
 const agents=window.AIMockAgentDetail.getAgentNames();
 const agentSections={overview:"Обзор",messages:"Диалоги",settings:"Настройки",integrations:"Интеграции",knowledge:"Знания",testing:"Тестирование",automation:"Автоматизации",analytics:"Статистика",logs:"Логи"};
 const items=[
  ["Обзор","overview","home"],["Агенты","agents","grid"],["Библиотека агентов","library","layers"],
- ["Сообщения","messages","message"],["Знания","knowledge","book"],
+ ["Сообщения","messages","message"],["Знания","knowledge","book"],["Справка","help","book"],
  ["Интеграции","integrations","plug"],["Контакты","contacts","users"],
  ["Автоматизации","automation","workflow"],["Финансы","finance","wallet"],
  ...Object.entries(agents).map(([id,name])=>[name,"agent/"+id+"/overview","bot"])
 ];
 const $=id=>document.getElementById(id);
+const helpStorageKey="aimock:help-banner:dismissed:v1";
+let helpBannerDismissed=false;
+try{helpBannerDismissed=localStorage.getItem(helpStorageKey)==="1"}catch{}
 const stats={
  "7":[["284","+12% к прошлой неделе"],["96","+18% к прошлой неделе"],["24","За последние 7 дней"],["28 сек","−22% к прошлой неделе"]],
  "30":[["1 126","+9% к прошлому месяцу"],["418","+14% к прошлому месяцу"],["88","За последние 30 дней"],["31 сек","−11% к прошлому месяцу"]]
@@ -58,7 +61,9 @@ function renderRoute(){
  $("agentSettingsView").hidden=!isLeadSettings;
  $("agentIntegrationsView").hidden=!isLeadIntegrations;
  $("agentKnowledgeView").hidden=!isLeadKnowledge;
- $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
+ $("helpView").hidden=route.key!=="help";
+ $("appHelpBanner").hidden=helpBannerDismissed||route.key==="help";
+ $("placeholderView").hidden=route.key==="overview"||route.key==="help"||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
  $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
@@ -138,6 +143,11 @@ function openSearch(){
  closeNotifications();$("searchOverlay").hidden=false;$("globalSearchInput").value="";
  renderSearch("");$("globalSearchInput").focus();document.body.style.overflow="hidden";
 }
+$("appHelpDismiss").addEventListener("click",()=>{
+ helpBannerDismissed=true;
+ $("appHelpBanner").hidden=true;
+ try{localStorage.setItem(helpStorageKey,"1")}catch{}
+});
 document.querySelectorAll("[data-period]").forEach(button=>button.addEventListener("click",()=>updatePeriod(button.dataset.period)));
 $("mobileToggle").addEventListener("click",()=>{
  const active=!$("appSidebar").classList.contains("is-open");

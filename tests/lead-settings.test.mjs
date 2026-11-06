@@ -36,7 +36,7 @@ test("types, fields, conditions and local autosave remain available",()=>{
   "Расчёт кухни","Замер","Консультация","Тип мебели","Размеры помещения",
   "Контакт для связи","Критерий готовности","Результат и передача","AI-модель","Доступы и теги",
   "Перед запуском","Обязательное поле","Условие появления",
-  "Когда выбрано значение","Сценарии обработки"
+  "Когда выбрано значение","Неполные заявки"
  ])assert.ok(script.includes(label),label);
  assert.match(script,/localStorage\.setItem/);
  assert.match(script,/if\(isRunning\(\)\)return/);
@@ -66,18 +66,28 @@ test("work data redesign explains business context without duplicating knowledge
  assert.match(script,/class="ls-work-view"/);
  assert.match(script,/id="lsWorkProject"/);
  assert.match(script,/id="lsWorkRequirements"/);
+ assert.match(script,/class="ls-work-section-aside"/);
+ assert.match(script,/Кратко о разделе/);
+ assert.match(script,/О вашем бизнесе/);
+ assert.match(script,/Дополнительные пожелания/);
+ assert.match(script,/Типы обращений/);
+ assert.match(script,/href="#\/help">Подробнее в справке/);
+ assert.match(css,/\.ls-work-layout\{grid-template-columns:minmax\(0,1\.9fr\) minmax\(260px,\.8fr\)/);
+ assert.match(css,/\.ls-work-section-info\{/);
+ assert.match(css,/@media\(max-width:1240px\)\{/);
+
  assert.match(script,/data-ls-config="project"/);
  assert.match(script,/data-ls-config="requirements"/);
  assert.match(script,/data-ls-counter="project"/);
  assert.match(script,/data-ls-counter="requirements"/);
  assert.match(script,/Посмотреть пример заполнения/);
- assert.match(script,/Перейти к знаниям/);
+ assert.doesNotMatch(script,/ls-work-guide|ls-types-help|ПОДСКАЗКА|КАК ЭТО РАБОТАЕТ/);
  assert.match(script,/data-ls-tab="types"/);
  assert.match(script,/Встроенные правила профессии и безопасности не меняются/);
  assert.match(css,/\.ls-work-layout\{display:grid;grid-template-columns:/);
  assert.match(css,/@media\(max-width:1240px\)/);
  assert.match(css,/\.ls-work-textarea\{/);
- assert.match(css,/\.ls-work-aside\{/);
+ assert.match(css,/\.ls-work-layout,\.ls-model-layout\{grid-template-columns:minmax\(0,1fr\)/);
  assert.match(script,/counter\.textContent=el\.value\.length\+" символов"/);
 });
 
@@ -89,7 +99,7 @@ test("AI model and access are separate tabs with independent responsibilities",(
  assert.match(script,/<h2>AI-модель<\/h2>/);
  assert.match(script,/<h2>Доступы и теги<\/h2>/);
  assert.doesNotMatch(script,/AI-модель и доступы/);
- assert.match(script,/data-ls-tab="access"/);
+ assert.match(script,/\["access","Доступы и теги"\]/);
  assert.match(script,/function modelTab\(\)/);
  assert.match(script,/data-ls-model-mode="automatic"/);
  assert.match(script,/data-ls-model-mode="explicit"/);
@@ -110,4 +120,73 @@ test("AI model and access are separate tabs with independent responsibilities",(
  assert.match(css,/@media\(max-width:1240px\)/);
  assert.match(css,/\.ls-model-tag-list\{/);
  assert.match(css,/\.ls-model-choice\.is-selected\{/);
+});
+
+test("types of applications use a guided two-column flow without reinstating the preview",()=>{
+ assert.match(script,/class="ls-types-view"/);
+ assert.match(script,/ls-types-intro/);
+ assert.match(script,/ВЫБРАННЫЙ ТИП ЗАЯВКИ/);
+ assert.match(script,/Какие данные собирать/);
+ assert.match(script,/Когда заявка готова/);
+ assert.match(script,/ls-completion-panel/);
+ assert.doesNotMatch(script,/ls-types-help/);
+ assert.match(script,/Условия сбора/);
+ assert.match(script,/ls-fields-empty/);
+ assert.match(script,/data-ls-action="add-type"/);
+ assert.match(script,/data-ls-action="rename-type"/);
+ assert.match(script,/data-ls-type-name/);
+ assert.match(script,/data-ls-action="delete-type"/);
+ assert.match(script,/state\.types\.length<=1/);
+ assert.match(script,/fieldCountLabel\(n\)/);
+ assert.doesNotMatch(script,/prompt\("Название типа заявки"/);
+ assert.doesNotMatch(script,/Предпросмотр заявки/);
+ assert.match(css,/\.ls-types-view \.ls-workbench\{grid-template-columns:/);
+ assert.match(css,/@media\(max-width:880px\)/);
+ assert.match(css,/\.ls-types-view \.ls-criteria\{[^}]*grid-template-columns:1fr 1fr/);
+});
+
+test("in-app help is distinct from agent knowledge and the dismissed banner stays hidden",()=>{
+ const html=readFileSync(resolve(root,"index.html"),"utf8");
+ const css=readFileSync(resolve(root,"styles/redesign-v1.css"),"utf8");
+ const integr=readFileSync(resolve(root,"scripts/agent-integrations.js"),"utf8");
+ const knowledge=readFileSync(resolve(root,"scripts/agent-knowledge.js"),"utf8");
+ assert.match(html,/id="appHelpBanner"[^>]*hidden/);
+ assert.match(html,/id="appHelpDismiss"/);
+ assert.match(html,/id="helpView"/);
+ assert.match(html,/href="#\/help"/);
+ assert.match(html,/href="#\/knowledge"/);
+ assert.match(html,/id="helpHeading">Справка AIMock/);
+ assert.match(router,/help:"Справка AIMock"/);
+ assert.match(router,/helpStorageKey="aimock:help-banner:dismissed:v1"/);
+ assert.match(router,/localStorage\.setItem\(helpStorageKey,"1"\)/);
+ assert.match(router,/route\.key==="help"/);
+ assert.match(router,/appHelpBanner/);
+ assert.match(css,/\.app-help-banner\[hidden\],\.app-help-page\[hidden\]\{display:none!important\}/);
+ assert.doesNotMatch(script,/ls-work-guide|ls-types-help/);
+ assert.doesNotMatch(integr,/ai-aside-guide|КАК ЭТО РАБОТАЕТ/);
+ assert.doesNotMatch(knowledge,/ak-overview-card|КАК ЭТО РАБОТАЕТ/);
+});
+
+test("all approved agent settings reuse the compact contextual summary pattern",()=>{
+ assert.match(script,/function sectionInfo\(items\)/);
+ assert.match(script,/function guided\(body,items,extraClass/);
+ assert.match(script,/Кратко о разделе/);
+ assert.match(script,/Подробнее в справке/);
+ for(const cls of ["ls-types-guided","ls-result-guided","ls-model-guided","ls-access-guided","ls-ready-guided"]){
+   assert.ok(script.includes(cls),cls);
+ }
+ assert.match(script,/ls-result-fields-grid/);
+ assert.match(script,/ls-result-notify/);
+ assert.match(script,/data-ls-result=.*recipient/);
+ assert.match(script,/data-ls-result=.*crmAction/);
+ assert.match(script,/data-ls-result="notify"/);
+ assert.match(script,/ls-model-status-card/);
+ assert.match(script,/Для запуска необходимо выбрать модель из актуального каталога провайдера/);
+ assert.match(script,/ls-access-guided/);
+ assert.match(script,/ls-ready-notice/);
+ assert.match(css,/\.ls-guided-layout\{display:grid;grid-template-columns:minmax\(0,1fr\) minmax\(255px,295px\)/);
+ assert.match(css,/@media\(max-width:1200px\)/);
+ assert.match(css,/\.ls-section-info\{/);
+ assert.match(css,/\.ls-section-points\{/);
+ assert.doesNotMatch(script,/GPT-4o|Claude 4|o3-mini|GPT-4.1/);
 });

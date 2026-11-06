@@ -92,6 +92,7 @@
   <div class="sidebar-spacer"></div>
   <nav class="nav-group" aria-label="Дополнительно">
     <a class="nav-link" href="#/settings" data-global-route="settings"><svg class="icon"><use href="#i-settings"/></svg>Настройки</a>
+    <a class="nav-link" href="#/help" data-global-route="help"><svg class="icon"><use href="#i-book"/></svg>Справка</a>
   </nav>
   <div class="sidebar-bottom">
     <a class="workspace-link" href="#/workspace"><span class="ws-mark">A</span><span><strong>Acme Studio</strong><small>Пространство компании</small></span><svg class="icon"><use href="#i-right"/></svg></a>
@@ -111,6 +112,11 @@
   </header>
   <div class="popover" id="notificationsPopover" hidden role="region" aria-label="Последние уведомления"><h3>Уведомления</h3><p>Есть несколько событий, требующих внимания.</p><a href="#/notifications">Открыть уведомления →</a></div>
   <main id="mainContent">
+  <div class="app-help-banner" id="appHelpBanner" role="note" hidden>
+    <span class="app-help-mark" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+    <p>Не знаете, с чего начать? <a href="#/help">Откройте справку AIMock</a> — там описана настройка агентов и разделов.</p>
+    <button type="button" id="appHelpDismiss" aria-label="Скрыть подсказку о справке"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
   <section id="overviewView" class="content" aria-labelledby="overviewHeading">
     <div class="page-intro">
       <div><span class="eyebrow">Ваше рабочее пространство</span><h1 id="overviewHeading">Обзор</h1><p class="page-description">Агенты, обращения и важные события — без лишней информации.</p></div>
@@ -188,6 +194,22 @@
   <section id="agentSettingsView" class="agent-settings-view" hidden aria-labelledby="agentSettingsHeading"></section>
   <section id="agentIntegrationsView" class="agent-integrations-view" hidden aria-labelledby="agentIntegrationsHeading"></section>
   <section id="agentKnowledgeView" class="agent-knowledge-view" hidden aria-labelledby="agentKnowledgeHeading"></section>
+  <section id="helpView" class="app-help-page" hidden aria-labelledby="helpHeading">
+    <div class="app-help-title"><span class="eyebrow">СПРАВОЧНЫЙ ЦЕНТР</span><h1 id="helpHeading">Справка AIMock</h1>
+      <p>Короткие ответы о настройке и работе платформы. Бизнес-материалы для агентов находятся в отдельном разделе «Знания».</p></div>
+    <div class="app-help-articles">
+      <article class="app-help-article" id="help-agents"><span>01 / АГЕНТЫ</span><h2>Как настроить агента</h2>
+        <p>В настройках задайте рабочий контекст, выберите AI-модель и определите права доступа. Подключения и источники знаний назначаются в разделах соответствующего агента.</p>
+        <a href="#/agent/leads/settings">Открыть настройки агента <svg class="icon"><use href="#i-right"/></svg></a></article>
+      <article class="app-help-article" id="help-applications"><span>02 / ЗАЯВКИ</span><h2>Типы заявок и поля</h2>
+        <p>Тип обращения определяет, какие сведения необходимо собрать. У поля можно задать тип данных, обязательность и условие появления. Правило завершения определяет, что делать с неполной заявкой.</p>
+        <a href="#/agent/leads/settings">Перейти к типам заявок <svg class="icon"><use href="#i-right"/></svg></a></article>
+      <article class="app-help-article" id="help-integrations"><span>03 / ПОДКЛЮЧЕНИЯ</span><h2>Интеграции и знания</h2>
+        <p>Новые подключения создаются в общем Integration Hub, а затем назначаются агентам. Документы и FAQ хранятся в библиотеке компании; агент получает доступ только к выбранным разрешённым материалам.</p>
+        <div class="app-help-links"><a href="#/integrations">Интеграции <svg class="icon"><use href="#i-right"/></svg></a>
+          <a href="#/knowledge">Библиотека знаний <svg class="icon"><use href="#i-right"/></svg></a></div></article>
+    </div>
+  </section>
   <section id="placeholderView" hidden class="placeholder-wrap" aria-live="polite">
     <div class="placeholder">
       <div class="placeholder-art"><svg class="icon"><use href="#i-layers"/></svg></div>

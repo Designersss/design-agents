@@ -32,7 +32,7 @@ test("all prototype links stay inside the new route system", () => {
   const pages = new Set([
     "overview", "agents", "library", "messages", "knowledge", "integrations", "contacts",
     "automation", "finance", "workspace", "profile", "settings", "notifications",
-    "attention", "create"
+    "attention", "create", "help"
   ]);
   const agents = new Set(["consultant", "leads", "recruiter", "support"]);
   const sections = new Set(["overview", "messages", "settings", "integrations",

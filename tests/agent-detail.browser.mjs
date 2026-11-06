@@ -16,6 +16,38 @@ try {
  page.on("pageerror",error=>exceptions.push(error.message));
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),true);
+ assert.equal(await page.locator("#appHelpBanner a").getAttribute("href"),"#/help");
+ assert.equal(await page.locator('[data-global-route="help"]').count(),1);
+ await page.screenshot({path:resolve(artifactDir,"help-banner-desktop.png"),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ const helpBannerWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+ assert.ok(helpBannerWidth.page<=helpBannerWidth.viewport+2,"Help banner overflows mobile viewport");
+ await page.screenshot({path:resolve(artifactDir,"help-banner-mobile.png"),fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
+ await page.locator("#appHelpBanner a").click();
+ await page.waitForSelector("#helpView:not([hidden])");
+ assert.equal(await page.locator("#placeholderView").isVisible(),false);
+ assert.equal((await page.locator("#helpHeading").textContent()).trim(),"Справка AIMock");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+ assert.equal(await page.locator(".app-help-article").count(),3);
+ assert.equal(await page.locator("#agentKnowledgeView").isVisible(),false,"Help Center and agent Knowledge are different pages");
+ await page.screenshot({path:resolve(artifactDir,"help-center-desktop.png"),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ const helpPageWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+ assert.ok(helpPageWidth.page<=helpPageWidth.viewport+2,"Help articles overflow mobile viewport");
+ await page.screenshot({path:resolve(artifactDir,"help-center-mobile.png"),fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto(base+"#/agent/leads/overview");
+ await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),true);
+ await page.locator("#appHelpDismiss").click();
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+ assert.equal(await page.evaluate(()=>localStorage.getItem("aimock:help-banner:dismissed:v1")),"1");
+ await page.reload();
+ await page.waitForSelector("#detailToggleStatus");
+ assert.equal(await page.locator("#appHelpBanner").isVisible(),false);
+
  assert.equal((await page.locator("#agentDetailHeading").textContent()).trim(),"Входящие заявки");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
  assert.equal(await page.locator("#agentDetailView").isVisible(),true);
@@ -160,6 +192,37 @@ try {
  assert.equal(await page.locator("#ls-preview-form").count(),0);
  assert.doesNotMatch(await page.locator("#agentSettingsView").innerText(),/Предпросмотр заявки|Проверить заполнение/);
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
+ assert.equal(await page.locator(".ls-types-view").count(),1);
+ assert.equal(await page.locator(".ls-completion-panel").count(),1);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-point").count(),4);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-more a").getAttribute("href"),"#/help");
+ const typesCardLayout=await page.evaluate(()=>{
+   const main=document.querySelector(".ls-types-guided .ls-workbench").getBoundingClientRect();
+   const side=document.querySelector(".ls-types-guided .ls-section-aside").getBoundingClientRect();
+   return {mainRight:main.right,sideLeft:side.left};
+ });
+ assert.ok(typesCardLayout.sideLeft>=typesCardLayout.mainRight-2,"Type details side information should appear to the right on desktop");
+
+ assert.equal(await page.locator(".ls-types-help").count(),0);
+ assert.equal(await page.locator(".ls-editor-section-label").count(),0);
+ assert.equal(await page.locator(".ls-types-example").count(),0);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-types-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-action="add-type"]').click();
+ assert.equal(await page.locator(".ls-type").count(),4);
+ assert.equal(await page.locator("#lsTypeName").count(),1);
+ assert.match(await page.locator(".ls-fields-empty").innerText(),/Поля ещё не добавлены/);
+ await page.locator("#lsTypeName").fill("Новая услуга");
+ await page.locator("#lsTypeName").press("Tab");
+ await page.locator('[data-ls-action="done-type-name"]').click();
+ assert.match(await page.locator(".ls-builder-heading h2").innerText(),/Новая услуга/);
+ await page.locator('[data-ls-action="rename-type"]').click();
+ assert.equal(await page.locator('[data-ls-action="delete-type"]').count(),1);
+ page.once("dialog",dialog=>dialog.accept());
+ await page.locator('[data-ls-action="delete-type"]').click();
+ assert.equal(await page.locator(".ls-type").count(),3);
+ assert.match(await page.locator(".ls-builder-heading h2").innerText(),/Расчёт кухни/);
  await page.screenshot({path:resolve(artifactDir,"settings-lead-desktop.png"),fullPage:true});
  await page.locator('[data-ls-type="measure"]').click();
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Замер/);
@@ -189,10 +252,30 @@ try {
  assert.equal(savedRules.types.find(t=>t.id==="kitchen").incompleteAction,"handoff");
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator(".ls-result-rules").innerText(),/Неполная заявка направляется ответственному/);
+ assert.equal(await page.locator(".ls-result-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-result-view .ls-setting-card").count(),3);
+ assert.equal(await page.locator(".ls-result-fields-grid .ls-result-field").count(),6);
+ assert.equal(await page.locator('[data-ls-result="crmAction"]').count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-result-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-result="crmAction"]').selectOption("create");
+ assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")))).result.crmAction,"create");
+ await page.locator('[data-ls-result="crmAction"]').selectOption("none");
+
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  assert.equal(await page.locator(".ls-work-form").count(),1);
- assert.equal(await page.locator(".ls-work-guide").count(),1);
+ assert.equal(await page.locator(".ls-work-guide").count(),0);
+ assert.equal(await page.locator(".ls-work-section-info").count(),1);
+ assert.match(await page.locator("#lsWorkAboutHeading").textContent(),/Кратко о разделе/);
+ assert.equal(await page.locator(".ls-work-about-item").count(),3);
+ assert.equal(await page.locator(".ls-work-section-more a").getAttribute("href"),"#/help");
+ const workLayout=await page.evaluate(()=>{
+   const form=document.querySelector(".ls-work-form").getBoundingClientRect();
+   const about=document.querySelector(".ls-work-section-info").getBoundingClientRect();
+   return {formX:form.x,formW:form.width,aboutX:about.x,aboutW:about.width};
+ });
+ assert.ok(workLayout.aboutX>workLayout.formX+workLayout.formW-2,"Section information must be in the right column on desktop: "+JSON.stringify(workLayout));
  assert.equal(await page.locator("#lsWorkProject").count(),1);
  assert.equal(await page.locator("#lsWorkRequirements").count(),1);
  assert.equal(await page.locator(".ls-work-type").count(),3);
@@ -214,10 +297,13 @@ try {
  assert.equal(await page.locator("#lsWorkRequirements").inputValue(),"Общаться с клиентами на «вы».");
  await page.locator("#lsWorkProject").fill(businessDescription);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
- assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
+ assert.match(await page.locator("#agentSettingsView").innerText(),/Результат и передача/);
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
  assert.equal(await page.locator(".ls-model-choice").count(),2);
+ assert.equal(await page.locator(".ls-model-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-model-status-card").count(),1);
+
  assert.equal(await page.locator(".ls-model-choice.is-selected").count(),1);
  assert.equal(await page.locator(".ls-model-tag").count(),0,"Model page must not contain tags");
  assert.equal(await page.locator("#lsAccessScope").count(),0,"Model page must not contain access controls");
@@ -233,11 +319,13 @@ try {
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  await page.locator('[data-ls-model-mode="automatic"]').click();
  assert.equal(await page.locator(".ls-model-manual").count(),0);
- await page.locator('.ls-model-nav-link[data-ls-tab="access"]').click();
+ await page.locator('.ls-tab[data-ls-tab="access"]').click();
  assert.match(await page.locator(".ls-model-intro h2").textContent(),/Доступы и теги/);
  assert.equal(await page.locator(".ls-model-choice").count(),0,"Access page must not contain model controls");
  assert.equal(await page.locator(".ls-model-tag").count(),2);
  assert.equal(await page.locator("#lsAccessScope").count(),1);
+ assert.equal(await page.locator(".ls-access-guided .ls-section-info").count(),1);
+
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:resolve(artifactDir,"settings-access-tags-desktop.png"),fullPage:true});
  await page.locator("#lsTagInput").fill("монтаж");
@@ -263,6 +351,11 @@ try {
  await page.screenshot({path:resolve(artifactDir,"settings-access-tags-after-edit.png"),fullPage:true});
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
+ assert.equal(await page.locator(".ls-ready-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-ready-notice").count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-ready-desktop.png"),fullPage:true});
+
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
  await page.screenshot({path:resolve(artifactDir,"settings-lead-after-edit.png"),fullPage:true});
  // Return to the approved overview; the builder must not replace its layout.
@@ -324,11 +417,12 @@ try {
    await page.setViewportSize({width,height:900});
    const boxes=await page.evaluate(()=>{
      const main=document.querySelector(".ls-work-form").getBoundingClientRect();
-     const guide=document.querySelector(".ls-work-guide").getBoundingClientRect();
-     return {main:{x:main.x,width:main.width},guide:{x:guide.x,width:guide.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
+     const aside=document.querySelector(".ls-work-section-info").getBoundingClientRect();
+     return {main:{x:main.x,y:main.y,width:main.width,height:main.height},aside:{x:aside.x,y:aside.y,width:aside.width},body:document.documentElement.scrollWidth,viewport:innerWidth};
    });
    assert.ok(boxes.body<=boxes.viewport+2,"Work data horizontal overflow at "+width+": "+JSON.stringify(boxes));
-   if(width<=1240)assert.ok(Math.abs(boxes.guide.x-boxes.main.x)<=3,"Guide aligns with form when stacked");
+   assert.ok(boxes.main.width<=boxes.viewport-boxes.main.x+2,"Work data form fits viewport");
+   assert.ok(boxes.aside.y>=boxes.main.y+boxes.main.height-2,"Section information must stack below the form on narrow viewports: "+JSON.stringify(boxes));
    if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-work-data-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
@@ -336,13 +430,12 @@ try {
    await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
    for(const width of [1024,768,390]){
      await page.setViewportSize({width,height:900});
-     const bounds=await page.evaluate(()=>{
-       const content=document.querySelector(".ls-model-main").getBoundingClientRect();
-       const note=document.querySelector(".ls-model-aside").getBoundingClientRect();
-       return {left:content.left,right:note.left,body:document.documentElement.scrollWidth,viewport:innerWidth};
-     });
+     const bounds=await page.evaluate(section=>{
+       const content=document.querySelector(".ls-"+section+"-guided .ls-guided-main").getBoundingClientRect();
+       return {left:content.left,width:content.width,body:document.documentElement.scrollWidth,viewport:innerWidth};
+     },section);
      assert.ok(bounds.body<=bounds.viewport+2,section+" horizontal overflow at "+width+": "+JSON.stringify(bounds));
-     if(width<=1240)assert.ok(Math.abs(bounds.left-bounds.right)<=3,section+" aside should stack under main at "+width);
+     assert.ok(bounds.width<=bounds.viewport-bounds.left+2,section+" controls fit inside the viewport");
      if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-"+(section==="model"?"model":"access-tags")+"-mobile.png"),fullPage:true});
    }
    await page.setViewportSize({width:1440,height:900});
@@ -392,6 +485,7 @@ try {
  assert.equal((await page.locator("#agentIntegrationsHeading").textContent()).trim(),"Интеграции");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Интеграции");
  assert.equal(await page.locator(".ai-integrations-panel").count(),2);
+ assert.equal(await page.locator(".ai-aside-guide").count(),0);
  assert.equal(await page.locator(".ai-connection-card").count(),2);
  assert.equal(await page.locator(".ai-grant input").count(),3);
  assert.equal(await page.locator(".ai-assigned-label").count(),2);
@@ -468,6 +562,7 @@ try {
  await page.waitForSelector("#agentKnowledgeView:not([hidden])");
  assert.equal(await page.locator("#placeholderView").isVisible(),false);
  assert.equal(await page.locator(".ak-main-panel").count(),1);
+ assert.equal(await page.locator(".ak-overview-card").count(),0);
  assert.equal(await page.locator(".ak-source-row").count(),2);
  assert.equal(await page.locator("#agentKnowledgeHeading").textContent(),"Знания");
  assert.equal((await page.locator("#breadcrumbCurrent").textContent()).trim(),"Входящие заявки / Знания");
@@ -543,7 +638,9 @@ try {
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
  for(const size of [{width:1024,height:768},{width:768,height:900},{width:390,height:844}]){
    await page.setViewportSize(size);
-   const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+   const widths=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,
+     offenders:[...document.querySelectorAll("#agentSettingsView *")].map(el=>({el,right:el.getBoundingClientRect().right,w:el.getBoundingClientRect().width}))
+       .filter(v=>v.right>innerWidth+2).slice(0,15).map(v=>({tag:v.el.tagName,cls:String(v.el.className).slice(0,85),right:Math.round(v.right),w:Math.round(v.w)}))}));
    assert.ok(widths.width<=widths.viewport+2,"Lead settings horizontal overflow at "+size.width+": "+JSON.stringify(widths));
    const cardBounds=await page.evaluate(()=>{
      const editor=document.querySelector(".ls-builder").getBoundingClientRect();
@@ -552,7 +649,30 @@ try {
    });
    assert.ok(Math.abs(cardBounds.summary-cardBounds.editor)<=3,
       "Result summary should align with the editor: "+JSON.stringify(cardBounds));
-   if(size.width===390)await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
+   if(size.width===390){
+     await page.screenshot({path:resolve(artifactDir,"settings-lead-mobile.png"),fullPage:true});
+     assert.equal(await page.locator(".ls-type").count(),3);
+   }
+ }
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
+ for(const [section,sideClass] of [
+    ["types",".ls-types-guided"],
+    ["result",".ls-result-guided"],
+    ["model",".ls-model-guided"],
+    ["access",".ls-access-guided"],
+    ["ready",".ls-ready-guided"]
+ ]){
+   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
+   const geometry=await page.evaluate(className=>{
+     const layout=document.querySelector(className);
+     const body=layout.querySelector(".ls-guided-main").getBoundingClientRect();
+     const aside=layout.querySelector(".ls-section-aside").getBoundingClientRect();
+     return {width:document.documentElement.scrollWidth,viewport:innerWidth,bodyBottom:body.bottom,asideTop:aside.top};
+   },sideClass);
+   assert.ok(geometry.width<=geometry.viewport+2,section+" mobile overflow: "+JSON.stringify(geometry));
+   assert.ok(geometry.asideTop>=geometry.bodyBottom-2,section+" section guidance should stack under form: "+JSON.stringify(geometry));
+   await page.screenshot({path:resolve(artifactDir,"settings-"+section+"-optionb-mobile.png"),fullPage:true});
  }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");

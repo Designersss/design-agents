@@ -58,19 +58,13 @@
 .ai-empty-connection strong{font-size:12px}
 .ai-empty-connection p{max-width:390px;color:#9ba39b;font-size:11px;line-height:1.6}
 .ai-integrations-aside{display:grid;gap:15px;min-width:0}
-.ai-aside-card,.ai-aside-guide,.ai-hub-note{border-radius:16px;border:1px solid #e7eae5;padding:21px;background:#fff}
-.ai-aside-card h2,.ai-aside-guide h2{font-size:16px;font-weight:770;letter-spacing:-.35px;margin:9px 0 17px}
+.ai-aside-card,.ai-hub-note{border-radius:16px;border:1px solid #e7eae5;padding:21px;background:#fff}
+.ai-aside-card h2{font-size:16px;font-weight:770;letter-spacing:-.35px;margin:9px 0 17px}
 .ai-summary-line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-top:1px solid #edf0ec}
 .ai-summary-line>span{display:flex;align-items:center;gap:8px;color:#6d796e;font-size:11px}
 .ai-summary-line .icon{width:15px;height:15px;color:#909c91}
 .ai-summary-line strong{font-size:13px;font-weight:790}
 .ai-aside-card>p{margin-top:10px;font-size:10.5px;color:#929b94;line-height:1.6}
-.ai-aside-guide{background:#f6f7f5}
-.ai-aside-guide h2{margin-bottom:19px}
-.ai-guide-item{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-top:1px solid #e7eae5}
-.ai-guide-number{width:25px;height:25px;flex:0 0 25px;display:grid;place-items:center;border-radius:8px;color:#78837a;background:#eef0ec;font-size:10px;font-weight:720}
-.ai-guide-item strong{font-size:11.5px;line-height:1.4;font-weight:750}
-.ai-guide-item p{font-size:10.5px;line-height:1.6;color:#89918a;margin-top:4px}
 .ai-hub-note{display:flex;align-items:flex-start;gap:11px}
 .ai-hub-icon{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;background:#f1f4ef;color:#748775;border-radius:10px}
 .ai-hub-icon .icon{width:16px;height:16px}
@@ -131,5 +125,5 @@
  .ai-picker-choice{display:flex;justify-content:space-between;align-items:center;width:100%}
  .ai-picker-footer{padding:15px 17px;align-items:flex-start;flex-direction:column}
  .ai-picker-footer button{align-self:flex-end}
- .ai-aside-card,.ai-aside-guide,.ai-hub-note{padding:18px}
+ .ai-aside-card,.ai-hub-note{padding:18px}
 }
