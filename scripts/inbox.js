@@ -156,7 +156,7 @@ function syncScope(id){
 root.addEventListener("click",event=>{
  const button=event.target.closest("button");if(!button)return;
  if(button.hasAttribute("data-inbox-open")){
-  selected=button.dataset.inboxOpen;change(selected,{unread:0});mobileView="conversation";contextOpen=false;render();return;
+  selected=button.dataset.inboxOpen;if(filter==="unread")filter="all";change(selected,{unread:0});mobileView="conversation";contextOpen=false;render();return;
  }
  if(button.hasAttribute("data-inbox-filter")){filter=validFilters.has(button.dataset.inboxFilter)?button.dataset.inboxFilter:"all";render();return}
  if(button.hasAttribute("data-inbox-back")){mobileView="list";contextOpen=false;render();return}
