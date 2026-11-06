@@ -4,7 +4,6 @@
 const root=document.getElementById("inboxView");
 if(!root)return;
 const STORAGE="aimock:inbox-ui:v1";
-const channels=["Telegram Bot API"];
 const initial=[
  {id:"lead-anna",agent:"leads",name:"Анна Ковалева",initials:"АК",color:"peach",handle:"@annakovaleva",source:"Telegram Bot API",agentName:"Входящие заявки",topic:"Расчёт кухни",mode:"waiting",unread:2,time:"12:42",crm:"amoCRM",contact:"Контакт №1248",tags:["Новая заявка","Кухня"],detail:"Интересуется изготовлением кухни по индивидуальным размерам.",messages:[
   ["client","Здравствуйте! Сколько примерно будет стоить кухня на заказ?","12:37"],
@@ -137,8 +136,8 @@ function contextPane(c){
   '<div class="inbox-context-footer"><a href="#/contacts">Все контакты '+icon("right")+'</a></div></aside>';
 }
 function render(){
- const records=list();
- if(!selected||!records.some(c=>c.id===selected))selected=records[0]?.id||null;
+ const records=list(),visible=records.filter(matches);
+ if(!selected||!visible.some(c=>c.id===selected))selected=visible[0]?.id||null;
  const chosen=selectedChat(),name=scope==="all"?"Сообщения":"Диалоги";
  root.innerHTML='<div class="inbox-page"><div class="inbox-page-head"><div><span class="inbox-eyebrow">'+(scope==="all"?"ЕДИНЫЙ INBOX":"ПЕРЕПИСКИ АГЕНТА")+'</span><h1 id="inboxHeading">'+name+'</h1>'+
   '<p>'+(scope==="all"?"Переписки всех агентов и обращения, требующие участия сотрудника.":"История обращений и передача разговора сотруднику.")+'</p></div>'+
