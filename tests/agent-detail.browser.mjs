@@ -430,10 +430,10 @@ try {
    await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
    for(const width of [1024,768,390]){
      await page.setViewportSize({width,height:900});
-     const bounds=await page.evaluate(()=>{
-       const content=document.querySelector(".ls-model-main").getBoundingClientRect();
+     const bounds=await page.evaluate(section=>{
+       const content=document.querySelector(".ls-"+section+"-guided .ls-guided-main").getBoundingClientRect();
        return {left:content.left,width:content.width,body:document.documentElement.scrollWidth,viewport:innerWidth};
-     });
+     },section);
      assert.ok(bounds.body<=bounds.viewport+2,section+" horizontal overflow at "+width+": "+JSON.stringify(bounds));
      assert.ok(bounds.width<=bounds.viewport-bounds.left+2,section+" controls fit inside the viewport");
      if(width===390)await page.screenshot({path:resolve(artifactDir,"settings-"+(section==="model"?"model":"access-tags")+"-mobile.png"),fullPage:true});
