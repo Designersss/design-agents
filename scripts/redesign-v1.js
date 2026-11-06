@@ -49,18 +49,21 @@ function closeSearch(){
 function renderRoute(){
  const route=currentRoute(),isAgent=route.key==="agent";
  const isAgentOverview=isAgent&&route.section==="overview";
+ const isInbox=route.key==="messages"||(isAgent&&route.section==="messages");
  const isLeadSettings=isAgent&&route.id==="leads"&&route.section==="settings";
  const isLeadIntegrations=isAgent&&route.id==="leads"&&route.section==="integrations";
  const isLeadKnowledge=isAgent&&route.id==="leads"&&route.section==="knowledge";
  document.body.classList.toggle("is-agent-route",isAgent);
  $("overviewView").hidden=route.key!=="overview";
+ $("inboxView").hidden=!isInbox;
  $("agentDetailView").hidden=!isAgentOverview;
  $("agentSettingsView").hidden=!isLeadSettings;
  $("agentIntegrationsView").hidden=!isLeadIntegrations;
  $("agentKnowledgeView").hidden=!isLeadKnowledge;
- $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
+ $("placeholderView").hidden=route.key==="overview"||isInbox||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
  $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
+ if(isInbox)window.AIMockInbox.render(isAgent?route.id:null);
  if(isAgent){
    $("agentSidebarName").textContent=route.name;
    const isRunning=window.AIMockAgentDetail.getStatus(route.id);
