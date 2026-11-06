@@ -18,6 +18,11 @@ test("Inbox is a dedicated global and agent-context route",()=>{
  assert.match(router,/isInbox\|\|isAgentOverview/);
  assert.match(html,/data-global-route="messages"/);
  assert.match(html,/data-agent-section="messages"/);
+ assert.doesNotMatch(inbox,/inbox-page-head|inbox-head-hint|inbox-eyebrow|ПЕРЕПИСКИ АГЕНТА|ЕДИНЫЙ INBOX/);
+ assert.match(inbox,/id="inboxHeading" class="inbox-sr"/);
+ assert.match(css,/\.inbox-page\{display:flex;flex-direction:column;[^}]*height:calc\(100dvh - 76px\)/);
+ assert.match(css,/\.inbox-workspace\{flex:1 1 auto;height:100%;min-height:0/);
+ assert.match(css,/height:calc\(100dvh - 68px\)/);
 });
 test("Messenger Workspace has a list, active conversation, and customer context",()=>{
  for(const name of ["inbox-list-pane","inbox-chat-pane","inbox-context-pane","inbox-thread-list","inbox-messages","inbox-person","inbox-context-section","inbox-compose-form"])
