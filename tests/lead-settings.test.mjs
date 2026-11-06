@@ -36,7 +36,7 @@ test("types, fields, conditions and local autosave remain available",()=>{
   "Расчёт кухни","Замер","Консультация","Тип мебели","Размеры помещения",
   "Контакт для связи","Критерий готовности","Результат и передача","AI-модель","Доступы и теги",
   "Перед запуском","Обязательное поле","Условие появления",
-  "Когда выбрано значение","Сценарии обработки"
+  "Когда выбрано значение","Неполные заявки"
  ])assert.ok(script.includes(label),label);
  assert.match(script,/localStorage\.setItem/);
  assert.match(script,/if\(isRunning\(\)\)return/);
@@ -165,4 +165,28 @@ test("in-app help is distinct from agent knowledge and the dismissed banner stay
  assert.doesNotMatch(script,/ls-work-guide|ls-types-help/);
  assert.doesNotMatch(integr,/ai-aside-guide|КАК ЭТО РАБОТАЕТ/);
  assert.doesNotMatch(knowledge,/ak-overview-card|КАК ЭТО РАБОТАЕТ/);
+});
+
+test("all approved agent settings reuse the compact contextual summary pattern",()=>{
+ assert.match(script,/function sectionInfo\(items\)/);
+ assert.match(script,/function guided\(body,items,extraClass/);
+ assert.match(script,/Кратко о разделе/);
+ assert.match(script,/Подробнее в справке/);
+ for(const cls of ["ls-types-guided","ls-result-guided","ls-model-guided","ls-access-guided","ls-ready-guided"]){
+   assert.ok(script.includes(cls),cls);
+ }
+ assert.match(script,/ls-result-fields-grid/);
+ assert.match(script,/ls-result-notify/);
+ assert.match(script,/data-ls-result="recipient"/);
+ assert.match(script,/data-ls-result="crmAction"/);
+ assert.match(script,/data-ls-result="notify"/);
+ assert.match(script,/ls-model-status-card/);
+ assert.match(script,/Для запуска необходимо выбрать модель из актуального каталога провайдера/);
+ assert.match(script,/ls-access-guided/);
+ assert.match(script,/ls-ready-notice/);
+ assert.match(css,/\.ls-guided-layout\{display:grid;grid-template-columns:minmax\(0,1fr\) minmax\(255px,295px\)/);
+ assert.match(css,/@media\(max-width:1200px\)/);
+ assert.match(css,/\.ls-section-info\{/);
+ assert.match(css,/\.ls-section-points\{/);
+ assert.doesNotMatch(script,/GPT-4o|Claude 4|o3-mini|GPT-4.1/);
 });
