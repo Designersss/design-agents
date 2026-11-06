@@ -86,6 +86,14 @@ try{
  assert.ok(mobile.pageHeight<=mobile.viewport+2,"Mobile page must not scroll "+JSON.stringify(mobile));
  assert.ok(mobile.pageWidth<=mobile.viewportWidth+2,"Mobile horizontal overflow "+JSON.stringify(mobile));
  assert.equal(await page.locator(".at-dialog").isVisible(),true);
+ const compactHeader=await page.evaluate(()=>{
+   const title=document.querySelector(".at-dialog-identity").getBoundingClientRect();
+   const add=document.querySelector(".at-header-new").getBoundingClientRect();
+   const tools=document.querySelector(".at-tools-toggle").getBoundingClientRect();
+   return {titleRight:title.right,newLeft:add.left,newRight:add.right,toolsLeft:tools.left};
+ });
+ assert.ok(compactHeader.titleRight<=compactHeader.newLeft+2,"Mobile testing header content overlaps new-test action: "+JSON.stringify(compactHeader));
+ assert.ok(compactHeader.newRight<=compactHeader.toolsLeft+2,"Mobile testing header buttons overlap: "+JSON.stringify(compactHeader));
  assert.equal(await page.locator(".at-history").isVisible(),false);
  assert.equal(await page.locator(".at-tools").isVisible(),false);
  await page.screenshot({path:resolve(out,"testing-mobile-chat.png"),fullPage:true});
