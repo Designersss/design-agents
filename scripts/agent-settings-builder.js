@@ -54,6 +54,17 @@ function tabs(){
  return '<div class="ls-tabs" role="tablist" aria-label="Разделы настроек">'+list.map(([id,text])=>
   '<button type="button" class="ls-tab'+(tab===id?" is-active":"")+'" role="tab" aria-selected="'+(tab===id)+'" data-ls-tab="'+id+'">'+text+'</button>').join("")+'</div>';
 }
+function sectionInfo(items){
+ return '<aside class="ls-section-aside" aria-label="Информация о разделе">'+
+  '<section class="ls-panel ls-section-info"><span class="ls-section-eyebrow">О РАЗДЕЛЕ</span>'+
+   '<h3>Кратко о разделе</h3><div class="ls-section-points">'+
+     items.map(([heading,body])=>'<div class="ls-section-point"><strong>'+escape(heading)+'</strong><p>'+escape(body)+'</p></div>').join("")+
+   '</div><div class="ls-section-more"><span>Подробная инструкция по настройке</span>'+
+   '<a href="#/help">Подробнее в справке '+icon("right")+'</a></div></section></aside>';
+}
+function guided(body,items,extraClass=""){
+ return '<div class="ls-guided-layout '+extraClass+'"><div class="ls-guided-main">'+body+'</div>'+sectionInfo(items)+'</div>';
+}
 function fieldCountLabel(n){const tail=n%100;if(n%10===1&&tail!==11)return n+" поле";if([2,3,4].includes(n%10)&&![12,13,14].includes(tail))return n+" поля";return n+" полей"}
 function typesList(){
  return '<aside class="ls-panel ls-types" aria-label="Типы заявок">'+
@@ -123,7 +134,7 @@ function builder(){
    '<div class="ls-types-intro"><span class="ls-section-eyebrow">НАСТРОЙКА ОБРАЩЕНИЙ</span>'+
    '<h2>Типы заявок и поля</h2>'+
    '<p>Определите, какие обращения принимает менеджер и что ему нужно узнать у клиента. Агент задаёт вопросы в переписке, а не показывает клиенту анкету.</p></div>'+
-   '<div class="ls-workbench">'+typesList()+
+   '<div class="ls-guided-layout ls-types-guided"><div class="ls-workbench">'+typesList()+
    '<div class="ls-main-column">'+
      '<section class="ls-panel ls-builder"><div class="ls-builder-heading"><div>'+
        '<span class="ls-section-eyebrow">ВЫБРАННЫЙ ТИП ЗАЯВКИ</span>'+
@@ -155,7 +166,12 @@ function builder(){
          '<span>Передача человеку не делает неполную заявку полностью готовой. Настройки не запускают реальные уведомления в этом макете.</span></div>'+
      '</section>'+
      resultSummary()+
-   '</div></div></div>';
+   '</div></div>'+sectionInfo([
+     ["Тип заявки","Отдельный сценарий обращения со своим набором полей и правилами завершения."],
+     ["Поля","Сведения, которые агент должен собрать у клиента, с указанием формата и обязательности."],
+     ["Условное появление","Дополнительный вопрос появляется только после выбранного ответа."],
+     ["Готовность","Определяет, когда можно завершить сбор данных или передать неполную заявку."]
+   ])+'</div></div>';
 }
 function resultSummary(){
  return '<section class="ls-panel ls-result"><button type="button" class="ls-summary-link" data-ls-tab="result"><strong>Результат заявки</strong>'+icon("right")+'</button>'+
