@@ -284,7 +284,7 @@ function modelTab(){
  return '<div class="ls-model-view">'+
    '<div class="ls-model-intro"><span class="ls-section-eyebrow">КОНФИГУРАЦИЯ</span>'+
      '<h2>AI-модель</h2><p>Выберите модель для обработки сообщений. Все остальные настройки агента находятся в своих разделах.</p></div>'+
-   '<div class="ls-model-layout"><div class="ls-model-main">'+
+   '<div class="ls-guided-layout ls-model-guided"><div class="ls-guided-main">'+
      '<section class="ls-panel ls-model-card" aria-labelledby="lsModelHeading">'+
        '<div class="ls-model-section-title"><span class="ls-work-step">01</span><div>'+
          '<h3 id="lsModelHeading">Модель для обработки заявок</h3>'+
@@ -305,15 +305,27 @@ function modelTab(){
            '<strong>Конкретная модель</strong><span class="ls-model-catalog-status">Не выбрана</span></div>'+
            '<p>Для ручного выбора необходим актуальный каталог моделей провайдера. Здесь нет загруженного каталога — название модели не подставляется автоматически.</p>'+
            '<span class="ls-model-manual-note">'+icon("alert")+' Для запуска с ручным выбором модель должна быть указана.</span></div>')+
+     '</section>'+
+     '<section class="ls-panel ls-setting-card ls-model-status-card">'+
+       '<div class="ls-setting-heading"><span class="ls-work-step">02</span><div><h3>Текущая конфигурация</h3>'+
+         '<p>Настройка применения модели для профессии «Менеджер заявок».</p></div></div>'+
+       '<div class="ls-setting-status">'+icon(mode==="automatic"?"check":"alert")+
+         '<div><strong>'+(mode==="automatic"?"Режим «Автоматически»":"Ручной выбор модели")+'</strong>'+
+         '<p>'+(mode==="automatic"?"Будет использована модель по умолчанию, назначенная администратором AIMock.":
+             "Для запуска необходимо выбрать модель из актуального каталога провайдера. Каталог пока не подключён в этом прототипе.")+'</p></div></div>'+
      '</section></div>'+
-     '</div></div>';
+     sectionInfo([
+       ["Автоматически","Модель по умолчанию назначается администратором для каждой профессии."],
+       ["Выбрать вручную","Конкретную модель можно указать только из актуального каталога подключённого провайдера."],
+       ["Правила профессии","Изменение модели не отменяет встроенные ограничения и правила агента."]
+     ])+'</div></div>';
 }
 function accessTab(){
  const tags=modelTags(), group=isCompanyWorkspace();
  return '<div class="ls-model-view ls-access-view">'+
    '<div class="ls-model-intro"><span class="ls-section-eyebrow">ОРГАНИЗАЦИЯ</span>'+
      '<h2>Доступы и теги</h2><p>Управляйте областью доступа к агенту и метками для поиска. Эти настройки не влияют на выбор AI-модели.</p></div>'+
-   '<div class="ls-model-layout"><div class="ls-model-main">'+
+   '<div class="ls-guided-layout ls-access-guided"><div class="ls-guided-main">'+
      (group?'<section class="ls-panel ls-model-card" aria-labelledby="lsAccessHeading">'+
        '<div class="ls-model-section-title"><span class="ls-work-step">01</span><div>'+
        '<h3 id="lsAccessHeading">Доступ к агенту</h3>'+
@@ -338,7 +350,11 @@ function accessTab(){
        '<button type="button" class="ls-outline-btn" data-ls-action="add-tag"'+disabled()+'>'+icon("plus")+' Добавить</button></div>'+
        '<p class="ls-model-tag-hint" role="status" id="lsTagHint">Добавьте тег, чтобы быстрее находить агента в общем списке.</p>'+
      '</section></div>'+
-   '</div></div>';
+   sectionInfo([
+     ["Область доступа","Определяет, кому агент доступен в текущем рабочем пространстве."],
+     ["Роли и разрешения","Возможность редактирования и запуска зависит от действительных прав сотрудника."],
+     ["Теги","Помогают находить и группировать агентов, но сами по себе права не выдают."]
+   ])+'</div></div>';
 }
 function readyTab(){
  const hasFields=state.types.some(t=>t.fields.some(f=>f.required));
@@ -351,9 +367,19 @@ function readyTab(){
   ["Права на действия в CRM",null,"Проверяются по интеграциям"],
   ["Лимиты и баланс",null,"Проверяются сервером при запуске"]
  ];
- return panel("Перед запуском","Сводка конфигурации; здесь не выполняется серверная проверка готовности.",
-   '<div class="ls-readiness">'+checks.map(([name,ok,sub])=>'<div class="ls-checkrow"><span class="ls-ready-icon '+(ok===true?"is-ok":"")+'">'+icon(ok===true?"check":"clock")+'</span><span><strong>'+name+'</strong><small>'+sub+'</small></span></div>').join("")+'</div>'+
-   '<a href="#/agent/leads/integrations" class="ls-outline-btn">Настроить подключения '+icon("right")+'</a>');
+ const body='<section class="ls-panel ls-setting-card"><div class="ls-setting-heading">'+
+    '<span class="ls-work-step">01</span><div><h3>Проверка конфигурации</h3>'+
+    '<p>Состояние настроек агента перед запуском.</p></div></div>'+
+    '<div class="ls-readiness">'+checks.map(([name,ok,sub])=>'<div class="ls-checkrow"><span class="ls-ready-icon '+(ok===true?"is-ok":"")+'">'+icon(ok===true?"check":"clock")+'</span><span><strong>'+name+'</strong><small>'+sub+'</small></span></div>').join("")+'</div>'+
+    '<div class="ls-ready-notice">'+icon("alert")+' <span>Проверки интеграций, лимитов и баланса выполняются сервером при запуске, не в прототипе.</span></div>'+
+    '<a href="#/agent/leads/integrations" class="ls-outline-btn">Настроить подключения '+icon("right")+'</a></section>';
+ return '<div class="ls-ready-view"><div class="ls-setting-intro"><span class="ls-section-eyebrow">КОНТРОЛЬ</span>'+
+  '<h2>Перед запуском</h2><p>Проверьте, что агент настроен и подключён к необходимым источникам.</p></div>'+
+  guided(body,[
+    ["Основные настройки","Описание работы, типы заявок и выбор модели проверяются локально."],
+    ["Подключения и права","Проверки доступности каналов и CRM выполняются при запуске."],
+    ["Запуск","Активного агента нельзя редактировать до его остановки."]
+  ],"ls-ready-guided")+'</div>';
 }
 function content(){return tab==="types"?builder():tab==="work"?workTab():tab==="result"?resultTab():tab==="model"?modelTab():tab==="access"?accessTab():readyTab()}
 function render(){
