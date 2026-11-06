@@ -23,6 +23,14 @@ try{
  assert.equal(await page.locator(".inbox-context-pane").isVisible(),true);
  assert.equal(await page.locator(".inbox-thread").count(),6);
  assert.equal((await page.locator("#inboxHeading").textContent()).trim(),"Сообщения");
+ assert.equal(await page.locator(".inbox-page-head").count(),0,"No page intro above the Inbox");
+ const desktopFrame=await page.evaluate(()=>{
+   const rect=document.querySelector(".inbox-workspace").getBoundingClientRect();
+   return {top:rect.top,bottom:rect.bottom,viewport:innerHeight,pageHeight:document.documentElement.scrollHeight};
+ });
+ assert.ok(desktopFrame.top>=76&&desktopFrame.top<=105,"Inbox starts directly below topbar: "+JSON.stringify(desktopFrame));
+ assert.ok(desktopFrame.bottom>=desktopFrame.viewport-22&&desktopFrame.bottom<=desktopFrame.viewport+2,"Inbox fills available height: "+JSON.stringify(desktopFrame));
+ assert.ok(desktopFrame.pageHeight<=desktopFrame.viewport+2,"No full-page vertical scroll on desktop: "+JSON.stringify(desktopFrame));
  assert.match(await page.locator(".inbox-live-status").innerText(),/Нужен человек/);
  const positions=await page.locator(".inbox-list-pane,.inbox-chat-pane,.inbox-context-pane").evaluateAll(e=>e.map(el=>{
   const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top};
@@ -75,8 +83,14 @@ try{
  await page.waitForSelector(".inbox-workspace");
  assert.equal(await page.locator(".inbox-list-pane").isVisible(),true);
  assert.equal(await page.locator(".inbox-chat-pane").isVisible(),false);
- const mobileWidth=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+ const mobileWidth=await page.evaluate(()=>{
+   const frame=document.querySelector(".inbox-workspace").getBoundingClientRect();
+   return {width:document.documentElement.scrollWidth,viewport:innerWidth,top:frame.top,bottom:frame.bottom,viewportHeight:innerHeight,pageHeight:document.documentElement.scrollHeight};
+ });
  assert.ok(mobileWidth.width<=mobileWidth.viewport+2,"Inbox overflows mobile: "+JSON.stringify(mobileWidth));
+ assert.ok(mobileWidth.top>=68&&mobileWidth.top<=85,"Inbox starts directly below mobile topbar: "+JSON.stringify(mobileWidth));
+ assert.ok(mobileWidth.bottom>=mobileWidth.viewportHeight-18&&mobileWidth.bottom<=mobileWidth.viewportHeight+2,"Mobile Inbox fills available height: "+JSON.stringify(mobileWidth));
+ assert.ok(mobileWidth.pageHeight<=mobileWidth.viewportHeight+2,"No full-page vertical scroll on mobile: "+JSON.stringify(mobileWidth));
  await page.screenshot({path:resolve(artifactDir,"inbox-mobile-list.png"),fullPage:true});
  await page.locator('[data-inbox-open="lead-anna"]').click();
  assert.equal(await page.locator(".inbox-list-pane").isVisible(),false);
