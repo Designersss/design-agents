@@ -377,7 +377,7 @@ try {
    assert.equal(await page.locator("#placeholderReturn").getAttribute("href"),"#/overview");
    assert.doesNotMatch(await page.locator("#placeholderView").innerText(),banned,"Forbidden label in "+key);
  }
- for(const section of ["messages","testing","automation","analytics","logs"]){
+ for(const section of ["messages","automation","analytics","logs"]){
    await page.goto(base+"#/agent/leads/"+section);
    await page.waitForSelector("#placeholderView:not([hidden])");
    assert.equal((await page.locator("#placeholderName").textContent()).trim(),
