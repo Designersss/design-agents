@@ -37,6 +37,26 @@ try {
  const helpPageWidth=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
  assert.ok(helpPageWidth.page<=helpPageWidth.viewport+2,"Help articles overflow mobile viewport");
  await page.screenshot({path:resolve(artifactDir,"help-center-mobile.png"),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('.ls-tab[data-ls-tab="types"]').click();
+ for(const [section,sideClass] of [
+    ["types",".ls-types-guided"],
+    ["result",".ls-result-guided"],
+    ["model",".ls-model-guided"],
+    ["access",".ls-access-guided"],
+    ["ready",".ls-ready-guided"]
+ ]){
+   await page.locator('.ls-tab[data-ls-tab="'+section+'"]').click();
+   const geometry=await page.evaluate(className=>{
+     const layout=document.querySelector(className);
+     const body=layout.querySelector(".ls-guided-main").getBoundingClientRect();
+     const aside=layout.querySelector(".ls-section-aside").getBoundingClientRect();
+     return {width:document.documentElement.scrollWidth,viewport:innerWidth,bodyBottom:body.bottom,asideTop:aside.top};
+   },sideClass);
+   assert.ok(geometry.width<=geometry.viewport+2,section+" mobile overflow: "+JSON.stringify(geometry));
+   assert.ok(geometry.asideTop>=geometry.bodyBottom-2,section+" section guidance should stack under form: "+JSON.stringify(geometry));
+   await page.screenshot({path:resolve(artifactDir,"settings-"+section+"-optionb-mobile.png"),fullPage:true});
+ }
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+"#/agent/leads/overview");
  await page.waitForSelector("#detailToggleStatus");
@@ -194,6 +214,16 @@ try {
  assert.match(await page.locator(".ls-builder-heading h2").textContent(),/Расчёт кухни/);
  assert.equal(await page.locator(".ls-types-view").count(),1);
  assert.equal(await page.locator(".ls-completion-panel").count(),1);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-point").count(),4);
+ assert.equal(await page.locator(".ls-types-guided .ls-section-more a").getAttribute("href"),"#/help");
+ const typesCardLayout=await page.evaluate(()=>{
+   const main=document.querySelector(".ls-types-guided .ls-workbench").getBoundingClientRect();
+   const side=document.querySelector(".ls-types-guided .ls-section-aside").getBoundingClientRect();
+   return {mainRight:main.right,sideLeft:side.left};
+ });
+ assert.ok(typesCardLayout.sideLeft>=typesCardLayout.mainRight-2,"Type details side information should appear to the right on desktop");
+
  assert.equal(await page.locator(".ls-types-help").count(),0);
  assert.equal(await page.locator(".ls-editor-section-label").count(),0);
  assert.equal(await page.locator(".ls-types-example").count(),0);
@@ -242,6 +272,16 @@ try {
  assert.equal(savedRules.types.find(t=>t.id==="kitchen").incompleteAction,"handoff");
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
  assert.match(await page.locator(".ls-result-rules").innerText(),/Неполная заявка направляется ответственному/);
+ assert.equal(await page.locator(".ls-result-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-result-view .ls-setting-card").count(),3);
+ assert.equal(await page.locator(".ls-result-fields-grid .ls-result-field").count(),6);
+ assert.equal(await page.locator('[data-ls-result="crmAction"]').count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-result-desktop.png"),fullPage:true});
+ await page.locator('[data-ls-result="crmAction"]').selectOption("create");
+ assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem("aimock:lead-settings-builder:v1")))).result.crmAction,"create");
+ await page.locator('[data-ls-result="crmAction"]').selectOption("none");
+
  await page.locator('[data-ls-tab="work"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Рабочие данные/);
  assert.equal(await page.locator(".ls-work-form").count(),1);
@@ -281,6 +321,9 @@ try {
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
  assert.equal(await page.locator(".ls-model-choice").count(),2);
+ assert.equal(await page.locator(".ls-model-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-model-status-card").count(),1);
+
  assert.equal(await page.locator(".ls-model-choice.is-selected").count(),1);
  assert.equal(await page.locator(".ls-model-tag").count(),0,"Model page must not contain tags");
  assert.equal(await page.locator("#lsAccessScope").count(),0,"Model page must not contain access controls");
@@ -301,6 +344,8 @@ try {
  assert.equal(await page.locator(".ls-model-choice").count(),0,"Access page must not contain model controls");
  assert.equal(await page.locator(".ls-model-tag").count(),2);
  assert.equal(await page.locator("#lsAccessScope").count(),1);
+ assert.equal(await page.locator(".ls-access-guided .ls-section-info").count(),1);
+
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:resolve(artifactDir,"settings-access-tags-desktop.png"),fullPage:true});
  await page.locator("#lsTagInput").fill("монтаж");
@@ -326,6 +371,11 @@ try {
  await page.screenshot({path:resolve(artifactDir,"settings-access-tags-after-edit.png"),fullPage:true});
  await page.locator('.ls-tab[data-ls-tab="ready"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/Перед запуском/);
+ assert.equal(await page.locator(".ls-ready-guided .ls-section-info").count(),1);
+ assert.equal(await page.locator(".ls-ready-notice").count(),1);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:resolve(artifactDir,"settings-ready-desktop.png"),fullPage:true});
+
  await page.locator('.ls-tab[data-ls-tab="types"]').click();
  await page.screenshot({path:resolve(artifactDir,"settings-lead-after-edit.png"),fullPage:true});
  // Return to the approved overview; the builder must not replace its layout.
