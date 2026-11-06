@@ -5,16 +5,20 @@ on:
     paths:
       - "index.html"
       - "styles/redesign-v1.css"
+      - "styles/agent-testing.css"
       - "styles/agent-detail-modular-v3.css"
       - "styles/agent-settings-builder.css"
       - "styles/agent-integrations.css"
       - "styles/agent-knowledge.css"
       - "scripts/redesign-v1.js"
+      - "scripts/agent-testing.js"
       - "scripts/agent-detail-modular-v3.js"
       - "scripts/agent-settings-builder.js"
       - "scripts/agent-integrations.js"
       - "scripts/agent-knowledge.js"
       - "tests/light-dashboard.test.mjs"
+      - "tests/agent-testing.test.mjs"
+      - "tests/agent-testing.browser.mjs"
       - "tests/agent-detail-modular.test.mjs"
       - "tests/lead-settings.test.mjs"
       - "tests/agent-integrations.test.mjs"
@@ -43,23 +47,28 @@ jobs:
       - name: Check JavaScript
         run: |
           node --check scripts/redesign-v1.js
+          node --check scripts/agent-testing.js
           node --check scripts/agent-detail-modular-v3.js
           node --check scripts/agent-settings-builder.js
           node --check scripts/agent-integrations.js
           node --check scripts/agent-knowledge.js
       - name: Run static tests
-        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs tests/agent-integrations.test.mjs tests/agent-knowledge.test.mjs
+        run: node --test tests/light-dashboard.test.mjs tests/agent-detail-modular.test.mjs tests/lead-settings.test.mjs tests/agent-integrations.test.mjs tests/agent-knowledge.test.mjs tests/agent-testing.test.mjs
       - name: Install browser test runner
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: Browser smoke and screenshots
-        run: node tests/agent-detail.browser.mjs
+        run: |
+          node tests/agent-detail.browser.mjs
+          node tests/agent-testing.browser.mjs
       - name: Upload screenshot previews
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: agent-detail-variant-03-previews
-          path: artifacts/agent-detail/*.png
+          name: aimock-agent-testing-previews
+          path: |
+            artifacts/agent-detail/*.png
+            artifacts/testing/*.png
           if-no-files-found: ignore
           retention-days: 14
