@@ -139,9 +139,7 @@ function render(){
  const records=list(),visible=records.filter(matches);
  if(!selected||!visible.some(c=>c.id===selected))selected=visible[0]?.id||null;
  const chosen=selectedChat(),name=scope==="all"?"Сообщения":"Диалоги";
- root.innerHTML='<div class="inbox-page"><div class="inbox-page-head"><div><span class="inbox-eyebrow">'+(scope==="all"?"ЕДИНЫЙ INBOX":"ПЕРЕПИСКИ АГЕНТА")+'</span><h1 id="inboxHeading">'+name+'</h1>'+
-  '<p>'+(scope==="all"?"Переписки всех агентов и обращения, требующие участия сотрудника.":"История обращений и передача разговора сотруднику.")+'</p></div>'+
-  '<span class="inbox-head-hint">'+icon("message")+' Telegram Bot API</span></div>'+
+ root.innerHTML='<div class="inbox-page"><h1 id="inboxHeading" class="inbox-sr">'+name+'</h1>'+
   '<div class="inbox-workspace" data-mobile-view="'+mobileView+'">'+listPane(records)+conversationPane(chosen)+contextPane(chosen)+'</div></div>';
  const messages=root.querySelector("#inboxMessages");
  if(messages)messages.scrollTop=messages.scrollHeight;
