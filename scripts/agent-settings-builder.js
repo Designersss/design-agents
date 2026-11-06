@@ -134,7 +134,7 @@ function builder(){
    '<div class="ls-types-intro"><span class="ls-section-eyebrow">НАСТРОЙКА ОБРАЩЕНИЙ</span>'+
    '<h2>Типы заявок и поля</h2>'+
    '<p>Определите, какие обращения принимает менеджер и что ему нужно узнать у клиента. Агент задаёт вопросы в переписке, а не показывает клиенту анкету.</p></div>'+
-   '<div class="ls-guided-layout ls-types-guided"><div class="ls-workbench">'+typesList()+
+   '<div class="ls-guided-layout ls-types-guided"><div class="ls-guided-main"><div class="ls-workbench">'+typesList()+
    '<div class="ls-main-column">'+
      '<section class="ls-panel ls-builder"><div class="ls-builder-heading"><div>'+
        '<span class="ls-section-eyebrow">ВЫБРАННЫЙ ТИП ЗАЯВКИ</span>'+
@@ -166,7 +166,7 @@ function builder(){
          '<span>Передача человеку не делает неполную заявку полностью готовой. Настройки не запускают реальные уведомления в этом макете.</span></div>'+
      '</section>'+
      resultSummary()+
-   '</div></div>'+sectionInfo([
+   '</div></div></div>'+sectionInfo([
      ["Тип заявки","Отдельный сценарий обращения со своим набором полей и правилами завершения."],
      ["Поля","Сведения, которые агент должен собрать у клиента, с указанием формата и обязательности."],
      ["Условное появление","Дополнительный вопрос появляется только после выбранного ответа."],
