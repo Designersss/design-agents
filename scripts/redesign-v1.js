@@ -49,16 +49,18 @@ function closeSearch(){
 function renderRoute(){
  const route=currentRoute(),isAgent=route.key==="agent";
  const isAgentOverview=isAgent&&route.section==="overview";
+ const isAgentTesting=isAgent&&route.section==="testing";
  const isLeadSettings=isAgent&&route.id==="leads"&&route.section==="settings";
  const isLeadIntegrations=isAgent&&route.id==="leads"&&route.section==="integrations";
  const isLeadKnowledge=isAgent&&route.id==="leads"&&route.section==="knowledge";
  document.body.classList.toggle("is-agent-route",isAgent);
  $("overviewView").hidden=route.key!=="overview";
  $("agentDetailView").hidden=!isAgentOverview;
+ $("agentTestingView").hidden=!isAgentTesting;
  $("agentSettingsView").hidden=!isLeadSettings;
  $("agentIntegrationsView").hidden=!isLeadIntegrations;
  $("agentKnowledgeView").hidden=!isLeadKnowledge;
- $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
+ $("placeholderView").hidden=route.key==="overview"||isAgentOverview||isAgentTesting||isLeadSettings||isLeadIntegrations||isLeadKnowledge;
  $("breadcrumbRoot").textContent=isAgent?"Агенты":"AIMock";
  $("breadcrumbCurrent").textContent=isAgent?(route.section==="overview"?route.name:route.name+" / "+route.title):route.title;
  if(isAgent){
@@ -80,6 +82,7 @@ function renderRoute(){
    $("placeholderReturn").href="#/agent/"+route.id+"/overview";
    $("placeholderReturnLabel").textContent="К обзору агента";
    if(isAgentOverview)window.AIMockAgentDetail.render(route);
+   if(isAgentTesting)window.AIMockAgentTesting.render(route);
    if(isLeadSettings)window.AIMockLeadSettings.render(route);
    if(isLeadIntegrations)window.AIMockAgentIntegrations.render(route);
    if(isLeadKnowledge)window.AIMockAgentKnowledge.render(route);
