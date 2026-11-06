@@ -297,7 +297,7 @@ try {
  assert.equal(await page.locator("#lsWorkRequirements").inputValue(),"Общаться с клиентами на «вы».");
  await page.locator("#lsWorkProject").fill(businessDescription);
  await page.locator('.ls-tab[data-ls-tab="result"]').click();
- assert.match(await page.locator("#agentSettingsView").innerText(),/Результат заявки/);
+ assert.match(await page.locator("#agentSettingsView").innerText(),/Результат и передача/);
  await page.locator('.ls-tab[data-ls-tab="model"]').click();
  assert.match(await page.locator("#agentSettingsView").innerText(),/AI-модель/);
  assert.equal(await page.locator(".ls-model-choice").count(),2);
