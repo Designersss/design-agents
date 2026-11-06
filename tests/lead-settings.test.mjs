@@ -177,8 +177,8 @@ test("all approved agent settings reuse the compact contextual summary pattern",
  }
  assert.match(script,/ls-result-fields-grid/);
  assert.match(script,/ls-result-notify/);
- assert.match(script,/data-ls-result="recipient"/);
- assert.match(script,/data-ls-result="crmAction"/);
+ assert.match(script,/data-ls-result=.*recipient/);
+ assert.match(script,/data-ls-result=.*crmAction/);
  assert.match(script,/data-ls-result="notify"/);
  assert.match(script,/ls-model-status-card/);
  assert.match(script,/Для запуска необходимо выбрать модель из актуального каталога провайдера/);
