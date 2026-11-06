@@ -1,7 +1,7 @@
 /* AIMock · Agent testing workspace. Isolated light visual treatment. */
 .agent-testing-view{min-width:0}
 .at-workspace{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(190px,224px) minmax(320px,1fr) minmax(240px,275px);min-width:0;min-height:0;height:calc(100dvh - 102px);margin:12px 14px 14px;border:1px solid #e8ebe7;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 8px 32px rgba(23,28,23,.035)}
-.at-workspace button,.at-workspace input,.at-workspace textarea{font:inherit}
+.at-workspace button,.at-workspace input,.at-workspace textarea{font-family:inherit}
 .at-workspace button{cursor:pointer}
 .at-workspace button:disabled{cursor:default}
 .at-history,.at-dialog,.at-tools{min-width:0;min-height:0}
